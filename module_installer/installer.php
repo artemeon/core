@@ -868,6 +868,7 @@ $objInstaller = new Installer();
 $objInstaller->action();
 CoreEventdispatcher::getInstance()->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_ENDPROCESSING, array());
 ResponseObject::getInstance()->sendHeaders();
+Session::getInstance()->setBitBlockDbUpdate(true);
 ResponseObject::getInstance()->sendContent();
 CoreEventdispatcher::getInstance()->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_AFTERCONTENTSEND, array(RequestEntrypointEnum::INSTALLER()));
 
