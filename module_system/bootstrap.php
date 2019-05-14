@@ -25,30 +25,17 @@ if (!defined("_xmlLoader_")) {
 // Setting up the default timezone, determined by the server / environment. may be redefined by _system_timezone_
 date_default_timezone_set(date_default_timezone_get());
 
-// -- Include core files -----------------------------------------------------------------------------------------------
-// Functions to have fun & check for mb-string
-if (!include_once __DIR__."/system/functions.php") {
-    rawIncludeError(__DIR__."/system/functions.php");
-}
-
-if (!include_once __DIR__."/system/Classloader.php") {
-    rawIncludeError(__DIR__."/system/Classloader.php");
-}
-
 // -- Composer Autoloader ----------------------------------------------------------------------------------------------
 // We always include the composer autoloader
-require_once _realpath_."project/vendor/autoload.php";
+require_once __DIR__ . '/../../project/vendor/autoload.php';
 
-// -- Auto-Loader for classes ------------------------------------------------------------------------------------------
-// Prepend the autoloader so that we first try to use our autoload and then fallback to composer. Currently we load more
-// classes through our autoloader, if we have moved enough classes into composer packages we might want to change this
-// order
-spl_autoload_register(array(\Kajona\System\System\Classloader::getInstance(), "loadClass"), true, true);
-
+// -- Include core files -----------------------------------------------------------------------------------------------
+// Functions to have fun & check for mb-string
+require_once __DIR__ . '/system/functions.php';
 
 // -- Exception handler ------------------------------------------------------------------------------------------------
 // Register global exception handler for exceptions thrown but not catched (bad style ;) )
-set_exception_handler(array("Kajona\\System\\System\\Exception", "globalExceptionHandler"));
+set_exception_handler(array(\Kajona\System\System\Exception::class, 'globalExceptionHandler'));
 
 // -- The Path on web --------------------------------------------------------------------------------------------------
 defineWebPath();
@@ -64,19 +51,6 @@ defineWebPath();
 
 // -- Trigger the phar-extractor ---------------------------------------------------------------------------------------
 \Kajona\System\System\PharModuleExtractor::bootstrapPharContent();
-
-// -- Helper functions -------------------------------------------------------------------------------------------------
-// Helper for bad bad bad cases
-function rawIncludeError($strFileMissed)
-{
-    $strErrorMessage = "<html><head></head><body><div style=\"border: 1px solid red; padding: 5px; margin: 20px; font-family: arial,verdana, serif; font-size: 12px; \">\n";
-    $strErrorMessage .= "<div style=\"background-color: #cccccc; color: #000000; font-weight: bold; \">An error occurred:</div>\n";
-    $strErrorMessage .= "Error including necessary files. Can't proceed.<br />";
-    $strErrorMessage .= "Searched for ".$strFileMissed." but failed. Going home now...<br />";
-    $strErrorMessage .= "</div></body></html>";
-    header("HTTP/1.0 500 Internal Server Error");
-    die($strErrorMessage);
-}
 
 // Define web path
 function defineWebPath()
