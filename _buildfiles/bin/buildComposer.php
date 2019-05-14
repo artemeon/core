@@ -1,104 +1,157 @@
-#!/usr/bin/php
 <?php
 
-echo "merge and install vendor dependencies".PHP_EOL;
+declare(strict_types=1);
 
-$strRoot = realpath(__DIR__."/../../..");
+final class ComposerBuilder {
+    private const DS = \DIRECTORY_SEPARATOR;
 
-$arrIncludedModules = [];
-if (is_file($strRoot."/project/packageconfig.php")) {
-    include $strRoot."/project/packageconfig.php";
-}
-if (!isset($arrExcludedModules["core"])) {
-    $arrExcludedModules["core"] = [];
-}
+    private const COMPOSER_REPOSITORY_URL = 'https://buildpackages.kajona.de:5443';
+    private const PUBLIC_COMPOSER_PACKAGES = ['artemeon/image', 'artemeon/pdf'];
 
-// merge composer files
-$vendorDir = $strRoot."/project";
-$vendorComposer = $vendorDir."/composer.json";
-$vendorLock = $vendorDir."/composer.lock";
+    /**
+     * @param string $rootPath
+     * @return array[]
+     */
+    private function getIncludedAndExcludedModules(string $rootPath): array
+    {
+        [$arrIncludedModules, $arrExcludedModules] = [[], []];
 
-// we merge and create a composer json file only in case no composer.lock file exists
-if (!is_file($vendorLock)) {
-    // in case we have no composer.json create one
-    if (!is_file($vendorComposer)) {
-        $content = <<<'JSON'
-{
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https:\/\/buildpackages.kajona.de:5443"
+        if (\is_file($rootPath . self::DS . 'project' . self::DS . 'packageconfig.php')) {
+            /** @noinspection PhpIncludeInspection */
+            include $rootPath . self::DS . 'project' . self::DS . 'packageconfig.php';
         }
-    ]
-}
-JSON;
-        file_put_contents($vendorComposer, $content);
+
+        return [$arrIncludedModules, $arrExcludedModules];
     }
 
-    // merge all packages from all composer.json files inside a module
-    $composer = json_decode(file_get_contents($vendorComposer), true);
-    $composer["require"] = [];
+    /**
+     * @param string $rootPath
+     * @return array[]
+     */
+    private function getModuleComposerConfigurations(string $rootPath): iterable
+    {
+        [$includedModules, $excludedModules] = $this->getIncludedAndExcludedModules($rootPath);
 
-    $objCoreDirs = new DirectoryIterator($strRoot);
-    foreach ($objCoreDirs as $objCoreDir) {
-        if ($objCoreDir->isDir() && substr($objCoreDir->getFilename(), 0, 4) == 'core') {
-            $objModuleDirs = new DirectoryIterator($objCoreDir->getRealPath());
-            foreach ($objModuleDirs as $objDir) {
+        foreach (new \DirectoryIterator($rootPath) as $rootDirectory) {
+            if ($rootDirectory->isDot() || !$rootDirectory->isDir()) {
+                continue;
+            }
+            if (!\preg_match('/^core(?:_[a-z]+)?$/', $rootDirectory->getFilename())) {
+                continue;
+            }
 
-                //defined as included?
-                if (isset($arrIncludedModules[$objCoreDir->getFilename()]) && !in_array($objDir->getFilename(), $arrIncludedModules[$objCoreDir->getFilename()])) {
+            $moduleRoot = $rootDirectory->getFilename();
+
+            foreach (new \DirectoryIterator($rootDirectory->getRealPath()) as $moduleDirectory) {
+                if (!$moduleDirectory->isDir() || \strpos($moduleDirectory->getFilename(), 'module_') !== 0) {
                     continue;
                 }
 
-                //defined as excluded?
-                if (isset($arrExcludedModules[$objCoreDir->getFilename()]) && in_array($objDir->getFilename(), $arrExcludedModules[$objCoreDir->getFilename()])) {
-                    continue;
-                }
+                $isAnIncludedModule = !isset($includedModules[$moduleRoot]) ||
+                    \in_array($moduleDirectory->getFilename(), $includedModules[$moduleRoot], true);
+                $isAnExcludedModule = isset($excludedModules[$moduleRoot]) &&
+                    \in_array($moduleDirectory->getFilename(), $excludedModules[$moduleRoot], true);
 
-                $composerFile = $objDir->getRealPath() . '/composer.json';
-                if (is_file($composerFile)) {
-                    $content = json_decode(file_get_contents($composerFile), true);
+                if ($isAnIncludedModule && !$isAnExcludedModule) {
+                    $composerFile = $moduleDirectory->getRealPath() . self::DS . 'composer.json';
 
-                    if (isset($content["require"]) && is_array($content["require"])) {
-                        foreach ($content["require"] as $name => $version) {
-                            if (strpos($name, "/") !== false && isset($composer["require"][$name])) {
-                                if ($composer["require"][$name] != $version) {
-                                    throw new \RuntimeException("Found dependency {$name} multiple times with different version {$composer["require"][$name]} vs {$version}");
-                                }
-                            }
-
-                            $composer["require"][$name] = $version;
-                        }
+                    if (!\is_file($composerFile)) {
+                        continue;
                     }
+
+                    $composerConfiguration = \json_decode(\file_get_contents($composerFile), true);
+
+                    if (
+                        \is_array(@$composerConfiguration['autoload'])
+                        && \array_keys($composerConfiguration['autoload']) !== ['psr-4']
+                    ) {
+                        throw new \RuntimeException('non psr-4 module composer autoload configuration not supported');
+                    }
+
+                    yield $moduleDirectory->getRealPath() => $composerConfiguration;
                 }
             }
         }
     }
 
-    file_put_contents($vendorComposer, json_encode($composer, JSON_PRETTY_PRINT));
-} else {
-    echo "Composer lock file already exists, the existing dependencies are not updated\n";
-}
+    private function mergeConfigurations(string $rootPath): void {
+        if (\is_file($rootPath . self::DS . 'project' . self::DS . 'composer.lock')) {
+            return;
+        }
 
-// install composer
-$arrOutput = array();
-$intReturn = 0;
-exec('composer install --no-dev --prefer-dist --optimize-autoloader --working-dir ' . escapeshellarg($vendorDir), $arrOutput, $intReturn);
-if ($intReturn == 127) {
-    echo "<span style='color: red;'>composer was not found. please run 'composer install --prefer-dist --working-dir " . $vendorDir . "' manually</span>\n";
-}
-if ($intReturn == 1) {
-    echo "<span style='color: red;'>composer error. please run 'composer install --prefer-dist --working-dir " . $vendorDir . "' manually</span>\n";
+        $composerConfiguration = [
+            'repositories' => [
+                [
+                    'type' => 'composer',
+                    'url' => self::COMPOSER_REPOSITORY_URL,
+                ],
+            ],
+            'require' => [],
+            'autoload' => [
+                'psr-4' => [],
+            ],
+        ];
 
-    if (!is_writable($vendorDir)) {
-        echo "<span style='color: red;'>    target folder " . $vendorDir . " is not writable</span>\n";
+        foreach ($this->getModuleComposerConfigurations($rootPath) as $modulePath => $moduleComposerConfiguration) {
+            if (@\is_array($moduleComposerConfiguration['require'])) {
+                $moduleRequirements = $moduleComposerConfiguration['require'];
+
+                foreach ($moduleRequirements as $name => $version) {
+                    if (isset($moduleRequirements[$name]) && $moduleRequirements[$name] !== $version) {
+                        throw new \RuntimeException(
+                            \sprintf('unable to resolve differing requirements %1$s:%2$s vs %1$s:%3$s',
+                                $name,
+                                $moduleRequirements[$name],
+                                $version
+                            )
+                        );
+                    }
+
+                    if (\strpos($name, 'artemeon/') !== 0 || \in_array($name, self::PUBLIC_COMPOSER_PACKAGES, true)) {
+                        $composerConfiguration['require'][$name] = $version;
+                    }
+                }
+            }
+            if (@\is_array($moduleComposerConfiguration['autoload'])) {
+                $autoloadPathPrefix = \substr($modulePath, \strlen(\dirname($modulePath, 2))+1);
+
+                foreach ($moduleComposerConfiguration['autoload']['psr-4'] as $namespace => $path) {
+                    $autoloadPath = \rtrim($autoloadPathPrefix . self::DS . \ltrim($path, self::DS), self::DS) . self::DS;
+                    $composerConfiguration['autoload']['psr-4'][$namespace] = $autoloadPath;
+                }
+            }
+        }
+
+        \file_put_contents(
+            $rootPath . self::DS . 'project' . self::DS . 'composer.json',
+            \json_encode($composerConfiguration, \JSON_PRETTY_PRINT|\JSON_UNESCAPED_SLASHES|\JSON_UNESCAPED_UNICODE)
+        );
+    }
+
+    private function installPackages(string $projectPath): void
+    {
+        if (!\is_writable($projectPath)) {
+            throw new \RuntimeException(\sprintf('target folder %s is not writable', $projectPath));
+        }
+
+        passthru('composer install --no-dev --prefer-dist --optimize-autoloader --working-dir ' . escapeshellarg($projectPath), $exitCode);
+
+        if ($exitCode !== 0) {
+            switch ($exitCode) {
+                case 127:
+                    throw new \RuntimeException(\sprintf('composer was not found. please run "composer install --prefer-dist --working-dir %s" manually', $projectPath));
+                case 1:
+                    throw new \RuntimeException(\sprintf('composer error. please run "composer install --prefer-dist --working-dir %s" manually', $projectPath));
+                default:
+                    throw new \RuntimeException('Error exited with a non successful status code');
+            }
+        }
+    }
+
+    public function run(string $rootPath): void {
+        $this->mergeConfigurations($rootPath);
+        $this->installPackages($rootPath . self::DS . 'project');
     }
 }
-if ($intReturn !== 0) {
-    echo "Error exited with a non successful status code";
-    exit(1);
-}
 
-echo "Composer install finished for " . $vendorComposer . ": \n";
-
-echo "   " . implode("\n   ", $arrOutput);
+(new ComposerBuilder())->run(__DIR__ . '/../../..');
