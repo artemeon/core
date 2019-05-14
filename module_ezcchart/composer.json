@@ -1,11 +1,19 @@
 {
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://buildpackages.kajona.de:5443"
-    }
-  ],
-  "require": {
-    "zetacomponents/graph": "1.5.*"
-  }
+    "name": "artemeon/ezcchart",
+    "require": {
+        "zetacomponents/graph": "1.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Ezcchart\\Tests\\": "tests/",
+            "Kajona\\Ezcchart\\System\\": "system/",
+            "Kajona\\Ezcchart\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://buildpackages.kajona.de:5443"
+        }
+    ]
 }

@@ -1,0 +1,12 @@
+{
+    "name": "artemeon/basicauthentication",
+    "require": {
+        "artemeon/system": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Basicauthentication\\Event\\": "event/",
+            "Kajona\\Basicauthentication\\": ""
+        }
+    }
+}

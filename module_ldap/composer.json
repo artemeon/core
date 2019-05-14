@@ -1,0 +1,16 @@
+{
+    "name": "artemeon/ldap",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Ldap\\Admin\\Systemtasks\\": "admin/systemtasks/",
+            "Kajona\\Ldap\\System\\Workflows\\": "system/workflows/",
+            "Kajona\\Ldap\\System\\Usersources\\": "system/usersources/",
+            "Kajona\\Ldap\\System\\": "system/",
+            "Kajona\\Ldap\\Installer\\": "installer/",
+            "Kajona\\Ldap\\": ""
+        }
+    }
+}

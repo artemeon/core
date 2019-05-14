@@ -1,0 +1,12 @@
+{
+    "name": "artemeon/dbdump",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Dbdump\\System\\": "system/",
+            "Kajona\\Dbdump\\": ""
+        }
+    }
+}

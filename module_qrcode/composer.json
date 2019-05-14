@@ -1,11 +1,20 @@
 {
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://buildpackages.kajona.de:5443"
-    }
-  ],
-  "require": {
-    "aferrandini/phpqrcode": "1.0.1"
-  }
+    "name": "artemeon/qrcode",
+    "require": {
+        "aferrandini/phpqrcode": "1.0.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Qrcode\\Tests\\": "tests/",
+            "Kajona\\Qrcode\\System\\Scriptlets\\": "system/scriptlets/",
+            "Kajona\\Qrcode\\System\\": "system/",
+            "Kajona\\Qrcode\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://buildpackages.kajona.de:5443"
+        }
+    ]
 }

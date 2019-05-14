@@ -1,0 +1,9 @@
+{
+    "name": "artemeon/installer",
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Installer\\System\\": "system/",
+            "Kajona\\Installer\\": ""
+        }
+    }
+}

@@ -1,0 +1,20 @@
+{
+    "name": "artemeon/flow",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Flow\\Tests\\Condition\\": "tests/condition/",
+            "Kajona\\Flow\\Tests\\": "tests/",
+            "Kajona\\Flow\\Admin\\Formentries\\": "admin/formentries/",
+            "Kajona\\Flow\\Admin\\": "admin/",
+            "Kajona\\Flow\\System\\Flow\\Action\\": "system/flow/action/",
+            "Kajona\\Flow\\System\\Flow\\Condition\\": "system/flow/condition/",
+            "Kajona\\Flow\\System\\": "system/",
+            "Kajona\\Flow\\Installer\\": "installer/",
+            "Kajona\\Flow\\Event\\": "event/",
+            "Kajona\\Flow\\": ""
+        }
+    }
+}

@@ -1,0 +1,17 @@
+{
+    "name": "artemeon/mediamanager",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Mediamanager\\Tests\\": "tests/",
+            "Kajona\\Mediamanager\\Admin\\Formentries\\": "admin/formentries/",
+            "Kajona\\Mediamanager\\Admin\\": "admin/",
+            "Kajona\\Mediamanager\\System\\Validators\\": "system/validators/",
+            "Kajona\\Mediamanager\\System\\": "system/",
+            "Kajona\\Mediamanager\\Installer\\": "installer/",
+            "Kajona\\Mediamanager\\": ""
+        }
+    }
+}

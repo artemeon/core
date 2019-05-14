@@ -1,0 +1,13 @@
+{
+    "name": "artemeon/dbbrowser",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Dbbrowser\\Admin\\": "admin/",
+            "Kajona\\Dbbrowser\\Installer\\": "installer/",
+            "Kajona\\Dbbrowser\\": ""
+        }
+    }
+}

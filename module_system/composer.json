@@ -1,16 +1,80 @@
 {
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://buildpackages.kajona.de:5443"
-    }
-  ],
-  "require": {
-    "pimple/pimple": "^3.0",
-    "doctrine/cache": "1.6.*",
-    "psr/log": "^1.0",
-    "twig/twig": "^2.4",
-    "phpmailer/phpmailer": "~6.0",
-    "artemeon/image": "^0.1.1"
-  }
+    "name": "artemeon/system",
+    "require": {
+        "pimple/pimple": "^3.0",
+        "doctrine/cache": "1.6.*",
+        "psr/log": "^1.0",
+        "twig/twig": "^2.4",
+        "phpmailer/phpmailer": "~6.0",
+        "artemeon/image": "^0.1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\System\\Tests\\Security\\Policy\\": "tests/security/policy/",
+            "Kajona\\System\\Tests\\Security\\": "tests/security/",
+            "Kajona\\System\\Tests\\Lifecycle\\": "tests/lifecycle/",
+            "Kajona\\System\\Tests\\Permissions\\": "tests/permissions/",
+            "Kajona\\System\\Tests\\Benchmarks\\": "tests/benchmarks/",
+            "Kajona\\System\\Tests\\Filter\\": "tests/filter/",
+            "Kajona\\System\\Tests\\": "tests/",
+            "Kajona\\System\\Admin\\Systemtasks\\": "admin/systemtasks/",
+            "Kajona\\System\\Admin\\Formentries\\": "admin/formentries/",
+            "Kajona\\System\\Admin\\": "admin/",
+            "Kajona\\System\\System\\Filters\\": "system/filters/",
+            "Kajona\\System\\System\\Security\\Policy\\": "system/security/policy/",
+            "Kajona\\System\\System\\Security\\": "system/security/",
+            "Kajona\\System\\System\\Alert\\": "system/alert/",
+            "Kajona\\System\\System\\Template\\": "system/template/",
+            "Kajona\\System\\System\\Lifecycle\\": "system/lifecycle/",
+            "Kajona\\System\\System\\Workflows\\": "system/workflows/",
+            "Kajona\\System\\System\\Permissions\\": "system/permissions/",
+            "Kajona\\System\\System\\Scriptlets\\": "system/scriptlets/",
+            "Kajona\\System\\System\\Messageproviders\\": "system/messageproviders/",
+            "Kajona\\System\\System\\Db\\Schema\\": "system/db/schema/",
+            "Kajona\\System\\System\\Db\\": "system/db/",
+            "Kajona\\System\\System\\Validators\\": "system/validators/",
+            "Kajona\\System\\System\\Changelogprovider\\": "system/changelogprovider/",
+            "Kajona\\System\\System\\Usersources\\": "system/usersources/",
+            "Kajona\\System\\System\\": "system/",
+            "Kajona\\System\\View\\Components\\Warningbox\\": "view/components/warningbox/",
+            "Kajona\\System\\View\\Components\\Tabbedcontent\\": "view/components/tabbedcontent/",
+            "Kajona\\System\\View\\Components\\Dynamicmenu\\": "view/components/dynamicmenu/",
+            "Kajona\\System\\View\\Components\\Buttonwrapper\\": "view/components/buttonwrapper/",
+            "Kajona\\System\\View\\Components\\Textrow\\": "view/components/textrow/",
+            "Kajona\\System\\View\\Components\\Formentry\\Radiogroup\\": "view/components/formentry/radiogroup/",
+            "Kajona\\System\\View\\Components\\Formentry\\Listeditor\\": "view/components/formentry/listeditor/",
+            "Kajona\\System\\View\\Components\\Formentry\\Dropdown\\": "view/components/formentry/dropdown/",
+            "Kajona\\System\\View\\Components\\Formentry\\Buttonbar\\": "view/components/formentry/buttonbar/",
+            "Kajona\\System\\View\\Components\\Formentry\\Submit\\": "view/components/formentry/submit/",
+            "Kajona\\System\\View\\Components\\Formentry\\Objectselector\\": "view/components/formentry/objectselector/",
+            "Kajona\\System\\View\\Components\\Formentry\\Checkboxarray\\": "view/components/formentry/checkboxarray/",
+            "Kajona\\System\\View\\Components\\Formentry\\Inputcolorpicker\\": "view/components/formentry/inputcolorpicker/",
+            "Kajona\\System\\View\\Components\\Formentry\\Wysiwygeditor\\": "view/components/formentry/wysiwygeditor/",
+            "Kajona\\System\\View\\Components\\Formentry\\Inputtext\\": "view/components/formentry/inputtext/",
+            "Kajona\\System\\View\\Components\\Formentry\\Inputonoff\\": "view/components/formentry/inputonoff/",
+            "Kajona\\System\\View\\Components\\Formentry\\Objectlist\\": "view/components/formentry/objectlist/",
+            "Kajona\\System\\View\\Components\\Formentry\\Inputcheckbox\\": "view/components/formentry/inputcheckbox/",
+            "Kajona\\System\\View\\Components\\Formentry\\": "view/components/formentry/",
+            "Kajona\\System\\View\\Components\\Stackeddatabar\\": "view/components/stackeddatabar/",
+            "Kajona\\System\\View\\Components\\Listsearch\\": "view/components/listsearch/",
+            "Kajona\\System\\View\\Components\\Listbody\\": "view/components/listbody/",
+            "Kajona\\System\\View\\Components\\Popover\\": "view/components/popover/",
+            "Kajona\\System\\View\\Components\\Menu\\Item\\": "view/components/menu/item/",
+            "Kajona\\System\\View\\Components\\Menu\\": "view/components/menu/",
+            "Kajona\\System\\View\\Components\\Dtable\\Model\\": "view/components/dtable/model/",
+            "Kajona\\System\\View\\Components\\Dtable\\": "view/components/dtable/",
+            "Kajona\\System\\View\\Components\\Datatable\\": "view/components/datatable/",
+            "Kajona\\System\\View\\Components\\Grid\\": "view/components/grid/",
+            "Kajona\\System\\View\\Components\\": "view/components/",
+            "Kajona\\System\\Installer\\": "installer/",
+            "Kajona\\System\\Event\\": "event/",
+            "Kajona\\System\\": ""
+        }
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://buildpackages.kajona.de:5443"
+        }
+    ]
 }
