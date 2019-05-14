@@ -1,0 +1,16 @@
+{
+    "name": "artemeon/tags",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Tags\\Tests\\": "tests/",
+            "Kajona\\Tags\\Admin\\": "admin/",
+            "Kajona\\Tags\\System\\": "system/",
+            "Kajona\\Tags\\Installer\\": "installer/",
+            "Kajona\\Tags\\Event\\": "event/",
+            "Kajona\\Tags\\": ""
+        }
+    }
+}

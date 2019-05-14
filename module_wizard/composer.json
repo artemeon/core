@@ -1,0 +1,9 @@
+{
+    "name": "artemeon/wizard",
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Wizard\\System\\": "system/",
+            "Kajona\\Wizard\\": ""
+        }
+    }
+}

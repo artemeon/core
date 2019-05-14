@@ -1,11 +1,18 @@
 {
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://buildpackages.kajona.de:5443"
+    "name": "artemeon/installer",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://buildpackages.kajona.de:5443"
+        }
+    ],
+    "require": {
+        "symfony/lock": "^4.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Installer\\System\\": "system/",
+            "Kajona\\Installer\\": ""
+        }
     }
-  ],
-  "require": {
-    "symfony/lock": "^4.2"
-  }
 }

@@ -1,0 +1,13 @@
+{
+    "name": "artemeon/benchmark",
+    "require": {
+        "artemeon/system": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Benchmark\\System\\Bench\\": "system/bench/",
+            "Kajona\\Benchmark\\System\\": "system/",
+            "Kajona\\Benchmark\\": ""
+        }
+    }
+}

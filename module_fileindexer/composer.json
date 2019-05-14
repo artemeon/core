@@ -1,5 +1,14 @@
 {
+    "name": "artemeon/fileindexer",
     "require": {
         "symfony/process": "^3.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Fileindexer\\System\\Workflows\\": "system/workflows/",
+            "Kajona\\Fileindexer\\System\\Parser\\": "system/parser/",
+            "Kajona\\Fileindexer\\System\\": "system/",
+            "Kajona\\Fileindexer\\": ""
+        }
     }
 }

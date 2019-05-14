@@ -1,0 +1,15 @@
+{
+    "name": "artemeon/v4skin",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\V4skin\\Admin\\Skins\\Kajona_v4\\": "admin/skins/kajona_v4/",
+            "Kajona\\V4skin\\Admin\\": "admin/",
+            "Kajona\\V4skin\\View\\Components\\Rights\\": "view/components/rights/",
+            "Kajona\\V4skin\\Installer\\": "installer/",
+            "Kajona\\V4skin\\": ""
+        }
+    }
+}

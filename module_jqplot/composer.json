@@ -1,0 +1,13 @@
+{
+    "name": "artemeon/jqplot",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Jqplot\\System\\": "system/",
+            "Kajona\\Jqplot\\Debug\\": "debug/",
+            "Kajona\\Jqplot\\": ""
+        }
+    }
+}

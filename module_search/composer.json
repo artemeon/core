@@ -1,0 +1,20 @@
+{
+    "name": "artemeon/search",
+    "require": {
+        "artemeon/system": "~7.1",
+        "artemeon/packagemanager": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Search\\Tests\\": "tests/",
+            "Kajona\\Search\\Admin\\Systemtasks\\": "admin/systemtasks/",
+            "Kajona\\Search\\Admin\\": "admin/",
+            "Kajona\\Search\\System\\Workflows\\": "system/workflows/",
+            "Kajona\\Search\\System\\Scriptlets\\": "system/scriptlets/",
+            "Kajona\\Search\\System\\": "system/",
+            "Kajona\\Search\\Installer\\": "installer/",
+            "Kajona\\Search\\Event\\": "event/",
+            "Kajona\\Search\\": ""
+        }
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "artemeon/tinyurl",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Tinyurl\\Tests\\": "tests/",
+            "Kajona\\Tinyurl\\Admin\\": "admin/",
+            "Kajona\\Tinyurl\\System\\": "system/",
+            "Kajona\\Tinyurl\\Installer\\": "installer/",
+            "Kajona\\Tinyurl\\": ""
+        }
+    }
+}

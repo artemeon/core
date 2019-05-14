@@ -1,0 +1,14 @@
+{
+    "name": "artemeon/chartjs",
+    "require": {
+        "artemeon/system": "~7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Chartjs\\Tests\\": "tests/",
+            "Kajona\\Chartjs\\System\\": "system/",
+            "Kajona\\Chartjs\\Debug\\": "debug/",
+            "Kajona\\Chartjs\\": ""
+        }
+    }
+}

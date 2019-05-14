@@ -1,0 +1,15 @@
+{
+    "name": "artemeon/packagemanager",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Packagemanager\\Tests\\": "tests/",
+            "Kajona\\Packagemanager\\Admin\\": "admin/",
+            "Kajona\\Packagemanager\\System\\": "system/",
+            "Kajona\\Packagemanager\\Installer\\": "installer/",
+            "Kajona\\Packagemanager\\": ""
+        }
+    }
+}

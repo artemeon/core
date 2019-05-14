@@ -1,0 +1,22 @@
+{
+    "name": "artemeon/dashboard",
+    "require": {
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Dashboard\\Admin\\Widgets\\": "admin/widgets/",
+            "Kajona\\Dashboard\\Admin\\": "admin/",
+            "Kajona\\Dashboard\\System\\Lifecycle\\": "system/lifecycle/",
+            "Kajona\\Dashboard\\System\\Filter\\": "system/filter/",
+            "Kajona\\Dashboard\\System\\": "system/",
+            "Kajona\\Dashboard\\View\\Components\\Widgetlist\\": "view/components/widgetlist/",
+            "Kajona\\Dashboard\\View\\Components\\Widget\\": "view/components/widget/",
+            "Kajona\\Dashboard\\View\\Components\\Dashboard\\": "view/components/dashboard/",
+            "Kajona\\Dashboard\\Service\\": "service/",
+            "Kajona\\Dashboard\\Installer\\": "installer/",
+            "Kajona\\Dashboard\\Event\\": "event/",
+            "Kajona\\Dashboard\\": ""
+        }
+    }
+}
