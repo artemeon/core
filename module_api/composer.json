@@ -1,12 +1,21 @@
 {
-  "repositories": [
-    {
-      "type": "composer",
-      "url": "https://buildpackages.kajona.de:5443"
+    "name": "artemeon/api",
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://buildpackages.kajona.de:5443"
+        }
+    ],
+    "require": {
+        "slim/slim": "^3.0",
+        "psx/data": "^2.3",
+        "artemeon/system": "~7.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Kajona\\Api\\System\\Authorization\\": "system/authorization/",
+            "Kajona\\Api\\System\\": "system/",
+            "Kajona\\Api\\": ""
+        }
     }
-  ],
-  "require": {
-    "slim/slim": "^3.0",
-    "psx/data": "^2.3"
-  }
 }
