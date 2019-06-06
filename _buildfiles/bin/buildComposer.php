@@ -113,7 +113,7 @@ final class ComposerBuilder {
                 $autoloadPathPrefix = \substr($modulePath, \strlen(\dirname($modulePath, 2))+1);
 
                 foreach ($moduleComposerConfiguration['autoload']['psr-4'] as $namespace => $path) {
-                    $autoloadPath = \rtrim($autoloadPathPrefix . self::DS . \ltrim($path, self::DS), self::DS) . self::DS;
+                    $autoloadPath = '../' . \rtrim($autoloadPathPrefix . self::DS . \ltrim($path, self::DS), self::DS) . self::DS;
                     $composerConfiguration['autoload']['psr-4'][$namespace] = $autoloadPath;
                 }
             }
