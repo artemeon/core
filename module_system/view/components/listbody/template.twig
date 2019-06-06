@@ -10,7 +10,7 @@
         <td class="treedrag"></td>
         <td class="listsorthandle"></td>
         <td class="listcheckbox">{% if checkbox %}
-            <input type="checkbox" name="kj_cb_{{ listitemid }}" id="kj_cb_{{ listitemid }}" onchange="require('lists').updateToolbar();">
+            <input type="checkbox" name="kj_cb_{{ listitemid }}" id="kj_cb_{{ listitemid }}" onchange="Lists.updateToolbar();">
         {% endif %}</td>
         <td class="listimage">{{ image|raw }}</td>
         <td class="title">

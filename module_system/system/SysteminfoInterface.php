@@ -1,8 +1,8 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) ARTEMEON Management Partner GmbH
+ *       Published under the GNU LGPL v2.1
+ ********************************************************************************************************/
 
 namespace Kajona\System\System;
 
@@ -16,8 +16,10 @@ namespace Kajona\System\System;
  */
 interface SysteminfoInterface extends GenericPluginInterface
 {
-
     const STR_EXTENSION_POINT = "core.system.systeminfo";
+
+    const TYPE_HTML = 1;
+    const TYPE_JSON = 2;
 
     /**
      * Returns the title of the info-block
@@ -27,9 +29,10 @@ interface SysteminfoInterface extends GenericPluginInterface
     public function getStrTitle();
 
     /**
-     * Returns the contents of the info-block
+     * Returns the contents of the info-block. The target describes for which media type the content is generated
      *
+     * @param int $mediaType
      * @return array
      */
-    public function getArrContent();
+    public function getArrContent($mediaType = self::TYPE_HTML);
 }

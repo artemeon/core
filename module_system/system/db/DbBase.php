@@ -144,47 +144,38 @@ abstract class DbBase implements DbDriverInterface
         return $this->_pQuery("ALTER TABLE ".($this->encloseTableName($strTable))." DROP COLUMN ".($this->encloseColumnName($strColumn)), array());
     }
 
-
     /**
      * Creates a single query in order to insert multiple rows at one time.
      * For most databases, this will create s.th. like
-     * INSERT INTO $strTable ($arrColumns) VALUES (?, ?), (?, ?)...
+     * INSERT INTO $tableName ($columns) VALUES (?, ?), (?, ?)...
      * Please note that this method is used to create the query itself, based on the Kajona-internal syntax.
      * The query is fired to the database by Database
      *
-     * @param string $strTable
-     * @param string[] $arrColumns
-     * @param array $arrValueSets
-     * @param Database $objDb
-     *
-     * @param array|null $arrEscapes
+     * @param string $tableName
+     * @param string[] $columns
+     * @param array $valueSets
+     * @param Database $Db
+     * @param array|null $escapes
      * @return bool
      */
-    public function triggerMultiInsert($strTable, $arrColumns, $arrValueSets, Database $objDb, ?array $arrEscapes)
+    public function triggerMultiInsert($tableName, $columns, $valueSets, Database $Db, ?array $escapes): bool
     {
-
-        $arrPlaceholder = array();
-        $arrSafeColumns = array();
-
-        foreach ($arrColumns as $strOneColumn) {
-            $arrSafeColumns[] = $this->encloseColumnName($strOneColumn);
-            $arrPlaceholder[] = "?";
+        $safeColumns = array_map(function ($column) { return $this->encloseColumnName($column); }, $columns);
+        $paramsPlaceholder = '(' . implode(',', array_fill(0, count($safeColumns), '?')) . ')';
+        $placeholderSets = [];
+        $params = [];
+        $escapeValues = [];
+        foreach ($valueSets as $singleSet) {
+            $placeholderSets[] = $paramsPlaceholder;
+            $params[] = array_values($singleSet);
+            if ($escapes !== null) {
+                $escapeValues[] = $escapes;
+            }
         }
-        $strPlaceholder = "(".implode(",", $arrPlaceholder).")";
+        $insertStatement = 'INSERT INTO ' . $this->encloseTableName($tableName) . ' (' . implode(',', $safeColumns) . ') VALUES ' . implode(',', $placeholderSets);
 
-        $arrPlaceholderSets = array();
-        $arrParams = array();
-
-        foreach ($arrValueSets as $arrOneSet) {
-            $arrPlaceholderSets[] = $strPlaceholder;
-            $arrParams = array_merge($arrParams, array_values($arrOneSet));
-        }
-
-        $strQuery = "INSERT INTO ".$this->encloseTableName($strTable)." (".implode(",", $arrSafeColumns).") VALUES ".implode(",", $arrPlaceholderSets);
-
-        return $objDb->_pQuery($strQuery, $arrParams, $arrEscapes ?? []);
+        return $Db->_pQuery($insertStatement, array_merge(...$params), $escapeValues !== [] ? array_merge(...$escapeValues) : []);
     }
-
 
     /**
      * Dummy implementation, using a select & insert combination. This is not threadsafe, so the

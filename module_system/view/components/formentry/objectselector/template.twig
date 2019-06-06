@@ -11,10 +11,9 @@
     </div>
 
     <script type="text/javascript">
-        require(['jquery', 'v4skin'], function($, v4skin){
-            var searchEl = $("#{{ name }}");
+        var searchEl = $("#{{ name }}");
 
-            var objConfig = new v4skin.defaultAutoComplete();
+            var objConfig = new V4skin.defaultAutoComplete();
             objConfig.source = function(request, response) {
                 $.ajax({
                     url: "{{ endpoint_url|escape("js") }}",
@@ -50,6 +49,5 @@
                     .append('<div class="ui-autocomplete-item">' + text + '</div>')
                     .appendTo(ul);
             } ;
-        });
     </script>
 </div>

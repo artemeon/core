@@ -9,6 +9,7 @@ namespace Kajona\System\Admin\Formentries;
 use Kajona\System\Admin\FormentryPrintableInterface;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Validators\TextValidator;
+use Kajona\System\View\Components\Formentry\Inputtextarea\Inputtextarea;
 
 
 /**
@@ -23,6 +24,8 @@ class FormentryTextarea extends FormentryBase implements FormentryPrintableInter
     private $bitLarge = false;
     private $intNumberOfRows = 4;
     private $strPlaceholder;
+
+    private $dataAttributes = [];
 
     public function __construct($strFormName, $strSourceProperty, $objSourceObject = null)
     {
@@ -46,8 +49,16 @@ class FormentryTextarea extends FormentryBase implements FormentryPrintableInter
             $strReturn .= $objToolkit->formTextHint($this->getStrHint(), $this->getBitHideLongHints());
         }
 
-        $strReturn .= $objToolkit->formInputTextArea($this->getStrEntryName(), $this->getStrLabel(), $this->getStrValue(), $this->bitLarge ? "input-large" : "", $this->getBitReadonly(), $this->getIntNumberOfRows(), $this->strOpener, $this->getStrPlaceholder());
+        $cmp = new Inputtextarea($this->getStrEntryName(), $this->getStrLabel());
+        $cmp->setValue($this->getStrValue());
+        $cmp->setClass($this->bitLarge ? "input-large" : "");
+        $cmp->setReadOnly($this->getBitReadonly());
+        $cmp->setNumberOfRows($this->getIntNumberOfRows());
+        $cmp->setOpener($this->getStrOpener());
+        $cmp->setPlaceholder($this->getStrPlaceholder());
+        $cmp->setDataArray($this->dataAttributes);
 
+        $strReturn .= $cmp->renderComponent();
         return $strReturn;
     }
 
@@ -131,4 +142,26 @@ class FormentryTextarea extends FormentryBase implements FormentryPrintableInter
         $this->strPlaceholder = $strPlaceholder;
         return $this;
     }
+
+    /**
+     * @return array
+     */
+    public function getDataAttributes(): array
+    {
+        return $this->dataAttributes;
+    }
+
+    /**
+     * @param array $dataAttributes
+     * @return FormentryTextarea
+     */
+    public function setDataAttributes(array $dataAttributes): FormentryTextarea
+    {
+        $this->dataAttributes = $dataAttributes;
+        return $this;
+    }
+
+
+
+
 }

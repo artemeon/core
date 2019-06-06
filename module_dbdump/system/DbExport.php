@@ -192,6 +192,13 @@ class DbExport
                     unset($arrRow["rnum"]);
                 }
 
+                //cast blobs fields
+                foreach ($arrRow as $key => $val) {
+                    if (is_object($val)) {
+                        $arrRow[$key] = $val."";
+                    }
+                }
+
                 if (!$objFile->writeToFile(serialize($arrRow).self::LINE_SEPARATOR)) {
                     return false;
                 }

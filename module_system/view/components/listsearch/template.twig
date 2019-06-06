@@ -16,10 +16,9 @@
     </div>
 
     <script type="text/javascript">
-    require(["jquery", "v4skin"], function($, v4skin){
-        var searchEl = $("#{{ form_id }} > .search > input");
+            var searchEl = $("#{{ form_id }} > .search > input");
 
-        var objConfig = new v4skin.defaultAutoComplete();
+        var objConfig = new V4skin.defaultAutoComplete();
         objConfig.source = function(request, response) {
             $.ajax({
                 url: "{{ endpoint_url|escape("js") }}",
@@ -53,7 +52,6 @@
         } ;
 
         {% if focus %}searchEl.focus();{% endif %}
-    });
     </script>
 </div>
 

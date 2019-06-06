@@ -25,20 +25,6 @@ interface SamplecontentInstallerInterface {
     public function install();
 
     /**
-     * Passes the db object
-     *
-     * @param Database $objDb
-     */
-    public function setObjDb($objDb);
-
-    /**
-     * Passes the portal language
-     *
-     * @param string $strContentlanguage
-     */
-    public function setStrContentlanguage($strContentlanguage);
-
-    /**
      * Returns the assigned module
      *
      * @return string

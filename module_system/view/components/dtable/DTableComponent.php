@@ -38,6 +38,11 @@ class DTableComponent extends AbstractComponent
     private $withTbody = false;
 
     /**
+     * @var bool
+     */
+    private $enableFloatThead = true;
+
+    /**
      * DTableComponent constructor.
      * @param DTable $dataTable
      */
@@ -80,6 +85,25 @@ class DTableComponent extends AbstractComponent
         $this->withTbody = $withTbody;
     }
 
+    /**
+     * @return bool
+     */
+    public function getEnableFloatThead(): bool
+    {
+        return $this->enableFloatThead;
+    }
+
+    /**
+     * @param bool $enableFloatThead
+     * @return DTableComponent
+     */
+    public function setEnableFloatThead(bool $enableFloatThead): DTableComponent
+    {
+        $this->enableFloatThead = $enableFloatThead;
+        return $this;
+    }
+
+
 
     /**
      * @inheritdoc
@@ -91,6 +115,7 @@ class DTableComponent extends AbstractComponent
             "rows" => $this->dataTable->getRows(),
             "tableCssAddon" => $this->getTableCssAddon(),
             "withTbody" => $this->isWithTbody(),
+            "floatThead" => $this->getEnableFloatThead(),
         ];
 
         return $this->renderTemplate($data);

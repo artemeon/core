@@ -29,6 +29,9 @@ trait I18nTrait
      */
     public function is18nValue($value): bool
     {
+        if (!is_string($value)) {
+            return false;
+        }
         $val = json_decode($value, true);
         return $val !== null;
     }

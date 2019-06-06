@@ -143,7 +143,7 @@ class MessagingAlert extends Model implements ModelInterface, AdminListableInter
             "title" => $this->strTitle,
             "body" => $this->strBody,
             "confirmLabel" => $this->strConfirmLabel,
-            "onAccept" => json_decode($this->strOnAcceptCallback),
+            "onAccept" => json_decode($this->strOnAcceptCallback.""),
             "systemid" => $this->getSystemid()
         ];
     }

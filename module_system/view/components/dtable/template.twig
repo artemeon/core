@@ -10,10 +10,12 @@
         <tr class="header-{{ i }}">
             {% set j = 0 %}
             {% for cell in header.cells %}
-                <th class="row-{{ j }}{% if cell.classAddon!="" %} {{ cell.classAddon }}{% endif %}"
+                <th {% if cell.styleAddon!="" %} style="{{ cell.styleAddon }}" {% endif %}
                         {% if cell.colspan > 0 %} colspan="{{ cell.colspan }}" {% endif %}
-                        {% if cell.tooltip!="" %} title="{{ cell.tooltip }}"{% endif %}">
-                        {{ cell.value | raw }}
+                        {% if cell.rowspan > 0 %} rowspan="{{ cell.rowspan }}" {% endif %}
+                        {% if cell.tooltip!="" %} title="{{ cell.tooltip }}"{% endif %}
+                        class="col-{{ j }}{% if cell.classAddon!="" %} {{ cell.classAddon }}{% endif %}">
+                    {{ cell.value | raw }}
                 </th>
                 {% set j = j + 1 %}
             {% endfor %}
@@ -26,9 +28,11 @@
         <tr data-systemid="{{ i }}" {% if row.classAddon!="" %} class="{{ row.classAddon }}"{% endif %}>
             {% set j = 0 %}
             {% for cell in row.cells %}
-                <td class="row-{{ j }}{% if cell.classAddon!="" %} {{ cell.classAddon }}{% endif %}"
+                <td {% if cell.styleAddon!="" %} style="{{ cell.styleAddon }}" {% endif %}
                         {% if cell.colspan > 0 %} colspan="{{ cell.colspan }}" {% endif %}
-                        {% if cell.tooltip!="" %} title="{{ cell.tooltip }}"{% endif %}">
+                        {% if cell.rowspan > 0 %} rowspan="{{ cell.rowspan }}" {% endif %}
+                        {% if cell.tooltip!="" %} title="{{ cell.tooltip }}"{% endif %}
+                        class="col-{{ j }}{% if cell.classAddon!="" %} {{ cell.classAddon }}{% endif %}">
                     {{ cell.value | raw }}
                 </td>
                 {% set j = j + 1 %}
@@ -38,11 +42,11 @@
     {% endfor %}
 </table>
 
+{% if floatThead %}
 <script type="text/javascript">
-    require(["jquery-floatThread"], function() {
         $('table.core-component-datatable:not(.kajona-data-table-ignore-floatthread)').floatThead({
-            scrollingTop: $("body.dialogBody").size() > 0 ? 0 : 70,
+            scrollingTop: $("body.dialogBody").length > 0 ? 0 : 70,
             useAbsolutePositioning: true
         });
-    });
 </script>
+{% endif %}

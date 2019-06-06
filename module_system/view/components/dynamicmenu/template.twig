@@ -1,5 +1,36 @@
-<div class='core-component-dynamicmenu dropdown' id='{{ menuid }}'>
+<div class='core-component-dynamicmenu dropdown {{ class }}' id='{{ menuid }}' data-systemid="{{ systemId }}">
     <a href='#' class='navbar-link' data-toggle='dropdown'>{{ button|raw }}</a>
-    <div class='core-component-menu dropdown-menu generalContextMenu' role='menu' id='{{ menuid }}-menu'></div>
-    <script type="text/javascript"> require(["jquery", "ajax"], function($, ajax) { $("#{{ menuid }}").on("show.bs.dropdown", function () { ajax.loadUrlToElement("#{{ menuid }}-menu", "{{ endpoint|raw }}"); }); }); </script>
+    <div class='core-component-menu dropdown-menu generalContextMenu' role='menu' {% if width %}style="width:{{ width }}px;overflow:hidden;"{% endif %}>
+        {% if filter %}
+        <div class="menu-filter">
+            <input type="text" class="form-control" id="{{ menuid }}-filter" value="" placeholder="{{ filterPlaceholder }}" autocomplete="off">
+        </div>
+        {% endif %}
+        <div id='{{ menuid }}-menu' style="padding:0"></div>
+    </div>
+    <script type="text/javascript">
+            $("#{{ menuid }}").on("show.bs.dropdown", function () {
+                {% if filter %}$("#{{ menuid }}-filter").val("");{% endif %}
+                Ajax.loadUrlToElement("#{{ menuid }}-menu", "{{ endpoint|raw }}");
+            });
+
+            {% if filter %}
+            var timeout;
+            var send = function(){
+                var value = $("#{{ menuid }}-filter").val();
+                Ajax.loadUrlToElement("#{{ menuid }}-menu", "{{ endpoint|raw }}&filter=" + value);
+                $('#{{ menuid }}-filter').focus();
+            };
+            var filter = function(){
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                timeout = setTimeout(send, 300);
+            };
+
+            $('#{{ menuid }}-filter').on('keypress', filter);
+            $('#{{ menuid }}-filter').on('change', filter);
+            {% endif %}
+
+    </script>
 </div>

@@ -134,9 +134,10 @@ class UsersourcesGroupKajona extends Model implements ModelInterface, Usersource
      * @param int $intStart
      * @param int $intEnd
      *
+     * @param bool $ignoreCache
      * @return array
      */
-    public function getUserIdsForGroup($intStart = null, $intEnd = null)
+    public function getUserIdsForGroup($intStart = null, $intEnd = null, bool $ignoreCache = false)
     {
         $strQuery = "SELECT user2.user_id FROM 
                                          agp_user as user2,
@@ -148,7 +149,7 @@ class UsersourcesGroupKajona extends Model implements ModelInterface, Usersource
 					                 AND system_deleted = 0
                                 ORDER BY user2.user_username ASC  ";
 
-        $arrIds = $this->objDB->getPArray($strQuery, array($this->getSystemid()), $intStart, $intEnd);
+        $arrIds = $this->objDB->getPArray($strQuery, array($this->getSystemid()), $intStart, $intEnd, !$ignoreCache);
 
         $arrReturn = array();
         foreach ($arrIds as $arrOneId) {

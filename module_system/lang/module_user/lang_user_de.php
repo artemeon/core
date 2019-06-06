@@ -23,6 +23,7 @@ $lang["action_group_edit"]               = "Gruppe bearbeiten";
 $lang["action_group_member"]             = "Mitglieder der Gruppe anzeigen";
 $lang["action_group_new"]                = "Neue Gruppe";
 $lang["action_new_user"]                 = "Neuer Benutzer";
+$lang["action_show_report"]                 = "Auswertung";
 $lang["fehler_speichern"]                = "Beim Speichern des Benutzers ist ein Fehler aufgetreten!";
 $lang["form_group_desc"]                 = "Beschreibung";
 $lang["form_user_city"]                  = "Ort";
@@ -172,3 +173,8 @@ $lang["user_password_validate_passwordhistory"] = "Das Passwort wurde bereits ve
 $lang["user_password_validate_username"] = "Das Passwort darf keine Zeichen aus dem Benutzernamen enthalten";
 
 $lang["reset_reason_expired"] = "Ihr Passwort is abgelaufen. Bitte vergeben Sie ein neues Passwort unter Angabe des zugehörigen Benutzernamens.";
+
+$lang["report_hinweis_parametrisierung"] = "Diese Auswertung berücksichtigt NICHT die aktuelle Parametrisierung!";
+$lang["report_userrights"]               = "Anwenderliste mit zugehörigen Gruppen";
+$lang["user_active"]                     = "Aktiv";
+$lang["user_inactive"]                   = "Inaktiv";

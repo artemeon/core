@@ -27,7 +27,7 @@ class SamplecontentInstallerHelper
         //search for installers available
         $arrTempInstaller = Resourceloader::getInstance()->getFolderContent("/installer", array(".php"), false, null, function (&$strFilename, $strPath) {
             /** @var SamplecontentInstallerInterface $objInstance */
-            $objInstance = Classloader::getInstance()->getInstanceFromFilename($strPath, "Kajona\\System\\System\\SamplecontentInstallerInterface", null, null, true);
+            $objInstance = Classloader::getInstance()->getInstanceFromFilename($strPath, SamplecontentInstallerInterface::class, null, null, true);
 
             //See if a legacy class was stored in the file
             if ($objInstance == null) {
@@ -42,7 +42,6 @@ class SamplecontentInstallerHelper
                 }
             }
             else {
-                self::initInstaller($objInstance);
                 $strFilename = $objInstance;
             }
         });
@@ -66,12 +65,6 @@ class SamplecontentInstallerHelper
     }
 
 
-    private static function initInstaller(SamplecontentInstallerInterface $objInstaller)
-    {
-        $objInstaller->setObjDb(Carrier::getInstance()->getObjDB());
-        $objInstaller->setStrContentlanguage(Carrier::getInstance()->getObjSession()->getAdminLanguage(true, true));
-    }
-
     /**
      * @param PackagemanagerMetadata $objPackage
      *
@@ -84,9 +77,8 @@ class SamplecontentInstallerHelper
             if(StringUtil::indexOf($strPath, $objPackage->getStrPath()) !== false) {
 
                 /** @var SamplecontentInstallerInterface $objInstance */
-                $objInstance = Classloader::getInstance()->getInstanceFromFilename($strPath, null, "Kajona\\System\\System\\SamplecontentInstallerInterface", null, true);
+                $objInstance = Classloader::getInstance()->getInstanceFromFilename($strPath, null, SamplecontentInstallerInterface::class, null, true);
                 if($objInstance != null) {
-                    self::initInstaller($objInstance);
                     return $objInstance;
                 }
             }

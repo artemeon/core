@@ -30,6 +30,7 @@ $lang["message_sent_success"]            = "Die Nachricht wurde erfolgreich vers
 $lang["message_subject"]                 = "Betreff";
 $lang["message_to"]                      = "An";
 $lang["message_type"]                    = "Typ";
+$lang["message_attachment"]              = "Anhang";
 $lang["messageprovider_packageupdate_name"] = "Update-Meldungen";
 $lang["messaging_notification_body"]     = "Sie haben eine neue Nachricht erhalten. Klicken Sie auf diese Benachrichtigung um zur Übersicht aller Nachrichten zu gelangen.";
 $lang["messaging_notification_title"]    = "Neue Nachrichten";

@@ -1,12 +1,8 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="ajax"/>
-
-import * as $ from "jquery";
-import * as JQuery from "jquery";
-import WorkingIndicator = require("./WorkingIndicator");
-import Util = require("./Util");
-import Tooltip = require("./Tooltip");
-import StatusDisplay = require("./StatusDisplay");
+import $ from 'jquery'
+import WorkingIndicator from './WorkingIndicator'
+import Util from './Util'
+import Tooltip from './Tooltip'
+import StatusDisplay from './StatusDisplay'
 
 interface SystemStatusMessages {
     strInActiveIcon: string
@@ -17,14 +13,13 @@ interface SystemStatusMessages {
  * AJAX functions for connecting to the server
  */
 class Ajax {
-
     /**
      * @deprecated
      */
-    public static setSystemStatusMessages : SystemStatusMessages = {
-        strInActiveIcon : '',
-        strActiveIcon : ''
-    };
+    public static setSystemStatusMessages: SystemStatusMessages = {
+        strInActiveIcon: '',
+        strActiveIcon: ''
+    }
 
     /**
      * Shorthand method to load a html fragement into a node identified by the selector.
@@ -42,106 +37,123 @@ class Ajax {
      * @param {String} strMethod default is GET
      * @param {Function} objCallback - is called if the request was successful
      */
-    public static loadUrlToElement(strElementSelector: string|JQuery, strUrl: string, strData?: any, bitBlockLoadingContainer?: boolean, strMethod?: string, objCallback?: Function) {
-        WorkingIndicator.start();
+    public static loadUrlToElement (
+        strElementSelector: string | JQuery,
+        strUrl: string,
+        strData?: any,
+        bitBlockLoadingContainer?: boolean,
+        strMethod?: string,
+        objCallback?: Function
+    ) {
+        WorkingIndicator.start()
 
-        var objElement = Util.getElement(strElementSelector);
+        var objElement = Util.getElement(strElementSelector)
 
         if (!bitBlockLoadingContainer) {
-            objElement.html('<div class="loadingContainer"></div>');
+            objElement.html('<div class="loadingContainer"></div>')
         } else {
-            objElement.css('opacity', '0.4');
+            objElement.css('opacity', '0.4')
         }
 
-        if(!strMethod) {
-            strMethod = 'GET';
+        if (!strMethod) {
+            strMethod = 'GET'
         }
 
-        var target = strElementSelector;
+        var target = strElementSelector
         $.ajax({
             type: strMethod,
-            url: strUrl.indexOf(KAJONA_WEBPATH) > -1 ? strUrl : KAJONA_WEBPATH+strUrl,
+            url:
+                strUrl.indexOf(KAJONA_WEBPATH) > -1
+                    ? strUrl
+                    : KAJONA_WEBPATH + strUrl,
             data: strData
-        }).done(
-            function(data, status, xhr) {
+        })
+            .done(function (data, status, xhr) {
                 // detect file download
-                var disposition = xhr.getResponseHeader('Content-Disposition');
+                var disposition = xhr.getResponseHeader('Content-Disposition')
                 if (disposition && disposition.indexOf('filename') !== -1) {
                     // @TODO workaround to fix old file downloads. In case the ajax request returns a
                     // Content-Disposition header we redirect the client to the url to trigger the file download
                     // through the browser. Note you need to update the url of your download to point the user
                     // directly to the file instead of using a hash route. With this workaround the user downloads
                     // the file twice, once through the ajax call and then through the redirect.
-                    location.href = KAJONA_WEBPATH+strUrl;
+                    location.href = KAJONA_WEBPATH + strUrl
                 } else {
-                    objElement.html(data);
-                    objElement.css('opacity', '1');
+                    objElement.html(data)
+                    objElement.css('opacity', '1')
 
-                    Tooltip.initTooltip();
+                    Tooltip.initTooltip()
 
                     if (typeof objCallback === 'function') {
-                        objCallback();
+                        objCallback()
                     }
                 }
-            }
-        ).always(
-            function(response) {
-                WorkingIndicator.stop();
-                objElement.css('opacity', '1');
-            }
-        ).fail(function(data) {
-            if (data.status === 500) {
-                if (KAJONA_DEBUG === 1) {
-                    objElement.html(data.responseText);
-                } else {
-                    objElement.html("<div class=\"alert alert-danger\" role=\"alert\">An error occurred. Please contact the system admin.</div>");
+            })
+            .always(function (response) {
+                WorkingIndicator.stop()
+                objElement.css('opacity', '1')
+            })
+            .fail(function (data) {
+                if (data.status === 500) {
+                    if (KAJONA_DEBUG === 1) {
+                        objElement.html(data.responseText)
+                    } else {
+                        objElement.html(
+                            '<div class="alert alert-danger" role="alert">An error occurred. Please contact the system admin.</div>'
+                        )
+                    }
                 }
-            }
 
-            if (data.status === 401) {
-                objElement.html(data.responseText);
-                objElement.css('opacity', '1');
-                return;
-            }
+                if (data.status === 401) {
+                    objElement.html(data.responseText)
+                    objElement.css('opacity', '1')
+                    return
+                }
 
-            //maybe it was xml, so strip
-            StatusDisplay.messageError("<b>Request failed!</b><br />");
-        });
-    };
+                // maybe it was xml, so strip
+                StatusDisplay.messageError('<b>Request failed!</b><br />')
+            })
+    }
 
-    public static getDataObjectFromString(strData: any, bitFirstIsSystemid: boolean) {
-        if (typeof strData === "string") {
-            //strip other params, backwards compatibility
-            let arrElements = strData.split("&");
-            let data : any = {};
+    public static getDataObjectFromString (
+        strData: any,
+        bitFirstIsSystemid: boolean
+    ) {
+        if (typeof strData === 'string') {
+            // strip other params, backwards compatibility
+            let arrElements = strData.split('&')
+            let data: any = {}
 
             if (bitFirstIsSystemid) {
-                data["systemid"] = arrElements[0];
+                data['systemid'] = arrElements[0]
             }
 
-            //first one is the systemid
-            if(arrElements.length > 1) {
-                $.each(arrElements, function(index, strValue) {
-                    if(!bitFirstIsSystemid || index > 0) {
-                        var arrSingleParams = strValue.split("=");
-                        data[arrSingleParams[0]] = arrSingleParams[1];
+            // first one is the systemid
+            if (arrElements.length > 1) {
+                $.each(arrElements, function (index, strValue) {
+                    if (!bitFirstIsSystemid || index > 0) {
+                        var arrSingleParams = strValue.split('=')
+                        data[arrSingleParams[0]] = arrSingleParams[1]
                     }
-                });
+                })
             }
-            return data;
+            return data
         } else {
-            return strData;
+            return strData
         }
-    };
+    }
 
-    public static regularCallback(data: any, status: string, jqXHR: XMLHttpRequest) {
-        if(status == 'success') {
+    public static regularCallback (
+        data: any,
+        status: string,
+        jqXHR: XMLHttpRequest
+    ) {
+        if (status === 'success') {
             StatusDisplay.displayXMLMessage(data)
+        } else {
+            StatusDisplay.messageError('<b>Request failed!</b>')
         }
-        else {
-            StatusDisplay.messageError("<b>Request failed!</b>")
-        }
-    };
+    }
 
     /**
      * General helper to fire an ajax request against the backend
@@ -155,96 +167,150 @@ class Ajax {
      * @param strMethod default is POST
      * @param dataType
      */
-    public static genericAjaxCall(module: string, action: string, systemid: any, objCallback?: Function, objDoneCallback?: Function, objErrorCallback?: Function, strMethod?: string, dataType?: string) {
-        var postTarget = KAJONA_WEBPATH + '/xml.php?admin=1&module='+module+'&action='+action;
-        var data;
-        if(systemid) {
-            data = this.getDataObjectFromString(systemid, true);
+    public static genericAjaxCall (
+        module: string,
+        action: string,
+        systemid: any,
+        objCallback?: Function,
+        objDoneCallback?: Function,
+        objErrorCallback?: Function,
+        strMethod?: string,
+        dataType?: string
+    ) {
+        var postTarget =
+            KAJONA_WEBPATH +
+            '/xml.php?admin=1&module=' +
+            module +
+            '&action=' +
+            action
+        var data
+        if (systemid) {
+            data = this.getDataObjectFromString(systemid, true)
         }
 
-        WorkingIndicator.start();
+        WorkingIndicator.start()
         $.ajax({
-            type: strMethod ? strMethod : 'POST',
+            type: strMethod || 'POST',
             url: postTarget,
             data: data,
-            error: function(xhr: JQuery.jqXHR, textStatus: string, errorThrown: string){
+            error: function (
+                xhr: JQuery.jqXHR,
+                textStatus: string,
+                errorThrown: string
+            ) {
                 if (objCallback) {
-                    objCallback(xhr, textStatus, errorThrown);
+                    objCallback(xhr, textStatus, errorThrown)
                 }
             },
-            success: function(data: any, textStatus: string, xhr: JQuery.jqXHR){
+            success: function (
+                data: any,
+                textStatus: string,
+                xhr: JQuery.jqXHR
+            ) {
                 if (objCallback) {
-                    objCallback(data, textStatus, xhr);
+                    objCallback(data, textStatus, xhr)
                 }
             },
-            dataType: dataType ? dataType : 'text'
-        }).always(
-            function() {
-                WorkingIndicator.stop();
-            }
-        ).fail(function() {
-            if (objErrorCallback) {
-                objErrorCallback();
-            }
-        }).done(function() {
-            if (objDoneCallback) {
-                objDoneCallback();
-            }
-        });
+            dataType: dataType || 'text'
+        })
+            .always(function () {
+                WorkingIndicator.stop()
+            })
+            .fail(function () {
+                if (objErrorCallback) {
+                    objErrorCallback()
+                }
+            })
+            .done(function () {
+                if (objDoneCallback) {
+                    objDoneCallback()
+                }
+            })
+    }
 
-    };
+    public static setAbsolutePosition (
+        systemIdToMove: string,
+        intNewPos: number,
+        strIdOfList: string,
+        objCallback: Function,
+        strTargetModule?: string
+    ) {
+        if (strTargetModule == null || strTargetModule === '') { strTargetModule = 'system' }
 
-    public static setAbsolutePosition(systemIdToMove: string, intNewPos: number, strIdOfList: string, objCallback: Function, strTargetModule?: string) {
-        if(strTargetModule == null || strTargetModule == "")
-            strTargetModule = "system";
+        if (typeof objCallback === 'undefined' || objCallback == null) { objCallback = this.regularCallback }
 
-        if(typeof objCallback == 'undefined' || objCallback == null)
-            objCallback = this.regularCallback;
+        this.genericAjaxCall(
+            strTargetModule,
+            'setAbsolutePosition',
+            systemIdToMove + '&listPos=' + intNewPos,
+            objCallback
+        )
+    }
 
-
-        this.genericAjaxCall(strTargetModule, "setAbsolutePosition", systemIdToMove + "&listPos=" + intNewPos, objCallback);
-    };
-
-    public static setSystemStatus(strSystemIdToSet: string, bitReload: boolean) {
-        var me = this;
-        var objCallback = function(data: any, status: string, jqXHR: JQuery.jqXHR) {
-            if (status == 'success') {
-                StatusDisplay.displayXMLMessage(data);
+    public static setSystemStatus (
+        strSystemIdToSet: string,
+        bitReload: boolean
+    ) {
+        var me = this
+        var objCallback = function (
+            data: any,
+            status: string,
+            jqXHR: JQuery.jqXHR
+        ) {
+            if (status === 'success') {
+                StatusDisplay.displayXMLMessage(data)
 
                 if (bitReload !== null && bitReload === true) {
-                    location.reload();
+                    location.reload()
                 }
 
-                if (data.indexOf('<error>') == -1 && data.indexOf('<html>') == -1) {
-                    var newStatus = $($.parseXML(data)).find("newstatus").text();
-                    var link = $('#statusLink_' + strSystemIdToSet);
+                if (
+                    data.indexOf('<error>') === -1 &&
+                    data.indexOf('<html>') === -1
+                ) {
+                    var newStatus = $($.parseXML(data))
+                        .find('newstatus')
+                        .text()
+                    var link = $('#statusLink_' + strSystemIdToSet)
 
-                    var adminListRow = link.parents('.admintable > tbody').first();
+                    var adminListRow = link
+                        .parents('.admintable > tbody')
+                        .first()
                     if (!adminListRow.length) {
-                        adminListRow = link.parents('.grid > ul > li').first();
+                        adminListRow = link.parents('.grid > ul > li').first()
                     }
 
                     if (parseInt(newStatus) === 0) {
-                        link.html(me.setSystemStatusMessages.strInActiveIcon);
-                        adminListRow.addClass('disabled');
+                        link.html(me.setSystemStatusMessages.strInActiveIcon)
+                        adminListRow.addClass('disabled')
                     } else {
-                        link.html(me.setSystemStatusMessages.strActiveIcon);
-                        adminListRow.removeClass('disabled');
+                        link.html(me.setSystemStatusMessages.strActiveIcon)
+                        adminListRow.removeClass('disabled')
                     }
 
-                    Tooltip.addTooltip($('#statusLink_' + strSystemIdToSet).find("[rel='tooltip']"));
+                    Tooltip.addTooltip(
+                        $('#statusLink_' + strSystemIdToSet).find(
+                            "[rel='tooltip']"
+                        )
+                    )
                 }
             } else {
                 // in the error case the arguments are (jqXHR, status) so we need to get the responseText from the
                 // xhr object
-                StatusDisplay.messageError(data.responseText);
+                StatusDisplay.messageError(data.responseText)
             }
-        };
+        }
 
-        Tooltip.removeTooltip($('#statusLink_' + strSystemIdToSet).find("[rel='tooltip']"));
-        this.genericAjaxCall("system", "setStatus", strSystemIdToSet, objCallback);
-    };
-
+        Tooltip.removeTooltip(
+            $('#statusLink_' + strSystemIdToSet).find("[rel='tooltip']")
+        )
+        this.genericAjaxCall(
+            'system',
+            'setStatus',
+            strSystemIdToSet,
+            objCallback
+        )
+    }
 }
-
-export = Ajax
+;(<any>window).Ajax = Ajax
+export default Ajax

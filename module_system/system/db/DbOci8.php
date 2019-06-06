@@ -87,42 +87,38 @@ class DbOci8 extends DbBase
     /**
      * Creates a single query in order to insert multiple rows at one time.
      * For most databases, this will create s.th. like
-     * INSERT INTO $strTable ($arrColumns) VALUES (?, ?), (?, ?)...
+     * INSERT INTO $tableName ($columns) VALUES (?, ?), (?, ?)...
      *
      * Please note that this method is used to create the query itself, based on the Kajona-internal syntax.
      * The query is fired to the database by Database
      *
-     * @param string $strTable
-     * @param string[] $arrColumns
-     * @param array $arrValueSets
-     * @param Database $objDb
+     * @param string $tableName
+     * @param string[] $columns
+     * @param array $valueSets
+     * @param Database $Db
      *
-     * @param array|null $arrEscapes
+     * @param array|null $escapes
      * @return bool
      */
-    public function triggerMultiInsert($strTable, $arrColumns, $arrValueSets, Database $objDb, ?array $arrEscapes)
+    public function triggerMultiInsert($tableName, $columns, $valueSets, Database $Db, ?array $escapes): bool
     {
-        $arrPlaceholder = array();
-        $arrSafeColumns = array();
+        $safeColumns = array_map(function ($column) { return $this->encloseColumnName($column); }, $columns);
+        $paramsPlaceholder = '(' . implode(',', array_fill(0, count($safeColumns), '?')) . ')';
+        $columnNames = ' (' . implode(',', $safeColumns) . ') ';
 
-        foreach ($arrColumns as $strOneColumn) {
-            $arrSafeColumns[] = $this->encloseColumnName($strOneColumn);
-            $arrPlaceholder[] = "?";
+        $params = [];
+        $escapeValues = [];
+        $insertStatement = 'INSERT ALL ';
+        foreach ($valueSets as $valueSet) {
+            $params[] = array_values($valueSet);
+            if ($escapes !== null) {
+                $escapeValues[] = $escapes;
+            }
+            $insertStatement .= ' INTO ' . $this->encloseTableName($tableName) . ' ' . $columnNames . ' VALUES ' . $paramsPlaceholder . ' ';
         }
-        $strPlaceholder = " (".implode(",", $arrPlaceholder).") ";
-        $strColumnNames = " (".implode(",", $arrSafeColumns).") ";
+        $insertStatement .= ' SELECT * FROM dual';
 
-        $arrParams = array();
-
-        $strQuery = "INSERT ALL ";
-        foreach ($arrValueSets as $arrOneSet) {
-            $arrParams = array_merge($arrParams, array_values($arrOneSet));
-
-            $strQuery .= " INTO ".$this->encloseTableName($strTable)." ".$strColumnNames." VALUES ".$strPlaceholder." ";
-        }
-        $strQuery .= " SELECT * FROM dual";
-
-        return $objDb->_pQuery($strQuery, $arrParams, $arrEscapes ?? []);
+        return $Db->_pQuery($insertStatement, array_merge(...$params), $escapeValues !== [] ? array_merge(...$escapeValues) : []);
     }
 
 
@@ -365,7 +361,7 @@ class DbOci8 extends DbBase
     private function getCoreTypeForDbType($infoSchemaRow)
     {
         if ($infoSchemaRow["data_type"] == "NUMBER" && $infoSchemaRow["data_precision"] == 19) {
-            return DbDatatypes::STR_TYPE_INT;
+            return DbDatatypes::STR_TYPE_LONG;
         } elseif ($infoSchemaRow["data_type"] == "NUMBER" && $infoSchemaRow["data_precision"] == 19) {
             return DbDatatypes::STR_TYPE_LONG;
         } elseif ($infoSchemaRow["data_type"] == "FLOAT" && $infoSchemaRow["data_precision"] == 24) {
@@ -377,6 +373,8 @@ class DbOci8 extends DbBase
                 return DbDatatypes::STR_TYPE_CHAR20;
             } elseif ($infoSchemaRow["data_length"] == "100") {
                 return DbDatatypes::STR_TYPE_CHAR100;
+            } elseif ($infoSchemaRow["data_length"] == "254") {
+                return DbDatatypes::STR_TYPE_CHAR254;
             } elseif ($infoSchemaRow["data_length"] == "280") {
                 return DbDatatypes::STR_TYPE_CHAR254;
             } elseif ($infoSchemaRow["data_length"] == "500") {
@@ -433,7 +431,7 @@ class DbOci8 extends DbBase
         } elseif ($strType == DbDatatypes::STR_TYPE_LONGTEXT) {
             $strReturn .= " CLOB ";
         } else {
-            $strReturn .= " VARCHAR2( 254 ) ";
+            $strReturn .= " VARCHAR2( 280 ) ";
         }
 
         return $strReturn;

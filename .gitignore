@@ -10,4 +10,7 @@ _buildfiles/bin/plain*.js
 _buildfiles/bin/tsc*.js*
 _buildfiles/buildproject
 module_v4skin/admin/skins/kajona_v4/less/styles.min.css
+module_v4skin/admin/skins/kajona_v4/less/styles.less
 module_system/scripts/agp*.js
+module_system/scripts/vendors.chunks.min.js
+node_modules

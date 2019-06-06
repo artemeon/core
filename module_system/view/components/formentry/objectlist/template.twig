@@ -3,12 +3,13 @@
     <label for="{{ name }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6 inputText">
         <div class="inputContainer">
-            <table id="{{ name }}" data-name="{{ name }}" class="table table-striped form-control">
+            <table id="{{ name }}" data-name="{{ name }}" class="table table-striped form-control" data-max-values="{{ maxValues }}">
                 <colgroup>
                     <col width="20" />
                     <col width="*" />
                     {% if not readOnly %}<col width="20" />{% endif %}
                     {% if not readOnly and row.editLink %}<col width="20" />{% endif %}
+                    {% if row.detailLink %}<col width="20" />{% endif %}
                 </colgroup>
                 <tbody>
                 {% for row in rows %}
@@ -17,6 +18,7 @@
                     <td class="title">{% if row.path %}<div class="smaller">{{ row.path }}</div>{% endif %} {{ row.displayName }} <input type="hidden" name="{{ name }}[]" value="{{ row.systemid }}" /></td>
                     {% if not readOnly %}<td class="icon-cell">{{ row.removeLink|raw }}</td>{% endif %}
                     {% if not readOnly and row.editLink %}<td class="icon-cell">{{ row.editLink|raw }}</td>{% endif %}
+                    {% if row.detailLink %}<td class="icon-cell">{{ row.detailLink|raw }}</td>{% endif %}
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -41,8 +43,7 @@
 
     <script type="text/javascript">
     {% if endpointUrl and not readOnly %}
-        require(['jquery', 'v4skin', 'folderview'], function($, v4skin, folderview) {
-            var objConfig = new v4skin.defaultAutoComplete();
+                 var objConfig = new V4skin.defaultAutoComplete();
             objConfig.source = function(request, response) {
                 $.ajax({
                     url: '{{ endpointUrl|raw }}',
@@ -59,7 +60,7 @@
             objConfig.select = function(event, ui) {
                 if (ui.item) {
                     var path = $("<span/>").html(ui.item.path).text();
-                    folderview.setObjectListItems('{{ name }}', [{
+                    Folderview.setObjectListItems('{{ name }}', [{
                         strSystemId: ui.item.systemid,
                         strDisplayName: ui.item.title,
                         strIcon: ui.item.icon,
@@ -77,15 +78,9 @@
                     .append("<div class='ui-autocomplete-item'><div class='smaller'>" + item.path + "</div>" + item.icon + " " + item.title + "</div>")
                     .appendTo(ul);
             } ;
-
-
-
-
-        });
     {% endif %}
 
-        require(['jquery'], function($) {
-            var updateMandatory = function($objInput) {
+        var updateMandatory = function($objInput) {
                 var $input = $objInput.closest('.inputContainer');
                 if ($input && $objInput.hasClass('mandatoryFormElement')) {
                     $input.addClass('mandatoryFormElement');
@@ -98,6 +93,5 @@
                 updateMandatory($(this));
             });
             updateMandatory($objInput);
-        });
     </script>
 </div>

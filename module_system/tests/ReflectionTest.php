@@ -111,6 +111,16 @@ class ReflectionTest extends Testbase
     /**
      * @dataProvider additionProvider
      */
+    public function testGetMethodsWithAnnotation($a)
+    {
+        $objAnnotations = new Reflection(new B());
+
+        $this->assertEquals(["testMethod" => "val1"], $objAnnotations->getMethodsWithAnnotation("@methodTest"));
+    }
+
+    /**
+     * @dataProvider additionProvider
+     */
     public function testGetPropertiesWithAnnotation($a)
     {
 

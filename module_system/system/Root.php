@@ -534,8 +534,12 @@ abstract class Root
             $this->objSortManager->fixSortOnDelete($this->intSort);
         }
 
-        $strQuery = "DELETE FROM agp_system WHERE system_id = ?";
-        $bitReturn = $bitReturn && $this->objDB->_pQuery($strQuery, array($this->getSystemid()));
+        $bitReturn = $bitReturn && $this->objDB->_pQuery("DELETE FROM agp_system WHERE system_id = ?", array($this->getSystemid()));
+
+        if (version_compare(SystemModule::getModuleByName("system")->getStrVersion(), "7.1.4", "ge")) {
+            $this->objDB->_pQuery("DELETE FROM agp_permissions_view WHERE view_id = ?", [$this->getSystemid()]);
+            $this->objDB->_pQuery("DELETE FROM agp_permissions_right2 WHERE right2_id = ?", [$this->getSystemid()]);
+        }
 
         Objectfactory::getInstance()->removeFromCache($this->getSystemid());
         OrmRowcache::removeSingleRow($this->getSystemid());

@@ -1,8 +1,8 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2015-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2015-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\Dashboard\System;
 
@@ -33,9 +33,9 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
     {
         $arrProvider = array();
         $arrCategories = TodoRepository::getAllCategories();
-        foreach($arrCategories as $strProviderName => $arrTaskCategories) {
-            foreach($arrTaskCategories as $strKey => $strCategoryName) {
-                if(!isset($arrProvider[$strProviderName])) {
+        foreach ($arrCategories as $strProviderName => $arrTaskCategories) {
+            foreach ($arrTaskCategories as $strKey => $strCategoryName) {
+                if (!isset($arrProvider[$strProviderName])) {
                     $arrProvider[$strProviderName] = array();
                 }
 
@@ -44,10 +44,10 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
         }
 
         $arrProviderNodes = array();
-        foreach($arrProvider as $strProviderName => $arrCats) {
+        foreach ($arrProvider as $strProviderName => $arrCats) {
 
             $arrCategoryNodes = array();
-            foreach($arrCats as $strKey => $strCategoryName) {
+            foreach ($arrCats as $strKey => $strCategoryName) {
                 $strJsonKey = json_encode($strKey);
 
                 $objNode = new SystemJSTreeNode();
@@ -61,7 +61,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
                 );
                 $objNode->addAAttrAttr(
                     "onclick",
-                    "require('dashboard').todo.loadCategory($strJsonKey,'');return false;"
+                    "Dashboard.todo.loadCategory($strJsonKey,'');return false;"
                 );
                 $objNode->addStateAttr(
                     SystemJSTreeNode::STR_NODE_STATE_OPENED,
@@ -75,7 +75,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
 
             $objNode = new SystemJSTreeNode();
             $objNode->setStrId(generateSystemid());
-            $objNode->setStrText('<i class="fa fa-folder-o"></i>&nbsp;'.$this->objToolkit->getTooltipText($strProviderName, $strProviderName));
+            $objNode->setStrText('<i class="fa fa-folder-o"></i>&nbsp;' . $this->objToolkit->getTooltipText($strProviderName, $strProviderName));
             $objNode->setArrChildren($arrCategoryNodes);
             $objNode->setStrType("category");
             $objNode->addAAttrAttr(
@@ -84,13 +84,12 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
             );
             $objNode->addAAttrAttr(
                 "onclick",
-                "require('dashboard').todo.loadCategory($strKeysJson,'');return false;"
+                "Dashboardtodo.loadCategory($strKeysJson,'');return false;"
             );
             $objNode->addStateAttr(
                 SystemJSTreeNode::STR_NODE_STATE_OPENED,
                 true
             );
-
 
             $arrProviderNodes[] = $objNode;
         }
@@ -113,7 +112,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
         );
         $objNode->addAAttrAttr(
             "onclick",
-            "require('dashboard').todo.loadCategory('','')"
+            "Dashboard.todo.loadCategory('','')"
         );
 
         return $objNode;

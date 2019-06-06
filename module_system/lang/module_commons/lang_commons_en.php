@@ -141,12 +141,16 @@ $lang["commons_error_move_hierarchy"] = "Moving this object below the given obje
 
 $lang["commons_interval_day"]                    = "Day";
 $lang["commons_interval_days"]                   = "Days";
+$lang["commons_interval_day_days"] = "Day(s)";
 $lang["commons_interval_week"]                   = "Week";
 $lang["commons_interval_weeks"]                  = "Weeks";
+$lang["commons_interval_week_weeks"] = "Week(s)";
 $lang["commons_interval_month"]                  = "Month";
 $lang["commons_interval_months"]                 = "Months";
+$lang["commons_interval_month_months"] = "Month(s)";
 $lang["commons_interval_year"]                   = "Year";
 $lang["commons_interval_years"]                  = "Years";
+$lang["commons_interval_year_years"] = "Year(s)";
 
 $lang["commons_skin_footer"] = "<p>powered by <a href=\"https://github.com/artemeon/core\" target=\"_blank\" title=\"Kajona Core\">Kajona Core</a></p>";
 $lang["commons_login_footer"] = "<a href=\"https://github.com/artemeon/core\" target=\"_blank\">Kajona Core</a>";

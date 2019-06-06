@@ -1,8 +1,8 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\System\System;
 
@@ -102,9 +102,9 @@ class Link
      */
     public static function getLinkAdmin($strModule, $strAction, $strParams = "", $strText = "", $strAlt = "", $strImage = "", $bitTooltip = true, $strCss = "", $strOnClick = "")
     {
-        $strHref = "href=\"".Link::getLinkAdminHref($strModule, $strAction, $strParams, true, true)."\"";
+        $strHref = "href=\"" . Link::getLinkAdminHref($strModule, $strAction, $strParams, true, true) . "\"";
         if (!empty($strOnClick)) {
-            $strHref.= ' onclick="' . htmlspecialchars($strOnClick). '"';
+            $strHref .= ' onclick="' . htmlspecialchars($strOnClick) . '"';
         }
         return self::getLinkAdminManual($strHref, $strText, $strAlt, $strImage, "", "", $bitTooltip, $strCss);
     }
@@ -134,8 +134,6 @@ class Link
         $strModule = urlencode($strModule);
         $strAction = urlencode($strAction);
 
-
-
         if ($bitHashUrl || $bitPath) {
 
             //scheme: /admin/module.action.systemid
@@ -145,15 +143,15 @@ class Link
             }
 
             if ($strModule != "" && $strAction == "" && $strSystemid == "") {
-                $strLink .= "/".$strModule."";
+                $strLink .= "/" . $strModule . "";
             } elseif ($strModule != "" && $strAction != "" && $strSystemid == "") {
-                $strLink .= "/".$strModule."/".$strAction."";
+                $strLink .= "/" . $strModule . "/" . $strAction . "";
             } else {
-                $strLink .= "/".$strModule."/".$strAction."/".$strSystemid."";
+                $strLink .= "/" . $strModule . "/" . $strAction . "/" . $strSystemid . "";
             }
 
             if (count($arrParams) > 0) {
-                $strLink .= "?".implode("&", $arrParams);
+                $strLink .= "?" . implode("&", $arrParams);
             }
 
             if (!$bitEncodedAmpersand) {
@@ -161,12 +159,11 @@ class Link
             }
 
             if (!$bitPath) {
-                return _webpath_."/".$strLink;
+                return _webpath_ . "/" . $strLink;
             } else {
                 return $strLink;
             }
         }
-
 
         //rewriting enabled?
         if (SystemSetting::getConfigValue("_system_mod_rewrite_") == "true") {
@@ -177,24 +174,24 @@ class Link
 
             //scheme: /admin/module.action.systemid
             if ($strModule != "" && $strAction == "" && $strSystemid == "") {
-                $strLink = _webpath_.$strPrefix."/".$strModule.".html";
+                $strLink = _webpath_ . $strPrefix . "/" . $strModule . ".html";
             } elseif ($strModule != "" && $strAction != "" && $strSystemid == "") {
-                $strLink = _webpath_.$strPrefix."/".$strModule."/".$strAction.".html";
+                $strLink = _webpath_ . $strPrefix . "/" . $strModule . "/" . $strAction . ".html";
             } else {
-                $strLink = _webpath_.$strPrefix."/".$strModule."/".$strAction."/".$strSystemid.".html";
+                $strLink = _webpath_ . $strPrefix . "/" . $strModule . "/" . $strAction . "/" . $strSystemid . ".html";
             }
 
             if (count($arrParams) > 0) {
-                $strLink .= "?".implode("&amp;", $arrParams);
+                $strLink .= "?" . implode("&amp;", $arrParams);
             }
 
         } else {
-            $strLink = ""._indexpath_."?module=".$strModule.
-                ($strAction != "" ? "&amp;action=".$strAction : "").
-                ($strSystemid != "" ? "&amp;systemid=".$strSystemid : "");
+            $strLink = "" . _indexpath_ . "?module=" . $strModule .
+                ($strAction != "" ? "&amp;action=" . $strAction : "") .
+                ($strSystemid != "" ? "&amp;systemid=" . $strSystemid : "");
 
             if (count($arrParams) > 0) {
-                $strLink .= "&amp;".(implode("&amp;", $arrParams));
+                $strLink .= "&amp;" . (implode("&amp;", $arrParams));
             }
         }
 
@@ -238,24 +235,24 @@ class Link
 
             //scheme: /admin/module.action.systemid
             if ($strModule != "" && $strAction == "" && $strSystemid == "") {
-                $strLink = _webpath_."/xml".$strPrefix."/".$strModule;
+                $strLink = _webpath_ . "/xml" . $strPrefix . "/" . $strModule;
             } elseif ($strModule != "" && $strAction != "" && $strSystemid == "") {
-                $strLink = _webpath_."/xml".$strPrefix."/".$strModule."/".$strAction;
+                $strLink = _webpath_ . "/xml" . $strPrefix . "/" . $strModule . "/" . $strAction;
             } else {
-                $strLink = _webpath_."/xml".$strPrefix."/".$strModule."/".$strAction."/".$strSystemid;
+                $strLink = _webpath_ . "/xml" . $strPrefix . "/" . $strModule . "/" . $strAction . "/" . $strSystemid;
             }
 
             if (count($arrParams) > 0) {
-                $strLink .= "?".implode("&amp;", $arrParams);
+                $strLink .= "?" . implode("&amp;", $arrParams);
             }
 
         } else {
-            $strLink = ""._webpath_."/xml.php?module=".$strModule.
-                ($strAction != "" ? "&amp;action=".$strAction : "").
-                ($strSystemid != "" ? "&amp;systemid=".$strSystemid : "");
+            $strLink = "" . _webpath_ . "/xml.php?module=" . $strModule .
+                ($strAction != "" ? "&amp;action=" . $strAction : "") .
+                ($strSystemid != "" ? "&amp;systemid=" . $strSystemid : "");
 
             if (count($arrParams) > 0) {
-                $strLink .= "&amp;".(implode("&amp;", $arrParams));
+                $strLink .= "&amp;" . (implode("&amp;", $arrParams));
             }
         }
 
@@ -312,19 +309,19 @@ class Link
             }
 
             if (!$bitTooltip) {
-                $strLink = "<a href=\"#\" onclick=\"window.open('".Link::getLinkAdminHref($strModule, $strAction, $strParams)."','".$strTitle."','scrollbars=yes,resizable=yes,width=".$intWidth.",height=".$intHeight."'); return false;\" ".
-                    "title=\"".strip_tags($strAlt)."\">".AdminskinHelper::getAdminImage($strImage, $strAlt, true)."</a>";
+                $strLink = "<a href=\"#\" onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\" " .
+                "title=\"" . strip_tags($strAlt) . "\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
             } else {
-                $strLink = "<a href=\"#\" onclick=\"window.open('".Link::getLinkAdminHref($strModule, $strAction, $strParams)."','".$strTitle."','scrollbars=yes,resizable=yes,width=".$intWidth.",height=".$intHeight."'); return false;\" ".
-                    "title=\"".strip_tags($strAlt)."\" rel=\"tooltip\">".AdminskinHelper::getAdminImage($strImage, $strAlt, true)."</a>";
+                $strLink = "<a href=\"#\" onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\" " .
+                "title=\"" . strip_tags($strAlt) . "\" rel=\"tooltip\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
             }
         }
 
         if ($strImage == "" && $strText != "") {
             $bitTooltip = $bitTooltip && $strAlt != "";
 
-            $strLink = "<a href=\"#\" ".($bitPortalEditor ? "class=\"pe_link\"" : "")." ".($bitTooltip ? "title=\"".strip_tags($strAlt)."\" rel=\"tooltip\" " : "")." ".
-                "onclick=\"window.open('".Link::getLinkAdminHref($strModule, $strAction, $strParams)."','".$strTitle."','scrollbars=yes,resizable=yes,width=".$intWidth.",height=".$intHeight."'); return false;\">".$strText."</a>";
+            $strLink = "<a href=\"#\" " . ($bitPortalEditor ? "class=\"pe_link\"" : "") . " " . ($bitTooltip ? "title=\"" . strip_tags($strAlt) . "\" rel=\"tooltip\" " : "") . " " .
+            "onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\">" . $strText . "</a>";
         }
         return $strLink;
     }
@@ -367,7 +364,7 @@ class Link
 
         if ($strOnClick == "") {
             $strLink = Link::getLinkAdminHref($strModule, $strAction, $strParams);
-            $strOnClick = "require('dialogHelper').showIframeDialog('{$strLink}', '{$strTitle}'); return false;";
+            $strOnClick = "DialogHelper.showIframeDialog('{$strLink}', '{$strTitle}'); return false;";
         }
 
         $strLinkContent = $strText;
@@ -379,9 +376,7 @@ class Link
             $strLinkContent = AdminskinHelper::getAdminImage($strImage, $strAlt, true);
         }
 
-
-
-        return "<a href=\"#\" onclick=\"".$strOnClick."\" title=\"".strip_tags($strAlt)."\" ".($bitTooltip ? " rel=\"tooltip\"" : "" )." >".$strLinkContent."</a>";
+        return "<a href=\"#\" onclick=\"" . $strOnClick . "\" title=\"" . strip_tags($strAlt) . "\" " . ($bitTooltip ? " rel=\"tooltip\"" : "") . " >" . $strLinkContent . "</a>";
     }
 
     /**
@@ -413,7 +408,6 @@ class Link
 
         $strRedirectModule = "";
         $strRedirectAction = "";
-
 
         foreach ($arrFragments as $intPartKey => $strOnePart) {
             if ($strOnePart == "admin=1") { //TODO remove, only for backwards compat

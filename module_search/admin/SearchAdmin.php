@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$						    *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                            *
+ ********************************************************************************************************/
 
 namespace Kajona\Search\Admin;
 
@@ -28,7 +28,6 @@ use Kajona\System\System\Resourceloader;
 use Kajona\System\System\ResponseObject;
 use Kajona\System\System\StringUtil;
 use Kajona\System\System\SystemModule;
-
 
 /**
  * Portal-class of the search.
@@ -114,9 +113,7 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
         if ($this->getParam("mode") == "new") {
             $objSearch = new SearchSearch();
-        }
-
-        elseif ($this->getParam("mode") == "edit") {
+        } elseif ($this->getParam("mode") == "edit") {
             $objSearch = new SearchSearch($this->getSystemid());
         }
 
@@ -148,7 +145,7 @@ class SearchAdmin extends AdminSimple implements AdminInterface
     protected function actionList()
     {
         $objArraySectionIterator = new ArraySectionIterator(SearchSearch::getObjectCountFiltered());
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(SearchSearch::getObjectListFiltered(null, false, $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         return $this->renderList($objArraySectionIterator);
@@ -170,7 +167,6 @@ class SearchAdmin extends AdminSimple implements AdminInterface
         $objForm = $this->getSearchAdminForm($objSearch);
         $objForm->updateSourceObject();
 
-
         if ($this->getParam("filtermodules") == "") {
             $arrNrs = array_keys($objSearch->getPossibleModulesForFilter());
             $intSearch = array_search(SystemModule::getModuleByName("messaging")->getIntNr(), $arrNrs);
@@ -188,17 +184,14 @@ class SearchAdmin extends AdminSimple implements AdminInterface
         // Search Form
         $objForm = $this->getSearchAdminForm($objSearch);
 
-        $objForm->setStrOnSubmit('require(\'search\').triggerFullSearch(); return false;');
+        $objForm->setStrOnSubmit('Search.triggerFullSearch(); return false;');
         $strReturn .= $objForm->renderForm(Link::getLinkAdminHref($this->getArrModule("modul"), "search"), AdminFormgenerator::BIT_BUTTON_SUBMIT);
-
 
         $strCore = Resourceloader::getInstance()->getCorePathForModule("module_search");
         $strReturn .= "
 
         <script type=\"text/javascript\">
-        require(['search'], function(search) {
-            search.triggerFullSearch();
-        });
+        Search.triggerFullSearch();
 
         </script>";
         $strReturn .= "<div id=\"search_container\" ></div>";
@@ -242,14 +235,12 @@ class SearchAdmin extends AdminSimple implements AdminInterface
             $objSearch->setStrFormFilterUser(urldecode($this->getParam("search_formfilteruser_id")));
         }
 
-
         $objSearchCommons = new SearchCommons();
         $arrResult = $objSearchCommons->doIndexedSearch($objSearch, 0, self::INT_MAX_NR_OF_RESULTS_FULLSEARCH);
 
         $arrMappedObjects = array_map(function (SearchResult $objSearchResult) {
             return $objSearchResult->getObjObject();
         }, $arrResult);
-
 
         $strReturn = "<content><![CDATA[";
 
@@ -263,17 +254,14 @@ class SearchAdmin extends AdminSimple implements AdminInterface
                 $strReturn .= $this->objToolkit->simpleAdminList($objOneObject, $this->getActionIcons($objOneObject, "searchResultList"));
             }
             $strReturn .= $this->objToolkit->listFooter();
-        }
-        else {
+        } else {
             $strReturn .= $this->getLang("commons_list_empty");
         }
-
 
         $strReturn .= "]]></content>";
 
         return $strReturn;
     }
-
 
     /**
      * @param Model|AdminListableInterface|ModelInterface $objOneIterable
@@ -293,7 +281,6 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
         return parent::getActionIcons($objOneIterable, $strListIdentifier);
     }
-
 
     /**
      * @param string $strListIdentifier
@@ -353,8 +340,7 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
                 if ($intCmp != 0) {
                     return $intCmp;
-                }
-                else {
+                } else {
                     return $objA->getIntScore() < $objB->getIntScore();
                 }
             }
@@ -366,8 +352,7 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
         if ($this->getParam("asJson") != "") {
             $strReturn .= $this->createSearchJson($strSearchterm, $arrResult);
-        }
-        else {
+        } else {
             $strReturn .= $this->createSearchXML($strSearchterm, $arrResult);
         }
 
@@ -401,7 +386,7 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
             $strLink = $objOneResult->getStrPagelink();
             if ($strLink == "") {
-                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule("modul"), "edit", "&systemid=".$objOneResult->getStrSystemid(), true, true);
+                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule("modul"), "edit", "&systemid=" . $objOneResult->getStrSystemid(), true, true);
             }
 
             $arrItem["module"] = Carrier::getInstance()->getObjLang()->getLang("modul_titel", $objOneResult->getObjObject()->getArrModule("modul"));
@@ -419,7 +404,6 @@ class SearchAdmin extends AdminSimple implements AdminInterface
         return json_encode($objResult);
     }
 
-
     /**
      * @param string $strSearchterm
      * @param SearchResult[] $arrResults
@@ -431,10 +415,9 @@ class SearchAdmin extends AdminSimple implements AdminInterface
         $strReturn = "";
 
         $strReturn .=
-            "<search>\n"
-            ."  <searchterm>".xmlSafeString($strSearchterm)."</searchterm>\n"
-            ."  <nrofresults>".count($arrResults)."</nrofresults>\n";
-
+        "<search>\n"
+        . "  <searchterm>" . xmlSafeString($strSearchterm) . "</searchterm>\n"
+        . "  <nrofresults>" . count($arrResults) . "</nrofresults>\n";
 
         //And now all results
         $strReturn .= "    <resultset>\n";
@@ -455,17 +438,17 @@ class SearchAdmin extends AdminSimple implements AdminInterface
 
             $strLink = $objOneResult->getStrPagelink();
             if ($strLink == "") {
-                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule("modul"), "edit", "&systemid=".$objOneResult->getStrSystemid(), true, true);
+                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule("modul"), "edit", "&systemid=" . $objOneResult->getStrSystemid(), true, true);
             }
 
             $strReturn .=
-                "        <item>\n"
-                ."            <systemid>".$objOneResult->getStrSystemid()."</systemid>\n"
-                ."            <icon>".xmlSafeString($strIcon)."</icon>\n"
-                ."            <score>".$objOneResult->getIntHits()."</score>\n"
-                ."            <description>".xmlSafeString(StringUtil::truncate($objOneResult->getObjObject()->getStrDisplayName(), 200))."</description>\n"
-                ."            <link>".xmlSafeString($strLink)."</link>\n"
-                ."        </item>\n";
+            "        <item>\n"
+            . "            <systemid>" . $objOneResult->getStrSystemid() . "</systemid>\n"
+            . "            <icon>" . xmlSafeString($strIcon) . "</icon>\n"
+            . "            <score>" . $objOneResult->getIntHits() . "</score>\n"
+            . "            <description>" . xmlSafeString(StringUtil::truncate($objOneResult->getObjObject()->getStrDisplayName(), 200)) . "</description>\n"
+            . "            <link>" . xmlSafeString($strLink) . "</link>\n"
+                . "        </item>\n";
         }
 
         $strReturn .= "    </resultset>\n";
@@ -488,7 +471,6 @@ class SearchAdmin extends AdminSimple implements AdminInterface
         $arrFilterModules = $objSearch->getPossibleModulesForFilter();
         $objForm->getField("formfiltermodules")->setArrKeyValues($arrFilterModules);
 
-
         $bitVisible = $objSearch->getObjChangeEnddate() != null || $objSearch->getObjChangeStartdate() != null;
 
         $objForm->setStrHiddenGroupTitle($this->getLang("form_additionalheader"));
@@ -510,10 +492,9 @@ class SearchAdmin extends AdminSimple implements AdminInterface
     {
         if ($objListEntry instanceof SearchSearch) {
             return array(
-                $this->objToolkit->listButton(Link::getLinkAdmin($this->getArrModule("modul"), "search", "&systemid=".$objListEntry->getSystemid(), $this->getLang("action_execute_search"), $this->getLang("action_execute_search"), "icon_lens")),
+                $this->objToolkit->listButton(Link::getLinkAdmin($this->getArrModule("modul"), "search", "&systemid=" . $objListEntry->getSystemid(), $this->getLang("action_execute_search"), $this->getLang("action_execute_search"), "icon_lens")),
             );
-        }
-        else {
+        } else {
             return array();
         }
     }

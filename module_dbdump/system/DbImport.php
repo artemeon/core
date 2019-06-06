@@ -183,7 +183,12 @@ class DbImport
             $keyDef[] = $key['name'];
         }
 
-        return $this->objDB->createTable($schema['name'], $colDef, $keyDef);
+        if ($this->objDB->createTable($schema['name'], $colDef, $keyDef)) {
+            $this->syncIndexes($schema);
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -196,7 +201,7 @@ class DbImport
             if (!$this->objDB->hasIndex($schema['name'], $indexDef['name'])) {
                 $this->objDB->addIndex($schema['name'], (new TableIndex($indexDef['name']))->setDescription($indexDef['description']));
                 if ($this->bitPrintDebug) {
-                    echo "Adding index {$schema['name']}.{$indexDef['name']}".PHP_EOL;
+                    echo "Added index {$schema['name']}.{$indexDef['name']}".PHP_EOL;
                     ob_flush();
                     flush();
                 }

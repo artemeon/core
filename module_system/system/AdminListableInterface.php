@@ -26,8 +26,7 @@ interface AdminListableInterface
      * done afterwards.
      *
      * @abstract
-     * @return string the name of the icon, not yet wrapped by getImageAdmin(). Alternatively, you may return an array containing
-     *         [the image name, the alt-title]
+     * @return string the name of the icon, not yet wrapped by getImageAdmin().
      */
     public function getStrIcon();
 

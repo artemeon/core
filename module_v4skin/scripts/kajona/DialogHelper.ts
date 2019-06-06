@@ -1,12 +1,8 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="dialogHelper"/>
-
-import Dialog = require("./Dialog");
-import Folderview = require("../../../module_system/scripts/kajona/Folderview");
+import Dialog from './Dialog'
+import Folderview from 'core/module_system/scripts/kajona/Folderview'
 
 class DialogHelper {
-
-    private static loadingModal : Dialog = null;
+    private static loadingModal: Dialog = null
 
     /**
      * Creates a new confirmation dialog
@@ -17,14 +13,22 @@ class DialogHelper {
      * @param strConfirmationHref
      * @returns {module:dialog}
      */
-    public static showConfirmationDialog(strTitle : string, strContent : string, strConfirmationLabel : string, strConfirmationHref : string|Function) {
-        var dialogInstance = new Dialog('jsDialog_1', 1);
-        dialogInstance.setTitle(strTitle);
-        dialogInstance.setContent(strContent, strConfirmationLabel, strConfirmationHref);
-        dialogInstance.init();
-        return dialogInstance;
+    public static showConfirmationDialog (
+        strTitle: string,
+        strContent: string,
+        strConfirmationLabel: string,
+        strConfirmationHref: string | Function
+    ) {
+        var dialogInstance = new Dialog('jsDialog1', 1)
+        dialogInstance.setTitle(strTitle)
+        dialogInstance.setContent(
+            strContent,
+            strConfirmationLabel,
+            strConfirmationHref
+        )
+        dialogInstance.init()
+        return dialogInstance
     }
-
 
     /**
      * Opens an iframe based dialog to load other pages within a dialog. saves the dialog reference to folderview.dialog
@@ -34,68 +38,64 @@ class DialogHelper {
      * @param strTitle
      * @returns {module:dialog}
      */
-    public static showIframeDialog(strUrl : string, strTitle : string) {
-        var dialogInstance = new Dialog('folderviewDialog', 0);
-        dialogInstance.setContentIFrame(strUrl);
-        dialogInstance.setTitle(strTitle);
-        dialogInstance.init();
+    public static showIframeDialog (strUrl: string, strTitle: string) {
+        var dialogInstance = new Dialog('folderviewDialog', 0)
+        dialogInstance.setContentIFrame(strUrl)
+        dialogInstance.setTitle(strTitle)
+        dialogInstance.init()
 
-        //register the dialog
-        Folderview.dialog = dialogInstance;
+        // register the dialog
+        Folderview.dialog = dialogInstance
 
-        return dialogInstance;
-
+        return dialogInstance
     }
 
-    public static showIframeDialogStacked(strUrl : string, strTitle : string) {
-        var dialogInstance = new Dialog('folderviewDialogStacked', 0);
-        dialogInstance.setContentIFrame(strUrl);
-        dialogInstance.setTitle(strTitle);
-        dialogInstance.init();
+    public static showIframeDialogStacked (strUrl: string, strTitle: string) {
+        var dialogInstance = new Dialog('folderviewDialogStacked', 0)
+        dialogInstance.setContentIFrame(strUrl)
+        dialogInstance.setTitle(strTitle)
+        dialogInstance.init()
 
-        //register the dialog
-        Folderview.dialog = dialogInstance;
+        // register the dialog
+        Folderview.dialog = dialogInstance
 
-        return dialogInstance;
+        return dialogInstance
     }
 
     /**
      * Registers and shows a loading modal
      * @returns {module:dialog}
      */
-    public static showLoadingModal() {
-
+    public static showLoadingModal () {
         if (this.loadingModal === null) {
-            this.loadingModal = new Dialog('jsDialog_3', 3);
+            this.loadingModal = new Dialog('jsDialog3', 3)
         }
 
-        this.loadingModal.init();
-        return this.loadingModal;
+        this.loadingModal.init()
+        return this.loadingModal
     }
 
     /**
      * Registers and shows a information modal
      * @returns {module:dialog}
      */
-    public static showInfoModal(title : string, content : string) {
+    public static showInfoModal (title: string, content: string) {
+        var dialogInstance = new Dialog('jsDialog0', 0)
+        dialogInstance.setTitle(title)
+        dialogInstance.setContentRaw(content)
+        dialogInstance.init(300, 300)
 
-        var dialogInstance = new Dialog('jsDialog_0', 0);
-        dialogInstance.setTitle(title);
-        dialogInstance.setContentRaw(content);
-        dialogInstance.init(300, 300);
-
-        return dialogInstance;
+        return dialogInstance
     }
 
     /**
      * Hides the currently open loading modal
      */
-    public static hideLoadingModal() {
+    public static hideLoadingModal () {
         if (this.loadingModal instanceof Dialog) {
-            this.loadingModal.hide();
+            this.loadingModal.hide()
         }
     }
-
 }
-
-export = DialogHelper;
+;(<any>window).DialogHelper = DialogHelper
+export default DialogHelper

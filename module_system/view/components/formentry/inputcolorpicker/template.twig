@@ -13,10 +13,8 @@
     </div>
     {% endif %}
     <script type="text/javascript">
-        require(["jquery", "bootstrap-colorpicker"], function($, colorpicker) {
             $('#c_{{ name|e('html_attr') }}').colorpicker({
                 component: '*'
             });
-        });
     </script>
 </div>

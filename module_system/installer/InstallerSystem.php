@@ -14,6 +14,7 @@ use Kajona\System\System\Carrier;
 use Kajona\System\System\Config;
 use Kajona\System\System\Database;
 use Kajona\System\System\Date;
+use Kajona\System\System\Db\Schema\TableIndex;
 use Kajona\System\System\DbDatatypes;
 use Kajona\System\System\IdGenerator;
 use Kajona\System\System\InstallerBase;
@@ -37,6 +38,8 @@ use Kajona\System\System\SystemPwHistory;
 use Kajona\System\System\SystemSetting;
 use Kajona\System\System\UserGroup;
 use Kajona\System\System\UserUser;
+use Kajona\Workflows\System\WorkflowsHandler;
+use Kajona\Workflows\System\WorkflowsWorkflow;
 
 /**
  * Installer for the system-module
@@ -58,7 +61,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         parent::__construct();
 
         //set the correct language
-        $this->strContentLanguage = $this->objSession->getAdminLanguage(true, true);
+        $this->strContentLanguage = "de";
     }
 
     public function install() {
@@ -95,10 +98,29 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $arrFields["right_right5"] = array("text", true);
         $arrFields["right_changelog"] = array("text", true);
 
-        //TODO: remove system deleted index
         if(!$this->objDB->createTable("agp_system", $arrFields, array("system_id"), array("system_prev_id", "system_module_nr", "system_sort", "system_owner", "system_create_date", "system_status", "system_lm_time", "system_lock_time", "system_class")))
             $strReturn .= "An error occurred! ...\n";
 
+
+        $this->objDB->createTable(
+            "agp_permissions_view",
+            [
+                "view_id" => [DbDatatypes::STR_TYPE_CHAR20, false],
+                "view_shortgroup" => [DbDatatypes::STR_TYPE_LONG, false],
+            ],
+            ["view_id", "view_shortgroup"],
+            ["view_id", "view_shortgroup"]
+        );
+
+        $this->objDB->createTable(
+            "agp_permissions_right2",
+            [
+                "right2_id" => [DbDatatypes::STR_TYPE_CHAR20, false],
+                "right2_shortgroup" => [DbDatatypes::STR_TYPE_LONG, false],
+            ],
+            ["right2_id", "right2_shortgroup"],
+            ["right2_id", "right2_shortgroup"]
+        );
 
         // Modul table ----------------------------------------------------------------------------------
         $strReturn .= "Installing table system_module...\n";
@@ -180,7 +202,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $arrFields["user_log_userid"] = array("char254", true);
         $arrFields["user_log_date"] = array("long", true);
         $arrFields["user_log_status"] = array("int", true);
-        $arrFields["user_log_ip"] = array("char20", true);
+        $arrFields["user_log_ip"] = array("char254", true);
         $arrFields["user_log_sessid"]  = array("char20", true);
         $arrFields["user_log_enddate"] = array("long", true);
 
@@ -296,6 +318,8 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $this->registerConstant("_system_timezone_", "", SystemSetting::$int_TYPE_STRING, _system_modul_id_);
         $this->registerConstant("_system_session_ipfixation_", "true", SystemSetting::$int_TYPE_BOOL, _system_modul_id_);
 
+        $this->registerConstant("_system_permission_assignment_threshold_", 500, SystemSetting::$int_TYPE_INT, _system_modul_id_);
+
 
         //Creating the admin GROUP
         $objAdminGroup = new UserGroup();
@@ -350,11 +374,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         //create a default language
         $strReturn .= "Creating new default-language\n";
         $objLanguage = new LanguagesLanguage();
-
-        if($this->strContentLanguage == "de")
-            $objLanguage->setStrName("de");
-        else
-            $objLanguage->setStrName("en");
+        $objLanguage->setStrName("de");
 
         $objLanguage->setBitDefault(true);
         ServiceLifeCycleFactory::getLifeCycle(get_class($objLanguage))->update($objLanguage);
@@ -493,7 +513,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         }
 
         $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
-        if($arrModule["module_version"] == "7.0.3") {
+        if($arrModule["module_version"] == "7.0.3" || $arrModule["module_version"] == "7.0.4"  || $arrModule["module_version"] == "7.0.5") {
             $strReturn .= $this->update_703_71();
         }
 
@@ -505,6 +525,23 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
         if($arrModule["module_version"] == "7.1.1") {
             $strReturn .= $this->update_711_712();
+        }
+
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.2") {
+            $strReturn .= $this->update_712_713();
+        }
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.3") {
+            $strReturn .= $this->update_713_714();
+        }
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.4") {
+            $strReturn .= $this->update_714_715();
+        }
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.5") {
+            $strReturn .= $this->update_715_716();
         }
 
         return $strReturn."\n\n";
@@ -564,23 +601,6 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $strReturn .= "Updating module-versions...\n";
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1");
 
-        if (Config::getInstance()->getConfig("dbdriver") == "mysqli") {
-            // flush cache to exclude deleted tables
-            Database::getInstance()->flushTablesCache();
-
-            $strReturn .= "Updating myisam tables".PHP_EOL;
-
-            foreach (Database::getInstance()->getTables() as $table) {
-                $create = StringUtil::toLowerCase(Database::getInstance()->getPRow("show create table {$table}", [])["Create Table"]);
-
-                if (StringUtil::indexOf($create, "engine=myisam") !== false) {
-                    $strReturn .= "Updating engine of {$table}".PHP_EOL;
-                    Database::getInstance()->_pQuery("ALTER TABLE {$table} ENGINE = InnoDB", []);
-                }
-
-
-            }
-        }
         return $strReturn;
     }
 
@@ -603,51 +623,158 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $strReturn = "Updating to 7.1.2...".PHP_EOL;
         $strReturn .= "Updating changelog column types".PHP_EOL;
 
-        $arrTables = array("agp_changelog");
-        $arrProvider = SystemChangelog::getAdditionalProviders();
-        foreach($arrProvider as $objOneProvider) {
-            $arrTables[] = $objOneProvider->getTargetTable();
-        }
-
-        foreach($arrTables as $strOneTable) {
-            $strReturn .= "Checking {$strOneTable}...";
-            //only transform if required
-            $metainfo = Database::getInstance()->getTableInformation($strOneTable);
-            $col = $metainfo->getColumnByName("change_oldvalue");
-            if ($col === null) {
-                continue;
-            }
-            if ($col->getInternalType() == DbDatatypes::STR_TYPE_TEXT) {
-                $strReturn .= " not required".PHP_EOL;
-                continue;
-            }
-
-            if (Config::getInstance()->getConfig("dbdriver") == "mysqli") {
-                //direct change on the table, if required
-                Database::getInstance()->changeColumn($strOneTable, "change_oldvalue", "change_oldvalue", DbDatatypes::STR_TYPE_TEXT);
-                Database::getInstance()->changeColumn($strOneTable, "change_newvalue", "change_newvalue", DbDatatypes::STR_TYPE_TEXT);
-
-            } elseif (Config::getInstance()->getConfig("dbdriver") == "oci8") {
-
-                //Need to do it this way since under oracle converting from varchar2 to clob is not possible
-                Database::getInstance()->addColumn($strOneTable, "temp_change_oldvalue", DbDatatypes::STR_TYPE_TEXT);
-                Database::getInstance()->_pQuery("UPDATE $strOneTable SET temp_change_oldvalue=change_oldvalue", []);
-                Database::getInstance()->removeColumn($strOneTable, "change_oldvalue");
-                Database::getInstance()->changeColumn($strOneTable, "temp_change_oldvalue", "change_oldvalue", DbDatatypes::STR_TYPE_TEXT);
-
-                Database::getInstance()->addColumn($strOneTable, "temp_change_newvalue", DbDatatypes::STR_TYPE_TEXT);
-                Database::getInstance()->_pQuery("UPDATE $strOneTable SET temp_change_newvalue=change_newvalue", []);
-                Database::getInstance()->removeColumn($strOneTable, "change_newvalue");
-                Database::getInstance()->changeColumn($strOneTable, "temp_change_newvalue", "change_newvalue", DbDatatypes::STR_TYPE_TEXT);
-            }
-
-            $strReturn .= " migrated".PHP_EOL;
-        }
-
         $strReturn .= "Updating module-versions...\n";
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.2");
 
         return $strReturn;
     }
+
+    private function update_712_713()
+    {
+        $strReturn = "Updating to 7.1.3...".PHP_EOL;
+        $strReturn .= "Update messaging entity".PHP_EOL;
+
+        $schema = new OrmSchemamanager();
+        $schema->updateTable(MessagingMessage::class);
+
+        $strReturn .= "Updating module-versions...\n";
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.3");
+
+        return $strReturn;
+    }
+
+    private function update_713_714()
+    {
+        $strReturn = "Updating to 7.1.4...".PHP_EOL;
+        $strReturn .= "Adding system setting".PHP_EOL;
+        $this->registerConstant("_system_permission_assignment_threshold_", 500, SystemSetting::$int_TYPE_INT, _system_modul_id_);
+
+        $strReturn .= "Updating user-goup table".PHP_EOL;
+        $this->objDB->createIndex("agp_user_group", "ix_group_short_id", ["group_short_id"]);
+        $this->objDB->createIndex("agp_user_group", "ix_group_system_group", ["group_system_group"]);
+
+
+        $strReturn .= "Creating view-permissions table".PHP_EOL;
+        $this->objDB->createTable(
+            "agp_permissions_view",
+            [
+                "view_id" => [DbDatatypes::STR_TYPE_CHAR20, false],
+                "view_shortgroup" => [DbDatatypes::STR_TYPE_LONG, false],
+            ],
+            ["view_id", "view_shortgroup"],
+            ["view_id", "view_shortgroup"]
+        );
+
+        $this->objDB->createTable(
+            "agp_permissions_right2",
+            [
+                "right2_id" => [DbDatatypes::STR_TYPE_CHAR20, false],
+                "right2_shortgroup" => [DbDatatypes::STR_TYPE_LONG, false],
+            ],
+            ["right2_id", "right2_shortgroup"],
+            ["right2_id", "right2_shortgroup"]
+        );
+
+        $this->objDB->_pQuery("DELETE FROM agp_permissions_view WHERE 1=1", []);
+        $this->objDB->_pQuery("DELETE FROM agp_permissions_right2 WHERE 1=1", []);
+
+        $strReturn .= "Creating group map".PHP_EOL;
+        $groupMap = [];
+        foreach ($this->objDB->getPArray("SELECT group_id, group_short_id FROM agp_user_group", []) as $row) {
+            $groupMap[$row["group_short_id"]] = $row["group_id"];
+        }
+
+        $strReturn .= "View permissions".PHP_EOL;
+
+        $i = 0;
+        foreach ($this->objDB->getGenerator("SELECT system_id, right_view, right_right2 FROM agp_system ORDER BY system_id DESC", []) as $systemRecords) {
+                $insertView = [];
+                $insertRight2 = [];
+                foreach ($systemRecords as  $row) {
+                    $i++;
+                    $groups = explode(",", trim($row["right_view"], ','));
+                    foreach ($groups as $shortid) {
+                        if (is_numeric($shortid) && array_key_exists($shortid, $groupMap)) {
+                            $insertView[$row['system_id'].$shortid] = [$row['system_id'], $shortid];
+                        }
+                    }
+
+                    $groups = explode(",", trim($row["right_right2"], ','));
+                    foreach ($groups as $shortid) {
+                        if (is_numeric($shortid) && array_key_exists($shortid, $groupMap)) {
+                            $insertRight2[$row['system_id'].$shortid] = [$row['system_id'], $shortid];
+                        }
+                    }
+
+                    if ($i % 500 == 0) {
+                        if (!empty($insertView)) {
+                            $this->objDB->multiInsert("agp_permissions_view", ["view_id", "view_shortgroup"], $insertView);
+                            $insertView = [];
+                        }
+
+                        if (!empty($insertRight2)) {
+                            $this->objDB->multiInsert("agp_permissions_right2", ["right2_id", "right2_shortgroup"], $insertRight2);
+                            $insertRight2 = [];
+                        }
+
+                        $strReturn .= "Migrated {$i} records ".PHP_EOL;
+                    }
+
+                }
+
+                if (!empty($insertView)) {
+                    $this->objDB->multiInsert("agp_permissions_view", ["view_id", "view_shortgroup"], $insertView);
+                }
+                if (!empty($insertRight2)) {
+                    $this->objDB->multiInsert("agp_permissions_right2", ["right2_id", "right2_shortgroup"], $insertRight2);
+                }
+                $strReturn .= "Migrated {$i} records ".PHP_EOL;
+
+        }
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.4");
+
+        return $strReturn;
+    }
+
+    private function update_714_715()
+    {
+        $strReturn = "Updating to 7.1.5...".PHP_EOL;
+        $this->objDB->changeColumn("agp_user_log", "user_log_ip", "user_log_ip", DbDatatypes::STR_TYPE_CHAR254);
+
+        $strReturn .= "Updating messages schema".PHP_EOL;
+        $this->objDB->changeColumn("agp_messages", "message_title", "message_title", DbDatatypes::STR_TYPE_CHAR500);
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.5");
+
+        return $strReturn;
+    }
+
+    private function update_715_716()
+    {
+        $strReturn = "Updating to 7.1.6...".PHP_EOL;
+        $strReturn .= "Removing deprecated workflow".PHP_EOL;
+
+        //break if workflows present and < 7.1.6
+        $con = SystemModule::getModuleByName("workflows");
+        if ($con !== null && version_compare($con->getStrVersion(), "7.1", "l")) {
+            return "Update workflows to at least 7.1 before".PHP_EOL;
+        }
+
+        $wf = WorkflowsHandler::getHandlerByClass('AGP\Devops\System\Workflows\WorkflowDevopsSender');
+        if ($wf !== null) {
+            $wf->deleteObjectFromDatabase();
+        }
+
+        //TODO: geht erst wenn schema der wf durchmigriert ist, daher: dbupdate
+        foreach(WorkflowsWorkflow::getWorkflowsForClass('AGP\Devops\System\Workflows\WorkflowDevopsSender') as $wf) {
+            $wf->deleteObjectFromDatabase();
+        }
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.6");
+        return $strReturn;
+    }
+
+
 
 }

@@ -137,10 +137,29 @@ class FlowTransition extends Model implements ModelInterface, AdminListableInter
 
     /**
      * @param array $arrParams
+     * @deprecated - please use setParameter since this methods overwrites all params from previous actions
      */
     public function setArrParams(array $arrParams)
     {
         $this->arrParams = $arrParams;
+    }
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setParameter($key, $value)
+    {
+        $this->arrParams[$key] = $value;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getParameter($key)
+    {
+        return $this->arrParams[$key] ?? null;
     }
 
     /**

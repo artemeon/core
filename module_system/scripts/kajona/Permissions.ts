@@ -1,8 +1,6 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="permissions"/>
-
-import * as $ from "jquery";
-import Ajax = require("./Ajax");
+import $ from 'jquery'
+import Ajax from './Ajax'
+const toastr = require('toastr')
 
 interface Response {
     bitInherited: boolean
@@ -13,112 +11,155 @@ interface Response {
  * Little helper function for the system permissions matrix
  */
 class Permissions {
+    public static submitForm () {
+        var objResponse: Response = {
+            bitInherited: $('#inherit').is(':checked'),
+            arrConfigs: []
+        }
 
-    public static submitForm() {
-        var objResponse : Response = {
-            bitInherited : $("#inherit").is(":checked"),
-            arrConfigs : []
-        };
+        $('.core-component-rights tbody > tr')
+            .find('input:checked')
+            .each(function () {
+                objResponse.arrConfigs.push($(this).attr('id'))
+            })
 
-        $(".core-component-rights tbody > tr").find('input:checked').each(function(){
-            objResponse.arrConfigs.push($(this).attr('id'));
-        });
-
+        var submitBtn = $(".savechanges");
         // disable submit button
-        $(".savechanges").addClass("processing");
-        $(".savechanges").prop("disabled", true);
+        submitBtn.addClass("processing").prop("disabled", true);
 
         $.ajax({
-            url: KAJONA_WEBPATH + '/xml.php?admin=1&module=right&action=saveRights&systemid='+ $('#systemid').val(),
+            url:
+                KAJONA_WEBPATH +
+                '/xml.php?admin=1&module=right&action=saveRights&systemid=' +
+                $('#systemid').val(),
             type: 'POST',
             data: JSON.stringify(objResponse),
             contentType: 'application/json',
             dataType: 'json'
-        }).done(function(data) {
+        }).done(function (data) {
             // enable submit button
-            $(".savechanges").removeClass("processing");
-            $(".savechanges").prop("disabled", false);
+            submitBtn.removeClass("processing").prop("disabled", false);
 
             // load rights
-            Permissions.loadRights();
-        });
+            Permissions.loadRights()
+            // needs change after implementing type definition for toastr
+            toastr[data.type](data.message)
 
-        return false;
+
+
+        })
+
+        return false
     }
 
-    public static toggleInherit(){
-        $(".core-component-rights").find("input[type='checkbox']").each(function(){
-            $(this).prop("disabled", Permissions.isInherited());
-            $("#group_add").prop("disabled", Permissions.isInherited());
+    public static toggleInherit () {
+        $('.core-component-rights')
+            .find("input[type='checkbox']")
+            .each(function () {
+                $(this).prop('disabled', Permissions.isInherited())
+                $('#group_add').prop('disabled', Permissions.isInherited())
 
-            $(".core-component-rights").find(".fa-trash-o").each(function(){
-                if (Permissions.isInherited()) {
-                    $(this).addClass("text-muted");
-                } else {
-                    $(this).removeClass("text-muted");
-                }
-            });
-        });
+                $('.core-component-rights')
+                    .find('.fa-trash-o')
+                    .each(function () {
+                        if (Permissions.isInherited()) {
+                            $(this).addClass('text-muted')
+                        } else {
+                            $(this).removeClass('text-muted')
+                        }
+                    })
+            })
     }
 
-    public static isInherited(){
-        return $("#inherit").prop("checked");
+    public static isInherited () {
+        return $('#inherit').prop('checked')
     }
 
-    public static addGroup(groupId: string){
+    public static addGroup (groupId: string) {
         if (!groupId) {
-            return;
+            return
         }
 
         if (this.isInherited()) {
-            return;
+            return
         }
 
         if (this.hasGroup(groupId)) {
-            return;
+            return
         }
 
-        var groupName = $('#group_add').val();
+        var groupName = $('#group_add').val()
 
-        var row = "";
-        row+= "<tr data-groupid='" + groupId + "'>";
-        row+= "<td><a href=\"#\" onclick=\"require('permissions').removeGroup('" + groupId + "',this);return false;\"><i class=\"kj-icon fa fa-trash-o\" ></i></a></td>";
-        row+= "<td>" + groupName + "</td>";
+        var row = ''
+        row += "<tr data-groupid='" + groupId + "'>"
+        row +=
+            '<td><a href="#" onclick="Permissions.removeGroup(\'' +
+            groupId +
+            '\',this);return false;"><i class="kj-icon fa fa-trash-o" ></i></a></td>'
+        row += '<td>' + groupName + '</td>'
 
-        $(".core-component-rights thead > tr > th").each(function(){
-            var right = $(this).data("right");
+        $('.core-component-rights thead > tr > th').each(function () {
+            var right = $(this).data('right')
             if (right) {
-                row+= "<td><input rel=\"tooltip\" type=\"checkbox\" name=\"" + right + "," + groupId + "\" id=\"" + right + "," + groupId + "\" value=\"1\"></td>";
+                row +=
+                    '<td><input rel="tooltip" type="checkbox" name="' +
+                    right +
+                    ',' +
+                    groupId +
+                    '" id="' +
+                    right +
+                    ',' +
+                    groupId +
+                    '" value="1"></td>'
             }
-        });
+        })
 
-        row+= "</tr>";
-        $(".core-component-rights").find("tbody").append(row);
+        row += '</tr>'
+        $('.core-component-rights')
+            .find('tbody')
+            .append(row)
 
-        setTimeout(function(){
-            $('#group_add').val('');
-            $('#group_add_id').val('');
-        }, 100);
+        setTimeout(function () {
+            $('#group_add').val('')
+            $('#group_add_id').val('')
+        }, 100)
     }
 
-    public static removeGroup(groupId: string, el: string){
+    public static removeGroup (groupId: string, el: string) {
         if (this.isInherited()) {
-            return;
+            return
         }
 
-        $(el).closest("tr").remove();
+        $(el)
+            .closest('tr')
+            .remove()
     }
 
-    public static hasGroup(groupId: string){
-        return $(".core-component-rights tbody > tr[data-groupid='" + groupId + "']").length > 0;
+    public static hasGroup (groupId: string) {
+        return (
+            $(
+                ".core-component-rights tbody > tr[data-groupid='" +
+                    groupId +
+                    "']"
+            ).length > 0
+        )
     }
 
-    public static loadRights(){
-        Ajax.loadUrlToElement("#rightsContainer", KAJONA_WEBPATH + '/xml.php?module=right&action=loadRights&systemid=' + $('#systemid').val() + '&folderview=1', "", true, "GET", function(){
-            Permissions.toggleInherit();
-        });
+    public static loadRights () {
+        Ajax.loadUrlToElement(
+            '#rightsContainer',
+            KAJONA_WEBPATH +
+                '/xml.php?module=right&action=loadRights&systemid=' +
+                $('#systemid').val() +
+                '&folderview=1',
+            '',
+            true,
+            'GET',
+            function () {
+                Permissions.toggleInherit()
+            }
+        )
     }
-
 }
-
-export = Permissions;
+;(<any>window).Permissions = Permissions
+export default Permissions

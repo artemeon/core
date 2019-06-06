@@ -283,6 +283,12 @@ class ProviderManager
         $provider->setTokenUrl($row["token_url"]);
         $provider->setCertFile($row["cert_file"]);
         $provider->setClaimMapping($row["claim_mapping"]);
+        $provider->setRedirectDetector($row["redirect_detector"] ?? new class implements RedirectDetectorInterface {
+            public function forceRedirect()
+            {
+                return false;
+            }
+        });
 
         return $provider;
     }

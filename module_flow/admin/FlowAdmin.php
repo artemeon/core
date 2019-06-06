@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                   *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                   *
+ ********************************************************************************************************/
 
 namespace Kajona\Flow\Admin;
 
@@ -262,7 +262,7 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
         } elseif ($strListIdentifier == "listStep") {
             return $this->objToolkit->listButton(
                 Link::getLinkAdmin(
-                    $this->getArrModule("modul"), "newStep", "&systemid=".$strSystemId,
+                    $this->getArrModule("modul"), "newStep", "&systemid=" . $strSystemId,
                     $this->getLang("commons_list_new"), $this->getLang("commons_list_new"), "icon_new"
                 )
             );
@@ -275,7 +275,7 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
                 $objAction = new $strActionClass();
                 $arrLinks[] = $this->objToolkit->listButton(
                     Link::getLinkAdmin(
-                        $this->getArrModule("modul"), $this->getActionNameForClass("newTransitionAction", null), "&systemid=".$this->getSystemid()."&class=".$strActionClass, $objAction->getTitle(), $objAction->getTitle(), "icon_textfield", $objAction->getTitle()
+                        $this->getArrModule("modul"), $this->getActionNameForClass("newTransitionAction", null), "&systemid=" . $this->getSystemid() . "&class=" . $strActionClass, $objAction->getTitle(), $objAction->getTitle(), "icon_textfield", $objAction->getTitle()
                     )
                 );
             }
@@ -288,7 +288,7 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
                 $objCondition = new $strConditionClass();
                 $arrLinks[] = $this->objToolkit->listButton(
                     Link::getLinkAdmin(
-                        $this->getArrModule("modul"), $this->getActionNameForClass("newTransitionCondition", null), "&systemid=".$this->getSystemid()."&class=".$strConditionClass, $objCondition->getTitle(), $objCondition->getTitle(), "icon_textfield", $objCondition->getTitle()
+                        $this->getArrModule("modul"), $this->getActionNameForClass("newTransitionCondition", null), "&systemid=" . $this->getSystemid() . "&class=" . $strConditionClass, $objCondition->getTitle(), $objCondition->getTitle(), "icon_textfield", $objCondition->getTitle()
                     )
                 );
             }
@@ -341,16 +341,16 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
         /* Create list */
         $objFilter = FlowStatusFilter::getOrCreateFromSession();
         $objArraySectionIterator = new ArraySectionIterator(FlowStatus::getObjectCountFiltered($objFilter, $this->getSystemid()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(FlowStatus::getObjectListFiltered($objFilter, $this->getSystemid(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         /* Render list and filter */
         $strList = "";
-        $strList.= $this->objToolkit->formHeader("#");
-        $strList.= $this->objToolkit->formInputText("set[".$objFlow->getSystemid()."]", $this->getLang("form_flow_name"), $objFlow->getStrName(), "", "", false, $objFlow->getSystemid()."#strName");
-        $strList.= $this->objToolkit->formClose();
-        $strList.= $this->renderList($objArraySectionIterator, true, "list".$this->getStrCurObjectTypeName());
-        $strList.= "<script type='text/javascript'>require(['instantSave'], function(is) {is.init()});</script>";
+        $strList .= $this->objToolkit->formHeader("#");
+        $strList .= $this->objToolkit->formInputText("set[" . $objFlow->getSystemid() . "]", $this->getLang("form_flow_name"), $objFlow->getStrName(), "", "", false, $objFlow->getSystemid() . "#strName");
+        $strList .= $this->objToolkit->formClose();
+        $strList .= $this->renderList($objArraySectionIterator, true, "list" . $this->getStrCurObjectTypeName());
+        $strList .= "<script type='text/javascript'>InstantSave.init()</script>";
 
         $strGraph = FlowGraphWriter::write($objFlow);
 
@@ -377,7 +377,7 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
         /* Create list */
         $objFilter = null;
         $objArraySectionIterator = new ArraySectionIterator(FlowTransition::getObjectCountFiltered($objFilter, $this->getSystemid()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(FlowTransition::getObjectListFiltered($objFilter, $this->getSystemid(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         $strList = "";
@@ -394,7 +394,7 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
                 $allRights = $permissionHandler->getRoleRights($role);
                 $statusRights = $objStatus->getRightsForRole($role);
 
-                $rights = implode(", ", array_map(function($rightKey) use ($allRights){
+                $rights = implode(", ", array_map(function ($rightKey) use ($allRights) {
                     return isset($allRights[$rightKey]) ? $allRights[$rightKey] : "-";
                 }, $statusRights));
 
@@ -409,13 +409,13 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
                 $table->addRow([$label, $rights]);
             }
 
-            $strList.= $this->objToolkit->formHeadline(Lang::getInstance()->getLang("form_flow_headline_roles", "flow"));
-            $strList.= (new DTableComponent($table))->renderComponent();
-            $strList.= "<hr>";
+            $strList .= $this->objToolkit->formHeadline(Lang::getInstance()->getLang("form_flow_headline_roles", "flow"));
+            $strList .= (new DTableComponent($table))->renderComponent();
+            $strList .= "<hr>";
         }
 
-        $strList.= $this->objToolkit->formHeadline(Lang::getInstance()->getLang("form_flow_headline_transitions", "flow"));
-        $strList.= $this->renderList($objArraySectionIterator, true, "list".$this->getStrCurObjectTypeName());
+        $strList .= $this->objToolkit->formHeadline(Lang::getInstance()->getLang("form_flow_headline_transitions", "flow"));
+        $strList .= $this->renderList($objArraySectionIterator, true, "list" . $this->getStrCurObjectTypeName());
         $strGraph = FlowGraphWriter::write($objStatus->getFlowConfig(), $objStatus);
 
         $strHtml = "<div class='row'>";
@@ -441,12 +441,12 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
         /* Create list */
         $objFilter = null;
         $objArraySectionIterator = new ArraySectionIterator(FlowActionAbstract::getObjectCountFiltered($objFilter, $this->getSystemid()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(FlowActionAbstract::getObjectListFiltered($objFilter, $this->getSystemid(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         /* Render list and filter */
         $strList = $this->objToolkit->warningBox($this->getLang("flow_transition_action_list", [$objTransition->getParentStatus()->getStrName(), $objTransition->getTargetStatus()->getStrName()]), "alert-info");
-        $strList .= $this->renderList($objArraySectionIterator, true, "list".$this->getStrCurObjectTypeName());
+        $strList .= $this->renderList($objArraySectionIterator, true, "list" . $this->getStrCurObjectTypeName());
         $strGraph = FlowGraphWriter::write($objTransition->getParentStatus()->getFlowConfig(), $objTransition);
 
         $strHtml = "<div class='row'>";
@@ -472,12 +472,12 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
         /* Create list */
         $objFilter = null;
         $objArraySectionIterator = new ArraySectionIterator(FlowConditionAbstract::getObjectCountFiltered($objFilter, $this->getSystemid()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(FlowConditionAbstract::getObjectListFiltered($objFilter, $this->getSystemid(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         /* Render list and filter */
         $strList = $this->objToolkit->warningBox($this->getLang("flow_transition_condition_list", [$objTransition->getParentStatus()->getStrName(), $objTransition->getTargetStatus()->getStrName()]), "alert-info");
-        $strList .= $this->renderList($objArraySectionIterator, true, "list".$this->getStrCurObjectTypeName());
+        $strList .= $this->renderList($objArraySectionIterator, true, "list" . $this->getStrCurObjectTypeName());
         $strGraph = FlowGraphWriter::write($objTransition->getParentStatus()->getFlowConfig(), $objTransition);
 
         $strHtml = "<div class='row'>";
@@ -516,9 +516,9 @@ class FlowAdmin extends AdminEvensimpler implements AdminInterface
 
             $strAction = "";
             $strAction .= $this->objToolkit->listButton(
-                "<a href=\"#\" title=\"".$this->getLang("prozess_uebernehmen")."\" rel=\"tooltip\" onClick=\"require('folderview').setObjectListItems(
-                    '".$strFormElement."', [{strSystemId: '".$objStatus->getSystemid()."', strDisplayName: '".addslashes($objStatus->getStrName())."', strIcon:'".addslashes(getImageAdmin("icon_treeLeaf", "", true))."'}], null, '".addslashes(getImageAdmin("icon_delete", "", true))."'); parent.KAJONA.admin.folderview.dialog.hide();\">"
-                .AdminskinHelper::getAdminImage("icon_accept") . "</a>"
+                "<a href=\"#\" title=\"" . $this->getLang("prozess_uebernehmen") . "\" rel=\"tooltip\" onClick=\"Folderview.setObjectListItems(
+                    '" . $strFormElement . "', [{strSystemId: '" . $objStatus->getSystemid() . "', strDisplayName: '" . addslashes($objStatus->getStrName()) . "', strIcon:'" . addslashes(getImageAdmin("icon_treeLeaf", "", true)) . "'}], null, '" . addslashes(getImageAdmin("icon_delete", "", true)) . "'); parent.KAJONA.admin.folderview.dialog.hide();\">"
+                . AdminskinHelper::getAdminImage("icon_accept") . "</a>"
             );
 
             $strReturn .= $this->objToolkit->simpleAdminList($objStatus, $strAction);

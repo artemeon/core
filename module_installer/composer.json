@@ -1,5 +1,8 @@
 {
     "name": "artemeon/installer",
+    "require": {
+      "symfony/lock": "^4.2"
+    },
     "autoload": {
         "psr-4": {
             "Kajona\\Installer\\System\\": "system/",

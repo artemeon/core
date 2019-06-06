@@ -165,9 +165,7 @@ class DbMysqli extends DbBase
             $objMetadata = $objStatement->result_metadata();
             $arrParams = array();
             $arrRow = array();
-            if (is_bool($objMetadata )) {
-                $i = 1;
-            }
+
             while ($objField = $objMetadata->fetch_field()) {
                 $arrParams[] = &$arrRow[$objField->name];
             }

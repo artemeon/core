@@ -226,7 +226,9 @@ class DbPostgres extends DbBase
         $indexes = $this->getPArray("select * from pg_indexes where tablename  = ? AND indexname NOT LIKE '%_pkey'", [$tableName]) ?: [];
         foreach ($indexes as $indexInfo) {
             $index = new TableIndex($indexInfo['indexname']);
-            $index->setDescription($indexInfo['indexdef']);
+            //scrape the columns from the indexdef
+            $cols = StringUtil::substring($indexInfo['indexdef'], StringUtil::indexOf($indexInfo['indexdef'], "(")+1, StringUtil::indexOf($indexInfo['indexdef'], ")")-StringUtil::indexOf($indexInfo['indexdef'], "(")-1);
+            $index->setDescription($cols);
             $table->addIndex($index);
         }
 
@@ -416,14 +418,6 @@ class DbPostgres extends DbBase
         return count($arrIndex) > 0;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function addIndex(string $table, TableIndex $index): bool
-    {
-        return $this->_pQuery($index->getDescription(), []);
-    }
-
 
     /**
      * Starts a transaction
@@ -483,17 +477,19 @@ class DbPostgres extends DbBase
         $strFilename = _realpath_.$strFilename;
         $strTables = "-t ".implode(" -t ", $arrTables);
 
-        if ($this->isWinOs()) {
-            $strCommand = "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
-        } else {
-            $strCommand = "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
+        if ($this->objCfg->getStrPass() != "") {
+            if ($this->isWinOs()) {
+                $strCommand = "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
+            } else {
+                $strCommand = "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
+            }
         }
 
         if ($this->handlesDumpCompression()) {
             $strFilename .= ".gz";
-            $strCommand .= $this->strDumpBin." --clean --no-owner -h".$this->objCfg->getStrHost()." -U".$this->objCfg->getStrUsername()." -p".$this->objCfg->getIntPort()." ".$strTables." ".$this->objCfg->getStrDbName()." | gzip > \"".$strFilename."\"";
+            $strCommand .= $this->strDumpBin." --clean --no-owner -h".$this->objCfg->getStrHost().($this->objCfg->getStrUsername() != "" ? " -U".$this->objCfg->getStrUsername() : "")." -p".$this->objCfg->getIntPort()." ".$strTables." ".$this->objCfg->getStrDbName()." | gzip > \"".$strFilename."\"";
         } else {
-            $strCommand .= $this->strDumpBin." --clean --no-owner -h".$this->objCfg->getStrHost()." -U".$this->objCfg->getStrUsername()." -p".$this->objCfg->getIntPort()." ".$strTables." ".$this->objCfg->getStrDbName()." > \"".$strFilename."\"";
+            $strCommand .= $this->strDumpBin." --clean --no-owner -h".$this->objCfg->getStrHost().($this->objCfg->getStrUsername() != "" ? " -U".$this->objCfg->getStrUsername() : "")." -p".$this->objCfg->getIntPort()." ".$strTables." ".$this->objCfg->getStrDbName()." > \"".$strFilename."\"";
         }
         //Now do a systemfork
         $intTemp = "";
@@ -513,16 +509,19 @@ class DbPostgres extends DbBase
     {
         $strFilename = _realpath_.$strFilename;
 
-        if ($this->isWinOs()) {
-            $strCommand = "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
-        } else {
-            $strCommand = "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
+        if ($this->objCfg->getStrPass() != "") {
+            if ($this->isWinOs()) {
+                $strCommand = "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
+            } else {
+                $strCommand = "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
+            }
         }
 
+
         if ($this->handlesDumpCompression() && StringUtil::endsWith($strFilename, ".gz")) {
-            $strCommand .= " gunzip -c \"".$strFilename."\" | ".$this->strRestoreBin." -q -h".$this->objCfg->getStrHost()." -U".$this->objCfg->getStrUsername()." -p".$this->objCfg->getIntPort()." ".$this->objCfg->getStrDbName()."";
+            $strCommand .= " gunzip -c \"".$strFilename."\" | ".$this->strRestoreBin." -q -h".$this->objCfg->getStrHost().($this->objCfg->getStrUsername() != "" ? " -U".$this->objCfg->getStrUsername() : "")." -p".$this->objCfg->getIntPort()." ".$this->objCfg->getStrDbName()."";
         } else {
-            $strCommand .= $this->strRestoreBin." -q -h".$this->objCfg->getStrHost()." -U".$this->objCfg->getStrUsername()." -p".$this->objCfg->getIntPort()." ".$this->objCfg->getStrDbName()." < \"".$strFilename."\"";
+            $strCommand .= $this->strRestoreBin." -q -h".$this->objCfg->getStrHost().($this->objCfg->getStrUsername() != "" ? " -U".$this->objCfg->getStrUsername() : "")." -p".$this->objCfg->getIntPort()." ".$this->objCfg->getStrDbName()." < \"".$strFilename."\"";
         }
 
         $intTemp = "";

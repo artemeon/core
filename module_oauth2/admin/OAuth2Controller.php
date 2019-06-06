@@ -4,7 +4,7 @@
  *       Published under the GNU LGPL v2.1
  ********************************************************************************************************/
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace Kajona\Oauth2\Admin;
 
@@ -13,8 +13,6 @@ use Kajona\System\Admin\AdminEvensimpler;
 use Kajona\System\Admin\AdminInterface;
 use Kajona\System\Admin\LoginAdmin;
 use Kajona\System\System\Link;
-use Kajona\System\System\Model;
-use Kajona\System\System\ModelInterface;
 use Kajona\System\System\Session;
 use Kajona\System\System\StringUtil;
 
@@ -51,9 +49,7 @@ class OAuth2Controller extends AdminEvensimpler implements AdminInterface
         // redirect the user to the authorization url
         return <<<HTML
 <script type="text/javascript">
-require(["oauth2"], function(oauth2){
-    oauth2.redirect({$url});
-});
+Oauth2.redirect({$url});
 </script>
 HTML;
     }
@@ -82,7 +78,7 @@ HTML;
             $this->objSession->sessionUnset(LoginAdmin::SESSION_REFERER);
             $this->objSession->setSession(LoginAdmin::SESSION_LOAD_FROM_PARAMS, "true");
 
-            return Link::clientRedirectManual(_indexpath_."?".$strUrl);
+            return Link::clientRedirectManual(_indexpath_ . "?" . $strUrl);
         } else {
             //route to the default module
             $strModule = "dashboard";
@@ -96,7 +92,7 @@ HTML;
             // at the moment it is required to use the "old" url style since otherwise it could happen that the
             // location.href call does not trigger a redirect (in case only the url hash has changed) and thus we would
             // not load a different template and see the main content inside the login template
-            return Link::clientRedirectManual(_indexpath_."?admin=1&module=".$strModule);
+            return Link::clientRedirectManual(_indexpath_ . "?admin=1&module=" . $strModule);
         }
     }
 }

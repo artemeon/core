@@ -11,7 +11,8 @@ namespace Kajona\Dashboard\Admin\Widgets;
 
 use Kajona\Dashboard\System\TodoRepository;
 use Kajona\System\Admin\AdminFormgenerator;
-use Kajona\System\Admin\Formentries\FormentryCheckbox;
+use Kajona\System\Admin\Formentries\FormentryCheckboxarray;
+use Kajona\System\System\Exception;
 use Kajona\System\System\Link;
 
 /**
@@ -65,9 +66,13 @@ class AdminwidgetTodo extends Adminwidget implements AdminwidgetInterface
 
         foreach ($arrCategories as $strTitle => $arrRows) {
             $strKey = md5($strTitle);
-            $form->addField(new FormentryCheckbox("", $strKey), "")
-                ->setStrLabel($strTitle)
-                ->setStrValue($this->getFieldValue($strKey));
+            try {
+                $form->addField(new FormentryCheckboxarray("", $strKey), "")
+                    ->setStrLabel($strTitle)
+                    ->setStrValue($this->getFieldValue($strKey));
+            } catch (Exception $exception) {
+                // unable to add checkbox array form entry for category
+            }
         }
     }
 

@@ -10,18 +10,17 @@ final class ComposerBuilder {
 
     /**
      * @param string $rootPath
-     * @return array[]
+     * @return string[]
      */
-    private function getIncludedAndExcludedModules(string $rootPath): array
+    private function getIncludedModules(string $rootPath): array
     {
-        [$arrIncludedModules, $arrExcludedModules] = [[], []];
+        $includedModules = [];
 
-        if (\is_file($rootPath . self::DS . 'project' . self::DS . 'packageconfig.php')) {
-            /** @noinspection PhpIncludeInspection */
-            include $rootPath . self::DS . 'project' . self::DS . 'packageconfig.php';
+        if (\is_file($rootPath . self::DS . 'project' . self::DS . 'packageconfig.json')) {
+            $includedModules = \json_decode(\file_get_contents($rootPath . self::DS . 'project' . self::DS . 'packageconfig.json'), true);
         }
 
-        return [$arrIncludedModules, $arrExcludedModules];
+        return $includedModules;
     }
 
     /**
@@ -30,7 +29,7 @@ final class ComposerBuilder {
      */
     private function getModuleComposerConfigurations(string $rootPath): iterable
     {
-        [$includedModules, $excludedModules] = $this->getIncludedAndExcludedModules($rootPath);
+        $includedModules = $this->getIncludedModules($rootPath);
 
         foreach (new \DirectoryIterator($rootPath) as $rootDirectory) {
             if ($rootDirectory->isDot() || !$rootDirectory->isDir()) {
@@ -49,10 +48,8 @@ final class ComposerBuilder {
 
                 $isAnIncludedModule = !isset($includedModules[$moduleRoot]) ||
                     \in_array($moduleDirectory->getFilename(), $includedModules[$moduleRoot], true);
-                $isAnExcludedModule = isset($excludedModules[$moduleRoot]) &&
-                    \in_array($moduleDirectory->getFilename(), $excludedModules[$moduleRoot], true);
 
-                if ($isAnIncludedModule && !$isAnExcludedModule) {
+                if ($isAnIncludedModule) {
                     $composerFile = $moduleDirectory->getRealPath() . self::DS . 'composer.json';
 
                     if (!\is_file($composerFile)) {

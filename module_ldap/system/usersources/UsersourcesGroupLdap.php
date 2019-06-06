@@ -138,8 +138,9 @@ class UsersourcesGroupLdap extends \Kajona\System\System\Model implements \Kajon
      *
      * @return array
      * @throws \Kajona\System\System\Lifecycle\ServiceLifeCycleUpdateException
+     * @throws Exception
      */
-    public function getUserIdsForGroup($intStart = null, $intEnd = null)
+    public function getUserIdsForGroup($intStart = null, $intEnd = null, bool $ignoreCache = false)
     {
 
         $arrReturn = array();

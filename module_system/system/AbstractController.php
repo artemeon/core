@@ -8,6 +8,9 @@
 
 namespace Kajona\System\System;
 
+use Kajona\Admin\Exceptions\ModelNotFoundException;
+use Kajona\System\View\Components\Warningbox\Warningbox;
+
 /**
  * A common base class for AdminController and PortalController.
  * Use one of both to create admin-/portal-views.
@@ -266,7 +269,17 @@ abstract class AbstractController
             ResponseObject::getInstance()->setStrResponseType($strType);
         }
 
-        $response = $this->$strMethodName();
+        try {
+            $response = $this->$strMethodName();
+        } catch (ModelNotFoundException $ex) {
+            if ($strType === null || $strType === HttpResponsetypes::STR_TYPE_HTML) {
+                $box = new Warningbox($ex->getMessage());
+                $response = $box->renderComponent();
+            } else {
+                throw $ex;
+            }
+
+        }
 
         // in case we want to return json serialize the response data to json in case it is not a string
         if ($strType === HttpResponsetypes::STR_TYPE_JSON) {

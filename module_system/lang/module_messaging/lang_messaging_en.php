@@ -30,6 +30,7 @@ $lang["message_sent_success"]            = "The message was sent successfully.";
 $lang["message_subject"]                 = "Subject";
 $lang["message_to"]                      = "To";
 $lang["message_type"]                    = "Typ";
+$lang["message_attachment"]              = "Attachment";
 $lang["messageprovider_packageupdate_name"] = "Update-Messages";
 $lang["messaging_notification_body"]     = "You received a new message. Click on this notification to open the list of messages.";
 $lang["messaging_notification_title"]    = "New Messages";

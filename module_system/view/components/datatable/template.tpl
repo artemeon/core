@@ -13,12 +13,10 @@ data list footer. at the bottom of the datatable
 <datalist_footer>
     </table>
     <script type="text/javascript">
-        require(["jquery-floatThread"], function() {
-            $('table.core-component-datatable:not(.kajona-data-table-ignore-floatthread)').floatThead({
-                scrollingTop: $("body.dialogBody").size() > 0 ? 0 : 70,
+           $('table.core-component-datatable:not(.kajona-data-table-ignore-floatthread)').floatThead({
+                scrollingTop: $("body.dialogBody").length > 0 ? 0 : 70,
                 useAbsolutePositioning: true
             });
-        });
     </script>
 </datalist_footer>
 

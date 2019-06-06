@@ -1,9 +1,9 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\Mediamanager\Admin;
 
@@ -13,7 +13,6 @@ use Kajona\System\System\Link;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\SystemSetting;
-
 
 /**
  * This class provides a list-view of the folders created in the database / filesystem.
@@ -39,7 +38,6 @@ class FolderviewAdmin extends AdminController implements AdminInterface
         $this->setStrLangBase("mediamanager");
     }
 
-
     /**
      * @return string
      */
@@ -58,7 +56,7 @@ class FolderviewAdmin extends AdminController implements AdminInterface
         $strReturn = "";
 
         if ($this->getParam("CKEditorFuncNum") != "") {
-            $strReturn .= "<script type=\"text/javascript\">window.opener.require('folderview').selectCallbackCKEditorFuncNum = ".(int)$this->getParam("CKEditorFuncNum").";</script>";
+            $strReturn .= "<script type=\"text/javascript\">window.opener.Folderview.selectCallbackCKEditorFuncNum = " . (int) $this->getParam("CKEditorFuncNum") . ";</script>";
         }
 
         $strReturn .= $this->objToolkit->listHeader();
@@ -69,7 +67,7 @@ class FolderviewAdmin extends AdminController implements AdminInterface
                 Link::getLinkAdmin(
                     "mediamanager",
                     "folderContentFolderviewMode",
-                    "&systemid=".$strRepoId."&form_element=".$this->getParam("form_element")."&bit_link=1&download=".$this->getParam("download"),
+                    "&systemid=" . $strRepoId . "&form_element=" . $this->getParam("form_element") . "&bit_link=1&download=" . $this->getParam("download"),
                     $this->getLang("wysiwygFilesBrowser"),
                     $this->getLang("wysiwygFilesBrowser"),
                     "icon_folderActionOpen"
@@ -84,7 +82,7 @@ class FolderviewAdmin extends AdminController implements AdminInterface
                 Link::getLinkAdmin(
                     "mediamanager",
                     "folderContentFolderviewMode",
-                    "&systemid=".$strRepoId."&form_element=".$this->getParam("form_element")."&bit_link=1&download=".$this->getParam("download"),
+                    "&systemid=" . $strRepoId . "&form_element=" . $this->getParam("form_element") . "&bit_link=1&download=" . $this->getParam("download"),
                     $this->getLang("wysiwygImagesBrowser"),
                     $this->getLang("wysiwygImagesBrowser"),
                     "icon_folderActionOpen"
@@ -98,7 +96,7 @@ class FolderviewAdmin extends AdminController implements AdminInterface
                 Link::getLinkAdmin(
                     "mediamanager",
                     "folderContentFolderviewMode",
-                    "&form_element=".$this->getParam("form_element")."&bit_link=1&download=".$this->getParam("download"),
+                    "&form_element=" . $this->getParam("form_element") . "&bit_link=1&download=" . $this->getParam("download"),
                     $this->getLang("wysiwygRepoBrowser"),
                     $this->getLang("wysiwygRepoBrowser"),
                     "icon_folderActionOpen"
@@ -108,7 +106,7 @@ class FolderviewAdmin extends AdminController implements AdminInterface
         }
 
         $strReturn .= $this->objToolkit->listFooter();
-        $strReturn .= "<script type='text/javascript'>require(['lists'], function(l) { l.initRowClick(); });</script>";
+        $strReturn .= "<script type='text/javascript'>Lists.initRowClick();</script>";
         return $strReturn;
     }
 

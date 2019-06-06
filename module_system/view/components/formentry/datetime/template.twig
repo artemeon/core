@@ -1,0 +1,45 @@
+
+<div class="form-group core-component-formentry-datetime">
+    <label for="{{ name|e('html_attr') }}" class="col-sm-3 control-label">{{ title }}</label>
+    <div class="col-sm-2">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-calendar-o"></i></div>
+            <input id="{{ name|e('html_attr') }}" name="{{ name|e('html_attr') }}" class="form-control" size="16" type="text" value="{{ value|date_to_string(false) }}" {% if readOnly %}disabled{% endif %} autocomplete="off">
+        </div>
+    </div>
+
+    <div class="col-sm-2 form-inline">
+        <div class="form-group">
+            <div class="input-group">
+                <div class="input-group-addon"><i class="fa fa-clock-o"></i></div>
+                <input name="{{ name|e('html_attr') }}_hour" id="{{ name|e('html_attr') }}_hour" type="text" class="form-control {{ class|e('html_attr') }}" size="2" maxlength="2" value="{{ value.intHour|e('html_attr') }}" {% if readOnly %}disabled{% endif %} />
+            </div>
+            <input name="{{ name|e('html_attr') }}_minute" id="{{ name|e('html_attr') }}_minute" type="text" class="form-control {{ class|e('html_attr') }}" size="2" maxlength="2" value="{{ value.intMin|e('html_attr') }}" {% if readOnly %}disabled{% endif %} />
+        </div>
+    </div>
+    <div class="col-sm-1">
+    </div>
+    {% if opener %}
+    <div class="col-sm-2 form-opener">
+        {{ opener|raw }}
+    </div>
+    {% endif %}
+    <script type="text/javascript">
+                       $('#{{ name }}').datepicker({
+                    format: Util.transformDateFormat('{{ format }}', "bootstrap-datepicker"),
+                    weekStart: 1,
+                    autoclose: true,
+                    language: '{{ lang }}',
+                    todayHighlight: true,
+                    container: '#content',
+                    todayBtn: "linked",
+                    daysOfWeekHighlighted: "0,6",
+                    calendarWeeks: true
+                });
+
+                if ($('#{{ name }}').is(':focus')) {
+                    $('#{{ name }}').blur();
+                    $('#{{ name }}').focus();
+                }
+    </script>
+</div>

@@ -39,7 +39,10 @@ class MediamanagerFileFilter extends FilterBase
      */
     private $strFilename;
 
-    private $bitDateDescOrder = false;
+    /**
+     * @var bool
+     */
+    private $bitDateDescOrder = true;
 
     /**
      *@inheritdoc

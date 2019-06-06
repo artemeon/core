@@ -53,6 +53,16 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
         return $this;
     }
 
+    /**
+     * @return int
+     */
+    public function getIntType(): int
+    {
+        return $this->intType;
+    }
+
+
+
     public function setBitInline($bitInline)
     {
         $this->bitInline = $bitInline;
@@ -200,4 +210,13 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
         return implode("<br />", $arrNew);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        return array_merge(parent::jsonSerialize(), [
+            "values" => $this->arrKeyValues
+        ]);
+    }
 }

@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                               *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                               *
+ ********************************************************************************************************/
 
 namespace Kajona\System\System;
 
@@ -114,7 +114,7 @@ class RequestDispatcher
             if ($bitRedirectRequired) {
                 //reload to https
                 ResponseObject::getInstance()->setStrRedirectUrl(
-                    StringUtil::replace("http:", "https:", ResponseObject::getInstance()->getObjEntrypoint()->equals(RequestEntrypointEnum::XML()) ? _xmlpath_ : _indexpath_)."?".getServer("QUERY_STRING")
+                    StringUtil::replace("http:", "https:", ResponseObject::getInstance()->getObjEntrypoint()->equals(RequestEntrypointEnum::XML()) ? _xmlpath_ : _indexpath_) . "?" . getServer("QUERY_STRING")
                 );
                 ResponseObject::getInstance()->sendHeaders();
                 die("Reloading using https...");
@@ -124,7 +124,6 @@ class RequestDispatcher
 
         //set the current backend skin. right here to do it only once.
         AdminskinHelper::defineSkinWebpath();
-
 
         //validate login-status / process login-request
         if ($strModule != "login") {
@@ -141,14 +140,12 @@ class RequestDispatcher
                     Carrier::getInstance()->getObjSession()->sessionUnset(LoginAdmin::SESSION_PARAMS);
                 }
 
-
                 //fill the history array to track actions
                 if (ResponseObject::getInstance()->getObjEntrypoint()->equals(RequestEntrypointEnum::INDEX()) && empty(Carrier::getInstance()->getParam("folderview"))) {
                     $objHistory = new History();
                     //Writing to the history
                     $objHistory->setAdminHistory();
                 }
-
 
                 $strReturn = "";
 
@@ -159,10 +156,8 @@ class RequestDispatcher
                     unset($arrParams["action"]);
                     unset($arrParams["admin"]);
 
-                    return "<html><head></head><body><script type='text/javascript'>document.location='".Link::getLinkAdminHref($strModule, $strAction, $arrParams, false, true)."';</script></body></html>";
+                    return "<html><head></head><body><script type='text/javascript'>document.location='" . Link::getLinkAdminHref($strModule, $strAction, $arrParams, false, true) . "';</script></body></html>";
                 }
-
-
 
                 if (Carrier::getInstance()->getParam("blockAction") != "1") {
                     if (!empty($strModule)) {
@@ -173,12 +168,12 @@ class RequestDispatcher
                             if (ResponseObject::getInstance()->getObjEntrypoint()->equals(RequestEntrypointEnum::INDEX())) {
                                 if ($strReturn != "") {
                                     $objHelper = new SkinAdminController();
-                                    $strReturn = $objHelper->actionGetPathNavigation($objConcreteModule).$strReturn;
-                                    $strReturn = $objHelper->actionGetQuickHelp($objConcreteModule).$strReturn;
+                                    $strReturn = $objHelper->actionGetPathNavigation($objConcreteModule) . $strReturn;
+                                    $strReturn = $objHelper->actionGetQuickHelp($objConcreteModule) . $strReturn;
                                     if ($objConcreteModule instanceof AdminSimple) {
-                                        $strReturn = $objConcreteModule->getContentActionToolbar().$strReturn;
+                                        $strReturn = $objConcreteModule->getContentActionToolbar() . $strReturn;
                                     }
-                                    $strReturn = "<script type=\"text/javascript\"> require(['contentToolbar'], function(contentToolbar) { contentToolbar.resetBar()}); </script>".$strReturn; //TODO: das muss hier raus, falsche stelle?
+                                    $strReturn = "<script type=\"text/javascript\">ContentToolbar.resetBar()</script>" . $strReturn; //TODO: das muss hier raus, falsche stelle?
                                 }
                             }
                         } catch (ActionNotFoundException $objEx) {
@@ -212,7 +207,7 @@ class RequestDispatcher
                             $strUrl = ResponseObject::getInstance()->getStrRedirectUrl();
                             ResponseObject::getInstance()->setStrRedirectUrl("");
 
-                            $strRoutieRedirect = StringUtil::replace(_webpath_."/index.php?", "", $strUrl);
+                            $strRoutieRedirect = StringUtil::replace(_webpath_ . "/index.php?", "", $strUrl);
                             //and strip everything until the last #sign
                             $strRoutieRedirect = StringUtil::substring($strRoutieRedirect, StringUtil::lastIndexOf($strRoutieRedirect, "#"));
 
@@ -222,10 +217,8 @@ class RequestDispatcher
                             }
 
                             $strReturn = "<script type='text/javascript'>
-                                    require(['router', 'messaging'], function(router, messaging){ 
-                                        router.loadUrl('{$strRoutieRedirect}'); 
-                                        {$strJs}
-                                    });
+                            Router.loadUrl('{$strRoutieRedirect}');
+                            {$strJs}
                                 </script>";
 
                         }
@@ -249,14 +242,14 @@ class RequestDispatcher
                 if (Carrier::getInstance()->getParam("peClose") == "1") {
                     if (getGet("peRefreshPage") != "") {
                         $strReloadUrl = xssSafeString(getGet("peRefreshPage"));
-                        $strReturn = "<html><head></head><body><script type='text/javascript'>if(window.opener) { window.opener.location = '".$strReloadUrl."'; window.close(); } else { parent.location = '".$strReloadUrl."'; }</script></body></html>";
+                        $strReturn = "<html><head></head><body><script type='text/javascript'>if(window.opener) { window.opener.location = '" . $strReloadUrl . "'; window.close(); } else { parent.location = '" . $strReloadUrl . "'; }</script></body></html>";
                     } else {
                         $strReturn = "<html><head></head><body><script type='text/javascript'>if(window.opener) { window.opener.location.reload(); window.close(); } else { parent.location.reload(); }</script></body></html>";
                     }
                 }
 
             } else {
-                throw new Exception("Requested module ".$strModule." not existing");
+                throw new Exception("Requested module " . $strModule . " not existing");
             }
 
         } else {
@@ -339,26 +332,26 @@ class RequestDispatcher
             if (_timedebug_ === true) {
                 $arrTimestampEnde = gettimeofday();
                 $intTimeUsed = (($arrTimestampEnde['sec'] * 1000000 + $arrTimestampEnde['usec'])
-                        - ($this->arrTimestampStart['sec'] * 1000000 + $this->arrTimestampStart['usec'])) / 1000000;
+                     - ($this->arrTimestampStart['sec'] * 1000000 + $this->arrTimestampStart['usec'])) / 1000000;
 
-                $strDebug .= "PHP-Time: ".number_format($intTimeUsed, 6)." sec ";
+                $strDebug .= "PHP-Time: " . number_format($intTimeUsed, 6) . " sec ";
             }
 
             //Hows about the queries?
             if (_dbnumber_ === true) {
-                $strDebug .= "Queries db/cachesize/cached/fired: ".Carrier::getInstance()->getObjDB()->getNumber()."/".
-                    Carrier::getInstance()->getObjDB()->getCacheSize()."/".
-                    Carrier::getInstance()->getObjDB()->getNumberCache()."/".
-                    (Carrier::getInstance()->getObjDB()->getNumber() - Carrier::getInstance()->getObjDB()->getNumberCache())." ";
+                $strDebug .= "Queries db/cachesize/cached/fired: " . Carrier::getInstance()->getObjDB()->getNumber() . "/" .
+                Carrier::getInstance()->getObjDB()->getCacheSize() . "/" .
+                Carrier::getInstance()->getObjDB()->getNumberCache() . "/" .
+                    (Carrier::getInstance()->getObjDB()->getNumber() - Carrier::getInstance()->getObjDB()->getNumberCache()) . " ";
             }
 
             //memory
             if (_memory_ === true) {
-                $strDebug .= "Memory/Max Memory: ".bytesToString(memory_get_usage())."/".bytesToString(memory_get_peak_usage())." ";
-                $strDebug .= "Classes Loaded: ".Classloader::getInstance()->getIntNumberOfClassesLoaded()." ";
+                $strDebug .= "Memory/Max Memory: " . bytesToString(memory_get_usage()) . "/" . bytesToString(memory_get_peak_usage()) . " ";
+                $strDebug .= "Classes Loaded: " . Classloader::getInstance()->getIntNumberOfClassesLoaded() . " ";
             }
 
-            ResponseObject::getInstance()->addHeader("Kajona-Debug: ".$strDebug);
+            ResponseObject::getInstance()->addHeader("Kajona-Debug: " . $strDebug);
         }
 
         return $strReturn;

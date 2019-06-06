@@ -219,10 +219,8 @@ class Exception extends \Exception
         $objException->processException();
         ResponseObject::getInstance()->sendHeaders();
 
-        if ($objException->getErrorlevel() == Exception::$level_FATALERROR) {
-            ResponseObject::getInstance()->sendHeaders();
-            die();
-        }
+        // in this case we simply render the exception
+        echo self::renderException($objException);
     }
 
     /**

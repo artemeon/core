@@ -522,10 +522,14 @@ class   SystemChangelog
             $arrChangeSet["oldvalue"] = $strOldvalue;
             $arrChangeSet["newvalue"] = $strNewvalue;
 
-            if (StringUtil::length($strOldvalue) > 3990 || StringUtil::length($strNewvalue) > 3990) {
+            if (Config::getInstance("module_system")->getConfig("dbdriver") == "oci8" && StringUtil::length($strOldvalue) > 3990 || StringUtil::length($strNewvalue) > 3990) {
                 Logger::getInstance()->warning("Truncating changelog entries larger 3990 char, oldval: {$strOldvalue} newval: {$strNewvalue}");
                 $arrChangeSet["oldvalue"] = StringUtil::truncate($strOldvalue, 3990, '');
                 $arrChangeSet["newvalue"] = StringUtil::truncate($strNewvalue, 3990, '');
+            } elseif (StringUtil::length($strOldvalue) > 64000 || StringUtil::length($strNewvalue) > 64000) {
+                Logger::getInstance()->warning("Truncating changelog entries larger 3990 char, oldval: {$strOldvalue} newval: {$strNewvalue}");
+                $arrChangeSet["oldvalue"] = StringUtil::truncate($strOldvalue, 64000, '');
+                $arrChangeSet["newvalue"] = StringUtil::truncate($strNewvalue, 64000, '');
             }
 
             //add entry right here

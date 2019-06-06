@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                  *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                  *
+ ********************************************************************************************************/
 
 namespace Kajona\Tags\Admin;
 
@@ -56,7 +56,6 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
         return $arrReturn;
     }
 
-
     protected function getNewEntryAction($strListIdentifier, $bitDialog = false)
     {
         return "";
@@ -70,7 +69,7 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
                 Link::getLinkAdmin(
                     $this->getArrModule("modul"),
                     "showAssignedRecords",
-                    "&systemid=".$objListEntry->getSystemid(),
+                    "&systemid=" . $objListEntry->getSystemid(),
                     $this->getLang("action_show_assigned_records"),
                     $this->getLang("action_show_assigned_records"),
                     "icon_folderActionOpen"
@@ -79,16 +78,16 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
 
             if ($objListEntry->rightRight1()) {
                 $strJs = "<script type='text/javascript'>
-                require(['tags'], function(tags) {
-                    tags.createFavoriteEnabledIcon = '".addslashes(AdminskinHelper::getAdminImage("icon_favorite", $this->getLang("tag_favorite_remove")))."';
-                    tags.createFavoriteDisabledIcon = '".addslashes(AdminskinHelper::getAdminImage("icon_favoriteDisabled", $this->getLang("tag_favorite_add")))."';
-                });</script>";
+                Tags.createFavoriteEnabledIcon = '" . addslashes(AdminskinHelper::getAdminImage("icon_favorite", $this->getLang("tag_favorite_remove"))) . "';
+                    Tags.createFavoriteDisabledIcon = '" . addslashes(AdminskinHelper::getAdminImage("icon_favoriteDisabled", $this->getLang("tag_favorite_add"))) . "';
+
+                </script>";
 
                 $strImage = TagsFavorite::getAllFavoritesForUserAndTag($this->objSession->getUserID(), $objListEntry->getSystemid()) != null ?
-                    AdminskinHelper::getAdminImage("icon_favorite", $this->getLang("tag_favorite_remove")) :
-                    AdminskinHelper::getAdminImage("icon_favoriteDisabled", $this->getLang("tag_favorite_add"));
+                AdminskinHelper::getAdminImage("icon_favorite", $this->getLang("tag_favorite_remove")) :
+                AdminskinHelper::getAdminImage("icon_favoriteDisabled", $this->getLang("tag_favorite_add"));
 
-                $arrButtons[] = $strJs.$this->objToolkit->listButton("<a href=\"#\" onclick=\"require('tags').createFavorite('".$objListEntry->getSystemid()."', this); return false;\">".$strImage."</a>");
+                $arrButtons[] = $strJs . $this->objToolkit->listButton("<a href=\"#\" onclick=\"Tags.createFavorite('" . $objListEntry->getSystemid() . "', this); return false;\">" . $strImage . "</a>");
             }
 
             return $arrButtons;
@@ -97,7 +96,6 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
             return array();
         }
     }
-
 
     /**
      * @param ModelInterface|Model $objListEntry
@@ -111,17 +109,15 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
                 return $this->objToolkit->listDeleteButton(
                     $objListEntry->getStrDisplayName(),
                     $this->getLang("delete_question_fav", $objListEntry->getArrModule("modul")),
-                    Link::getLinkAdminHref($objListEntry->getArrModule("modul"), "delete", "&systemid=".$objListEntry->getSystemid())
+                    Link::getLinkAdminHref($objListEntry->getArrModule("modul"), "delete", "&systemid=" . $objListEntry->getSystemid())
                 );
             }
         } else {
             return parent::renderDeleteAction($objListEntry);
         }
 
-
         return "";
     }
-
 
     /**
      * @permissions view
@@ -134,7 +130,7 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
         //get assigned record-ids
 
         $objArraySectionIterator = new ArraySectionIterator($objTag->getIntAssignments());
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection($objTag->getArrAssignedRecords($objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         return $this->renderList($objArraySectionIterator, false, "assignedTagList");
@@ -189,7 +185,7 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
         $strTagsWrapperId = generateSystemid();
 
         $strTagContent .= $this->objToolkit->formHeader(
-            Link::getLinkAdminHref($this->getArrModule("modul"), "saveTags"), "", "", "require('tags').saveTag(document.getElementById('tagname').value+'', '".$strTargetSystemid."', '".$strAttribute."');return false;"
+            Link::getLinkAdminHref($this->getArrModule("modul"), "saveTags"), "", "", "Tags.saveTag(document.getElementById('tagname').value+'', '" . $strTargetSystemid . "', '" . $strAttribute . "');return false;"
         );
         $strTagContent .= $this->objToolkit->formTextRow($this->getLang("tag_name_hint"));
         $strTagContent .= $this->objToolkit->formInputTagSelector("tagname", $this->getLang("form_tags_name"));
@@ -205,12 +201,11 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
     protected function getOutputNaviEntry(ModelInterface $objInstance)
     {
         if ($objInstance instanceof TagsTag) {
-            return Link::getLinkAdmin($this->getArrModule("modul"), "showAssignedRecords", "&systemid=".$objInstance->getSystemid(), $objInstance->getStrName());
+            return Link::getLinkAdmin($this->getArrModule("modul"), "showAssignedRecords", "&systemid=" . $objInstance->getSystemid(), $objInstance->getStrName());
         }
 
         return null;
     }
-
 
     /**
      * Renders the list of favorites created by the current user
@@ -222,13 +217,11 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
     protected function actionListFavorites()
     {
         $objArraySectionIterator = new ArraySectionIterator(TagsFavorite::getNumberOfFavoritesForUser($this->objSession->getUserID()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(TagsFavorite::getAllFavoritesForUser($this->objSession->getUserID(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         return $this->renderList($objArraySectionIterator);
     }
-
-
 
     /**
      * @return string
@@ -240,9 +233,9 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
     {
         $objTags = Objectfactory::getInstance()->getObject($this->getSystemid());
 
-        $strError = "<message>".$this->getLang("favorite_save_error")."</message>";
-        $strSuccess = "<message>".$this->getLang("favorite_save_success").": ".$objTags->getStrDisplayName()."</message>";
-        $strExisting = "<message>".$this->getLang("favorite_save_remove").": ".$objTags->getStrDisplayName()."</message>";
+        $strError = "<message>" . $this->getLang("favorite_save_error") . "</message>";
+        $strSuccess = "<message>" . $this->getLang("favorite_save_success") . ": " . $objTags->getStrDisplayName() . "</message>";
+        $strExisting = "<message>" . $this->getLang("favorite_save_remove") . ": " . $objTags->getStrDisplayName() . "</message>";
 
         //already added before?
         if (count(TagsFavorite::getAllFavoritesForUserAndTag($this->objSession->getUserID(), $this->getSystemid())) > 0) {
@@ -258,7 +251,6 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
         $objFavorite->setStrUserId($this->objSession->getUserID());
         $objFavorite->setStrTagId($objTags->getSystemid());
 
-
         try {
             $this->objLifeCycleFactory->factory(get_class($objFavorite))->update($objFavorite);
         } catch (ServiceLifeCycleUpdateException $e) {
@@ -267,7 +259,6 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
 
         return $strSuccess;
     }
-
 
     /**
      * Creates a new tag (if not already existing) and assigns the tag to the passed system-record
@@ -404,9 +395,9 @@ class TagsAdmin extends AdminEvensimpler implements AdminInterface
 
         foreach ($arrFavorites as $objOneFavorite) {
             $arrReturn[] = array(
-                "name"    => $objOneFavorite->getStrDisplayName(),
-                "onclick" => "location.href='".Link::getLinkAdminHref("tags", "showAssignedRecords", "&systemid=".$objOneFavorite->getMappedTagSystemid(), false)."'",
-                "url"     => Link::getLinkAdminHref("tags", "showAssignedRecords", "&systemid=".$objOneFavorite->getMappedTagSystemid(), false)
+                "name" => $objOneFavorite->getStrDisplayName(),
+                "onclick" => "location.href='" . Link::getLinkAdminHref("tags", "showAssignedRecords", "&systemid=" . $objOneFavorite->getMappedTagSystemid(), false) . "'",
+                "url" => Link::getLinkAdminHref("tags", "showAssignedRecords", "&systemid=" . $objOneFavorite->getMappedTagSystemid(), false),
             );
         }
 

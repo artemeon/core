@@ -48,20 +48,18 @@
 
     function addWidgetToDashboard(widgetClass, column) {
         var data = "&widget="+widgetClass+"&column=column"+column+"&ajax=true";
-        require(['ajax', 'router'], function (ajax, router) {
-            ajax.genericAjaxCall("dashboard", "addWidget", data, null, function() {
+        Ajax.genericAjaxCall("dashboard", "addWidget", data, null, function() {
                 if (window.opener) {
                     window.close();
                 } else if (parent) {
-                    var context = parent.require('folderview');
-                    parent.require("router").reload();
+                    var context = parent.Folderview;
+                    parent.Router.reload();
                     if (context.dialog) {
                         context.dialog.hide();
                         context.dialog.setContentRaw("");
                     }
                 }
             });
-        });
     }
 
 </script>

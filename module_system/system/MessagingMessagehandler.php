@@ -50,9 +50,14 @@ class MessagingMessagehandler
             }
         );
 
-        return array_filter($arrHandler, function ($objInstance) {
-            return $objInstance != null;
-        });
+        $map = [];
+        foreach ($arrHandler as $instance) {
+            if ($instance !== null) {
+                //keep entries from the project dir
+                $map[get_class($instance)] = $instance;
+            }
+        }
+        return $map;
     }
 
 
@@ -162,6 +167,7 @@ class MessagingMessagehandler
                     $objCurrentMessage->setStrMessageProvider($objMessage->getStrMessageProvider());
                     $objCurrentMessage->setStrMessageRefId($objMessage->getStrMessageRefId());
                     $objCurrentMessage->setStrSenderId(validateSystemid($objMessage->getStrSenderId()) ? $objMessage->getStrSenderId() : Carrier::getInstance()->getObjSession()->getUserID());
+                    $objCurrentMessage->setStrAttachment($objMessage->getStrAttachment());
 
                     ServiceLifeCycleFactory::getLifeCycle(get_class($objCurrentMessage))->update($objCurrentMessage);
 
@@ -233,6 +239,12 @@ class MessagingMessagehandler
         $objMail->setHtml(nl2br($strBody));
         $objMail->addTo($objUser->getStrEmail());
 
+        // add attachment
+        $file = $objMessage->getStrAttachment();
+        if (!empty($file)) {
+            $objMail->addAttachement($file);
+        }
+
         Carrier::getInstance()->getObjLang()->setStrTextLanguage($strOriginalLang);
 
         return $objMail->sendMail();
@@ -248,6 +260,10 @@ class MessagingMessagehandler
     public function getRecipientsFromArray($arrRecipients)
     {
         $arrReturn = array();
+
+        if (!is_iterable($arrRecipients)) {
+            return [];
+        }
 
         foreach ($arrRecipients as $objOneRecipient) {
             if ($objOneRecipient instanceof UserUser && $objOneRecipient->getIntRecordDeleted() != 1) {

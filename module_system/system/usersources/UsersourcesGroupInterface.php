@@ -35,9 +35,10 @@ interface UsersourcesGroupInterface
      * @param int $intStart
      * @param int $intEnd
      *
+     * @param bool $ignoreCache
      * @return array
      */
-    public function getUserIdsForGroup($intStart = null, $intEnd = null);
+    public function getUserIdsForGroup($intStart = null, $intEnd = null, bool $ignoreCache = false);
 
     /**
      * Returns the number of members of the current group.

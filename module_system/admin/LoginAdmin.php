@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                        *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                        *
+ ********************************************************************************************************/
 
 namespace Kajona\System\Admin;
 
@@ -65,7 +65,6 @@ class LoginAdmin extends AdminController implements AdminInterface
         }
     }
 
-
     /**
      * Creates a small login-field
      *
@@ -82,10 +81,10 @@ class LoginAdmin extends AdminController implements AdminInterface
                     $this->objSession->logout();
                 }
 
-                return "<message><success>".xmlSafeString($this->getLang("login_xml_succeess", "system"))."</success></message>";
+                return "<message><success>" . xmlSafeString($this->getLang("login_xml_succeess", "system")) . "</success></message>";
             } else {
                 ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_UNAUTHORIZED);
-                return "<message><error>".xmlSafeString($this->getLang("login_xml_error", "system"))."</error></message>";
+                return "<message><error>" . xmlSafeString($this->getLang("login_xml_error", "system")) . "</error></message>";
             }
         } else {
             if ($this->objSession->isLoggedin() && $this->objSession->isAdmin()) {
@@ -141,7 +140,7 @@ class LoginAdmin extends AdminController implements AdminInterface
                             $objUser->setStrAuthcode("");
                             $this->objLifeCycleFactory->factory(get_class($objUser))->update($objUser);
 
-                            Logger::getInstance()->info("changed password of user ".$objUser->getStrUsername());
+                            Logger::getInstance()->info("changed password of user " . $objUser->getStrUsername());
 
                             return $this->objToolkit->warningBox($this->getLang("login_change_success", "user"));
                         } else {
@@ -166,21 +165,20 @@ class LoginAdmin extends AdminController implements AdminInterface
             $strReturn .= $this->objToolkit->warningBox($this->getLang("login_change_error", "user"));
         }
 
-
         return $strReturn;
     }
 
     private function getLoginForm($bitError = false)
     {
         $strForm = "";
-        $strForm .= $this->objToolkit->formHeader(Link::getLinkAdminHref($this->getArrModule("modul"), "login"), generateSystemid(), "", "require('forms').defaultOnSubmit(this);return false;");
+        $strForm .= $this->objToolkit->formHeader(Link::getLinkAdminHref($this->getArrModule("modul"), "login"), generateSystemid(), "", "Forms.defaultOnSubmit(this);return false;");
         $strForm .= $this->objToolkit->formInputText("name", $this->getLang("login_loginUser", "user"), "", "input-large");
         $strForm .= $this->objToolkit->formInputPassword("passwort", $this->getLang("login_loginPass", "user"), "", "input-large");
         $strForm .= $this->objToolkit->formInputSubmit($this->getLang("login_loginButton", "user"));
         $strForm .= $this->objToolkit->formClose();
-        $strForm .= "<script type='text/javascript'>require(['forms', 'util'], function(forms, util){
-    util.setBrowserFocus('name');
-});</script>";
+        $strForm .= "<script type='text/javascript'>
+    Util.setBrowserFocus('name');
+</script>";
 
         if (SystemModule::getModuleByName("oauth2") !== null) {
             /** @var ProviderManager $providerManager */
@@ -190,6 +188,11 @@ class LoginAdmin extends AdminController implements AdminInterface
             if (count($providers) > 0) {
                 $strForm .= $this->objToolkit->divider();
                 foreach ($providers as $provider) {
+                    if ($provider->getRedirectDetector()->forceRedirect()) {
+                        $redirectUrl = $providerManager->buildAuthorizationUrl($provider);
+                        ResponseObject::getInstance()->setStrRedirectUrl($redirectUrl);
+                    }
+
                     $strForm .= $this->objToolkit->formHeader(Link::getLinkAdminHref("oauth2", "redirect", ["provider_id" => $provider->getId()]), generateSystemid());
                     $strForm .= $this->objToolkit->formInputSubmit($this->getLang("login_with", "oauth2", [$provider->getName()]));
                     $strForm .= $this->objToolkit->formClose();
@@ -214,7 +217,7 @@ class LoginAdmin extends AdminController implements AdminInterface
     {
         //Loading a small form to change the password
         $strForm = "";
-        $strForm .= $this->objToolkit->formHeader(Link::getLinkAdminHref($this->getArrModule("modul"), "pwdReset"), generateSystemid(), "", "require('forms').defaultOnSubmit(this);return false;");
+        $strForm .= $this->objToolkit->formHeader(Link::getLinkAdminHref($this->getArrModule("modul"), "pwdReset"), generateSystemid(), "", "Forms.defaultOnSubmit(this);return false;");
         $strForm .= $this->objToolkit->formInputText("username", $this->getLang("login_loginUser", "user"), "", "inputTextShort");
         $strForm .= $this->objToolkit->formInputPassword("password1", $this->getLang("login_loginPass", "user"), "", "inputTextShort");
         $strForm .= $this->objToolkit->formInputPassword("password2", $this->getLang("login_loginPass2", "user"), "", "inputTextShort");
@@ -223,9 +226,9 @@ class LoginAdmin extends AdminController implements AdminInterface
         $strForm .= $this->objToolkit->formInputHidden("authcode", $this->getParam("authcode"));
         $strForm .= $this->objToolkit->formInputHidden("systemid", $this->getParam("systemid"));
         $strForm .= $this->objToolkit->formClose();
-        $strForm .= "<script type='text/javascript'>require(['forms', 'util'], function(forms, util){
-    util.setBrowserFocus('username');
-});</script>";
+        $strForm .= "<script type='text/javascript'>
+        Util.setBrowserFocus('username');
+        </script>";
 
         $arrTemplate = array();
         $arrTemplate["form"] = $strForm;
@@ -245,7 +248,7 @@ class LoginAdmin extends AdminController implements AdminInterface
     {
         $arrTemplate = array();
         $arrTemplate["name"] = $this->objSession->getUsername();
-        $arrTemplate["profile"] = Link::getLinkAdminHref("user", "edit", "userid=".$this->objSession->getUserID(), false);
+        $arrTemplate["profile"] = Link::getLinkAdminHref("user", "edit", "userid=" . $this->objSession->getUserID(), false);
         $arrTemplate["logout"] = Link::getLinkAdminHref($this->getArrModule("modul"), "adminLogout", "", true, false);
         $arrTemplate["dashboard"] = Link::getLinkAdminHref("dashboard", "", "", false);
         $arrTemplate["statusTitle"] = $this->getLang("login_statusTitle", "user");
@@ -267,16 +270,16 @@ class LoginAdmin extends AdminController implements AdminInterface
      */
     protected function actionAdminLogin()
     {
-try {
-        if ($this->objSession->login($this->getParam("name"), $this->getParam("passwort"))) {
-            //user allowed to access admin?
-            if (!$this->objSession->isAdmin()) {
-                //no, reset session
-                $this->objSession->logout();}
+        try {
+            if ($this->objSession->login($this->getParam("name"), $this->getParam("passwort"))) {
+                //user allowed to access admin?
+                if (!$this->objSession->isAdmin()) {
+                    //no, reset session
+                    $this->objSession->logout();}
 
-            //save the current skin as a cookie
-            $objCookie = new Cookie();
-            $objCookie->setCookie("adminlanguage", $this->objSession->getAdminLanguage(false, true));
+                //save the current skin as a cookie
+                $objCookie = new Cookie();
+                $objCookie->setCookie("adminlanguage", $this->objSession->getAdminLanguage(false, true));
 
                 return $this->loadPostLoginSite();
             } else {
@@ -305,9 +308,8 @@ try {
     protected function actionLogout()
     {
         $this->objSession->logout();
-        return "<message><success>".xmlSafeString($this->getLang("logout_xml", "system"))."</success></message>";
+        return "<message><success>" . xmlSafeString($this->getLang("logout_xml", "system")) . "</success></message>";
     }
-
 
     /**
      * Ends the session of the current user and
@@ -321,7 +323,6 @@ try {
         ResponseObject::getInstance()->setStrRedirectUrl(Link::getLinkAdminHref("login", "", "", true, false));
     }
 
-
     private function loadPostLoginSite()
     {
         // any url to redirect? Only in case its available and we dont come from the login module
@@ -331,7 +332,7 @@ try {
             $this->objSession->sessionUnset(self::SESSION_REFERER);
             $this->objSession->setSession(self::SESSION_LOAD_FROM_PARAMS, "true");
 
-            return Link::clientRedirectManual(_indexpath_."?".$strUrl);
+            return Link::clientRedirectManual(_indexpath_ . "?" . $strUrl);
         } else {
             //route to the default module
             $strModule = "dashboard";
@@ -345,7 +346,7 @@ try {
             // at the moment it is required to use the "old" url style since otherwise it could happen that the
             // location.href call does not trigger a redirect (in case only the url hash has changed) and thus we would
             // not load a different template and see the main content inside the login template
-            return Link::clientRedirectManual(_indexpath_."?admin=1&module=".$strModule);
+            return Link::clientRedirectManual(_indexpath_ . "?admin=1&module=" . $strModule);
         }
     }
 
@@ -361,7 +362,7 @@ try {
     protected function actionGetRecentMessages()
     {
         ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_UNAUTHORIZED);
-        return "<error>".$this->getLang("commons_error_permissions")."</error>";
+        return "<error>" . $this->getLang("commons_error_permissions") . "</error>";
     }
 
     /**
@@ -380,11 +381,11 @@ try {
             "login",
             array(
                 array("username", "xsd:string", true),
-                array("password", "xsd:string", true)
+                array("password", "xsd:string", true),
             ),
             array(),
             array(
-                array("application/xml", "message")
+                array("application/xml", "message"),
             )
         );
 

@@ -42,7 +42,7 @@ class MessagingMessage extends Model implements ModelInterface, AdminListableInt
     /**
      * @var string
      * @tableColumn agp_messages.message_title
-     * @tableColumnDatatype char254
+     * @tableColumnDatatype char500
      * @fieldType Kajona\System\Admin\Formentries\FormentryText
      * @fieldLabel message_subject
      * @fieldMandatory
@@ -102,6 +102,14 @@ class MessagingMessage extends Model implements ModelInterface, AdminListableInt
      */
     private $strMessageRefId = "";
 
+    /**
+     * Path to a file which is attached to this message
+     *
+     * @var string
+     * @tableColumn agp_messages.message_attachment
+     * @tableColumnDatatype char254
+     */
+    private $strAttachment = "";
 
     /**
      * @return bool
@@ -469,6 +477,22 @@ class MessagingMessage extends Model implements ModelInterface, AdminListableInt
     }
 
     /**
+     * @return string
+     */
+    public function getStrAttachment()
+    {
+        return $this->strAttachment;
+    }
+
+    /**
+     * @param string $strAttachment
+     */
+    public function setStrAttachment($strAttachment)
+    {
+        $this->strAttachment = $strAttachment;
+    }
+
+    /**
      * @inheritdoc
      */
     public function jsonSerialize()
@@ -480,27 +504,29 @@ class MessagingMessage extends Model implements ModelInterface, AdminListableInt
             "message_provider" => $this->strMessageProvider,
             "message_sender" => $this->strSenderId,
             "message_messageref" => $this->strMessageRefId,
+            "message_attachment" => $this->strAttachment,
         ];
     }
 
     /**
      * Creates a message object based on a json encoded string
      *
-     * @param string $strData
+     * @param string $json
      * @return static|null
      */
-    public static function fromJson($strData)
+    public static function fromJson($json)
     {
-        $arrData = json_decode($strData, true);
+        $data = json_decode($json, true);
 
-        $objMessage = new static();
-        $objMessage->setStrTitle(isset($arrData["message_title"]) ? $arrData["message_title"] : null);
-        $objMessage->setStrBody(isset($arrData["message_body"]) ? $arrData["message_body"] : null);
-        $objMessage->setStrInternalIdentifier(isset($arrData["message_internalidentifier"]) ? $arrData["message_internalidentifier"] : null);
-        $objMessage->setStrMessageProvider(isset($arrData["message_provider"]) ? $arrData["message_provider"] : null);
-        $objMessage->setStrSenderId(isset($arrData["message_sender"]) ? $arrData["message_sender"] : null);
-        $objMessage->setStrMessageRefId(isset($arrData["message_messageref"]) ? $arrData["message_messageref"] : null);
+        $message = new static();
+        $message->setStrTitle($data["message_title"] ?? null);
+        $message->setStrBody($data["message_body"] ?? null);
+        $message->setStrInternalIdentifier($data["message_internalidentifier"] ?? null);
+        $message->setStrMessageProvider($data["message_provider"] ?? null);
+        $message->setStrSenderId($data["message_sender"] ?? null);
+        $message->setStrMessageRefId($data["message_messageref"] ?? null);
+        $message->setStrAttachment($data["message_attachment"] ?? null);
 
-        return $objMessage;
+        return $message;
     }
 }

@@ -25,7 +25,7 @@ use Kajona\System\System\SystemModule;
  *
  * @package module_system
  */
-class SystemtaskDbdump extends SystemtaskBase implements AdminSystemtaskInterface
+class SystemtaskDbdump extends SystemtaskBase implements AdminSystemtaskInterface, ApiSystemTaskInterface
 {
 
     /**
@@ -81,6 +81,23 @@ class SystemtaskDbdump extends SystemtaskBase implements AdminSystemtaskInterfac
         } else {
             return $this->objToolkit->getTextRow($this->getLang("systemtask_dbexport_error"));
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function execute($body)
+    {
+        if (isset($body["excludedtables"]) && is_array($body["excludedtables"])) {
+            $excludeTables = $body["excludedtables"];
+        } else {
+            $excludeTables = [];
+        }
+
+        $connection = Carrier::getInstance()->getObjDB();
+        $connection->dumpDb($excludeTables);
+
+        return $this->getLang("systemtask_dbexport_success");
     }
 
     /**

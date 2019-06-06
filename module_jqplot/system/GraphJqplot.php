@@ -1,22 +1,18 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2013-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                      *
-********************************************************************************************************/
+ *   (c) 2013-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                      *
+ ********************************************************************************************************/
 
-declare(strict_types = 1);
+declare (strict_types = 1);
 
 namespace Kajona\Jqplot\System;
 
-use Kajona\System\System\AdminskinHelper;
-use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\GraphCommons;
 use Kajona\System\System\GraphInterfaceFronted;
-use Kajona\System\System\Lang;
-use Kajona\System\System\Resourceloader;
 
 /**
  * This class could be used to create graphs based on the jqPlot API.
@@ -46,7 +42,6 @@ class GraphJqplot implements GraphInterfaceFronted
 
     const STRING_FORMAT = "%s";
 
-
     /**
      * contains all series data per added chart
      *
@@ -57,104 +52,103 @@ class GraphJqplot implements GraphInterfaceFronted
     // array which contains all used jqPlot-Options.
     private $arrOptions = [
         "seriesColors" => ["#8bbc21", "#2f7ed8", "#f28f43", "#1aadce", "#77a1e5", "#0d233a", "#c42525", "#a6c96a", "#910000"],
-        "title"        => [
-            "text"            => null,
+        "title" => [
+            "text" => null,
             "rendererOptions" => [
-                "textColor"  => null,
+                "textColor" => null,
                 "fontFamily" => null,
             ],
         ],
-        "highlighter"  => [
-            "show"               => false,
+        "highlighter" => [
+            "show" => false,
             "bringSeriesToFront" => false,
-            "showMarker"         => false,
+            "showMarker" => false,
         ],
 
-        "legend"         => [
-            "renderer"        => "$.jqplot.EnhancedLegendRenderer",
-            "show"            => true,
+        "legend" => [
+            "renderer" => "$.jqplot.EnhancedLegendRenderer",
+            "show" => true,
             "rendererOptions" => [
-                "textColor"          => null,
-                "fontFamily"         => null,
-                "numberRows"         => null,
-                "numberColumns"      => 5,
+                "textColor" => null,
+                "fontFamily" => null,
+                "numberRows" => null,
+                "numberColumns" => 5,
                 "seriesToggleReplot" => [
                     "resetAxes" => true,
-                    "clear"     => true,
+                    "clear" => true,
                 ],
-                "location"           => "n",
-                "placement"          => "outsideGrid",
-                "rowSpacing"         => "1px",
+                "location" => "n",
+                "placement" => "outsideGrid",
+                "rowSpacing" => "1px",
             ],
         ],
-        "grid"           => [
-            "background"  => "transparent",
-            "shadow"      => false,
-            "drawBorder"  => false,
+        "grid" => [
+            "background" => "transparent",
+            "shadow" => false,
+            "drawBorder" => false,
             "borderWidth" => 0.5,
         ],
-        "axesDefaults"   => [
-            "tickRenderer"  => "$.jqplot.CanvasAxisTickRenderer",
+        "axesDefaults" => [
+            "tickRenderer" => "$.jqplot.CanvasAxisTickRenderer",
             "labelRenderer" => "$.jqplot.CanvasAxisLabelRenderer",
-            "labelOptions"  => [
-                "textColor"  => null,
+            "labelOptions" => [
+                "textColor" => null,
                 "fontFamily" => "'Open Sans', Helvetica, Arial, sans-serif",
             ],
-            "tickOptions"   => [
-                "textColor"    => null,
-                "fontFamily"   => "'Open Sans', Helvetica, Arial, sans-serif",
-                "fontSize"     => null,
+            "tickOptions" => [
+                "textColor" => null,
+                "fontFamily" => "'Open Sans', Helvetica, Arial, sans-serif",
+                "fontSize" => null,
                 "formatString" => self::STRING_FORMAT,
             ],
         ],
         "seriesDefaults" => [
             "useNegativeColors" => false,
-            "rendererOptions"   => [
+            "rendererOptions" => [
                 "animation" => [
-                    "show"  => true,
+                    "show" => true,
                     "speed" => 1000,
                 ],
             ],
         ],
-        "axes"           => [
-            "xaxis"  => [
-                "renderer"    => null,
-                "label"       => null,
-                "max"         => null,
-                "min"         => null,
-                "ticks"       => null,
-                "showTicks"   => null,
+        "axes" => [
+            "xaxis" => [
+                "renderer" => null,
+                "label" => null,
+                "max" => null,
+                "min" => null,
+                "ticks" => null,
+                "showTicks" => null,
                 "tickOptions" => [
-                    "angle"        => null,
+                    "angle" => null,
                     "showGridline" => false,
                 ],
             ],
-            "yaxis"  => [
-                "renderer"    => null,
-                "label"       => null,
-                "max"         => null,
-                "min"         => null,
-                "ticks"       => null,
-                "showTicks"   => null,
+            "yaxis" => [
+                "renderer" => null,
+                "label" => null,
+                "max" => null,
+                "min" => null,
+                "ticks" => null,
+                "showTicks" => null,
                 "tickOptions" => [
                     "showGridline" => true,
                 ],
             ],
             "y2axis" => [
-                "renderer"    => null,
-                "label"       => null,
-                "max"         => null,
-                "min"         => null,
-                "ticks"       => null,
-                "showTicks"   => null,
+                "renderer" => null,
+                "label" => null,
+                "max" => null,
+                "min" => null,
+                "ticks" => null,
+                "showTicks" => null,
                 "tickOptions" => [
                     "showGridline" => false,
                 ],
             ],
         ],
-        "series"         => [],
+        "series" => [],
     ];
-
 
     /**
      * Checks if the chart contains the given chart type
@@ -172,7 +166,6 @@ class GraphJqplot implements GraphInterfaceFronted
         }
         return false;
     }
-
 
     /**
      * Gets series objects of the given chart type
@@ -247,7 +240,6 @@ class GraphJqplot implements GraphInterfaceFronted
         $this->arrSeriesData[] = $objSeriesData;
     }
 
-
     /**
      * Used to create a stacked bar-chart.
      * For each set of bar-values you can call this method once.
@@ -305,38 +297,7 @@ class GraphJqplot implements GraphInterfaceFronted
     }
 
     /**
-     * Registers a new plot to the current graph. Works in line-plot-mode only.
-     * Add a set of linePlot to a graph to get more then one line.
-     * If you created a bar-chart before, it it is possible to add line-plots on top of
-     * the bars. Nevertheless, the scale is calculated out of the bars, so make
-     * sure to remain inside the visible range!
-     * A sample-code could be:
-     *  $objGraph = new class_graph();
-     *  $objGraph->setStrXAxisTitle("x-axis");
-     *  $objGraph->setStrYAxisTitle("y-axis");
-     *  $objGraph->setStrGraphTitle("Test Graph");
-     *
-     *  //simple array
-     *      $objGraph->addLinePlot(array(1,4,6,7,4), "serie 1");
-     *
-     * //datapoints array
-     *      $objDataPoint1 = new GraphDatapoint(1);
-     *      $objDataPoint2 = new GraphDatapoint(2);
-     *      $objDataPoint3 = new GraphDatapoint(4);
-     *      $objDataPoint4 = new GraphDatapoint(5);
-     *
-     *      //set action handler example
-     *      $objDataPoint1->setObjActionHandler("<javascript code here>");
-     *      $objDataPoint1->getObjActionHandlerValue("<value_object> e.g. some json");
-     *
-     *      $objGraph->addLinePlot(array($objDataPoint1, $objDataPoint2, $objDataPoint3, $objDataPoint4) "serie 1");
-     *
-     *
-     * @param array $arrValues - an array with simple values or an array of data points (GraphDatapoint).
-     *                           The advantage of a data points are that action handlers can be defined for each data point which will be executed when clicking on the data point in the chart.
-     * @param string $strLegend the name of the single plot
-     *
-     * @throws Exception
+     * @inheritdoc
      */
     public function addLinePlot($arrValues, $strLegend)
     {
@@ -353,40 +314,8 @@ class GraphJqplot implements GraphInterfaceFronted
         $this->arrSeriesData[] = $objSeriesData;
     }
 
-
     /**
-     * Registers a new plot to the current graph. Works in line-plot-mode only.
-     * Add a set of linePlot to a graph to get more then one line.
-     * If you created a bar-chart before, it it is possible to add line-plots on top of
-     * the bars. Nevertheless, the scale is calculated out of the bars, so make
-     * sure to remain inside the visible range!
-     * A sample-code could be:
-     *  $objGraph = new class_graph();
-     *  $objGraph->setStrXAxisTitle("x-axis");
-     *  $objGraph->setStrYAxisTitle("y-axis");
-     *  $objGraph->setStrGraphTitle("Test Graph");
-     *
-     *  //simple array
-     *      $objGraph->addLinePlot(array(1,4,6,7,4), "serie 1");
-     *
-     * //datapoints array
-     *      $objDataPoint1 = new GraphDatapoint(1);
-     *      $objDataPoint2 = new GraphDatapoint(2);
-     *      $objDataPoint3 = new GraphDatapoint(4);
-     *      $objDataPoint4 = new GraphDatapoint(5);
-     *
-     *      //set action handler example
-     *      $objDataPoint1->setObjActionHandler("<javascript code here>");
-     *      $objDataPoint1->getObjActionHandlerValue("<value_object> e.g. some json");
-     *
-     *      $objGraph->addLinePlot(array($objDataPoint1, $objDataPoint2, $objDataPoint3, $objDataPoint4) "serie 1");
-     *
-     *
-     * @param array $arrValues - an array with simple values or an array of data points (GraphDatapoint).
-     *                           The advantage of a data points are that action handlers can be defined for each data point which will be executed when clicking on the data point in the chart.
-     * @param string $strLegend the name of the single plot
-     *
-     * @throws Exception
+     * @inheritdoc
      */
     public function addLinePlotY2Axis($arrValues, $strLegend)
     {
@@ -404,35 +333,7 @@ class GraphJqplot implements GraphInterfaceFronted
     }
 
     /**
-     * Creates a new pie-chart. Pass the values as the first param. If
-     * you want to use a legend and / or Colors use the second and third param.
-     * Make sure the array have the same number of elements, ohterwise they won't
-     * be uses.
-     * A sample-code could be:
-     *  $objChart = new class_graph();
-     *  $objChart->setStrGraphTitle("Test Pie Chart");
-     *
-     * //simple array
-     *      $objChart->createPieChart(array(2,6,7,3), array("val 1", "val 2", "val 3", "val 4"));
-     *
-     * //datapoints array
-     *      $objDataPoint1 = new GraphDatapoint(1);
-     *      $objDataPoint2 = new GraphDatapoint(2);
-     *      $objDataPoint3 = new GraphDatapoint(4);
-     *      $objDataPoint4 = new GraphDatapoint(5);
-     *
-     *      //set action handler example
-     *      $objDataPoint1->setObjActionHandler("<javascript code here>");
-     *      $objDataPoint1->getObjActionHandlerValue("<value_object> e.g. some json");
-     *
-     *      $objGraph->createPieChart(array($objDataPoint1, $objDataPoint2, $objDataPoint3, $objDataPoint4) , array("val 1", "val 2", "val 3", "val 4"), "serie 1");
-     *
-     *
-     * @param array $arrValues - an array with simple values or an array of data points (GraphDatapoint).
-     *                           The advantage of a data points are that action handlers can be defined for each data point which will be executed when clicking on the data point in the chart.
-     * @param array $arrLegends
-     *
-     * @throws Exception
+     * @inheritdoc
      */
     public function createPieChart($arrValues, $arrLegends)
     {
@@ -451,7 +352,7 @@ class GraphJqplot implements GraphInterfaceFronted
         $objSeriesData = new GraphJqplotSeriesdata(GraphJqplotCharttype::PIE, count($this->arrSeriesData), $this->arrOptions);
         $objSeriesData->setArrDataPoints($arrDataPoints);
 
-        $this->arrXAxisTickLabels = $arrLegends;//set to this array, as the data array is built up similar
+        $this->arrXAxisTickLabels = $arrLegends; //set to this array, as the data array is built up similar
         $this->arrSeriesData[] = $objSeriesData;
     }
 
@@ -494,82 +395,80 @@ class GraphJqplot implements GraphInterfaceFronted
      */
     public function renderGraph()
     {
-        if (count($this->arrSeriesData) == 0) {
-            throw new Exception("Chart not initialized yet", Exception::$level_ERROR);
-        }
+        //     if (count($this->arrSeriesData) == 0) {
+        //         throw new Exception("Chart not initialized yet", Exception::$level_ERROR);
+        //     }
 
-        $this->preGraphGeneration();
+        //     $this->preGraphGeneration();
 
-        //1. create id's
-        $strSystemId = generateSystemid();
-        $strResizeableId = "resize_".$strSystemId;
-        $strChartId = "chart_".$strSystemId;
-        $strTooltipId = "tooltip_".$strSystemId;
-        $strImageExportId = $strChartId."_exportpng";
+        //     //1. create id's
+        //     $strSystemId = generateSystemid();
+        //     $strResizeableId = "resize_".$strSystemId;
+        //     $strChartId = "chart_".$strSystemId;
+        //     $strTooltipId = "tooltip_".$strSystemId;
+        //     $strImageExportId = $strChartId."_exportpng";
 
-        $strWidth = $this->bitIsResponsive ? "100%" : $this->intWidth."px";
-        //create div where the chart is being put
-        $strReturn = "<div onmouseover='$(\"#\"+\"{$strImageExportId}\").show();' onmouseout='$(\"#\"+\"{$strImageExportId}\").hide();' id=\"$strResizeableId\" style=\"width:{$strWidth}; height:".$this->intHeight."px;\">";
+        //     $strWidth = $this->bitIsResponsive ? "100%" : $this->intWidth."px";
+        //     //create div where the chart is being put
+        //     $strReturn = "<div onmouseover='$(\"#\"+\"{$strImageExportId}\").show();' onmouseout='$(\"#\"+\"{$strImageExportId}\").hide();' id=\"$strResizeableId\" style=\"width:{$strWidth}; height:".$this->intHeight."px;\">";
 
-        //chart div
-        $strReturn .= "<div id=\"$strChartId\" style=\"width:95%; height:100%; float: left;\"></div>";
+        //     //chart div
+        //     $strReturn .= "<div id=\"$strChartId\" style=\"width:95%; height:100%; float: left;\"></div>";
 
-        //image export div
-        $strReturn .= "<div style=\"width:5%; height:100%; float: left;\">";
+        //     //image export div
+        //     $strReturn .= "<div style=\"width:5%; height:100%; float: left;\">";
 
-        if ($this->isBitDownloadLink()) {
-            $strImage = AdminskinHelper::getAdminImage("icon_downloads", Lang::getInstance()->getLang("commons_save_as_image", "system"));
+        //     if ($this->isBitDownloadLink()) {
+        //         $strImage = AdminskinHelper::getAdminImage("icon_downloads", Lang::getInstance()->getLang("commons_save_as_image", "system"));
 
-            $strReturn .= "<a style=\"display:none; cursor: pointer; \" id=\"{$strImageExportId}\" onclick=\"require('jqlot.custom_helper').exportAsImage('{$strChartId}')\"'>
-                                   {$strImage}
-                               </a>";
-        }
+        //         $strReturn .= "<a style=\"display:none; cursor: pointer; \" id=\"{$strImageExportId}\" onclick=\"require('jqlot.custom_helper').exportAsImage('{$strChartId}')\"'>
+        //                                {$strImage}
+        //                            </a>";
+        //     }
 
-        $strReturn .= "</div>";
+        //     $strReturn .= "</div>";
 
-        $strReturn .= "</div>";
+        //     $strReturn .= "</div>";
 
+        //     //2. Sort charts by type
+        //     $this->sortBySeriesType();
 
-        //2. Sort charts by type
-        $this->sortBySeriesType();
+        //     //3. create the data array and options object for the jqPlot method
+        //     $strChartOptions = $this->strCreateJSOptions();
+        //     $strChartData = $this->strCreateJSDataArray();
+        //     $strDataPointObjects = $this->strCreateDataPointObjects();
+        //     $arrPostPlotOptions = [
+        //         "intNrOfWrittenLabelsXAxis" => $this->intNrOfWrittenLabelsXAxis,
+        //         "intNrOfWrittenLabelsYAxis" => $this->intNrOfWrittenLabelsYAxis,
+        //     ];
+        //     $strPostPlotOptions = json_encode($arrPostPlotOptions);
 
-        //3. create the data array and options object for the jqPlot method
-        $strChartOptions = $this->strCreateJSOptions();
-        $strChartData = $this->strCreateJSDataArray();
-        $strDataPointObjects = $this->strCreateDataPointObjects();
-        $arrPostPlotOptions = [
-            "intNrOfWrittenLabelsXAxis" => $this->intNrOfWrittenLabelsXAxis,
-            "intNrOfWrittenLabelsYAxis" => $this->intNrOfWrittenLabelsYAxis,
-        ];
-        $strPostPlotOptions = json_encode($arrPostPlotOptions);
+        //     //4. Get decimal styles
+        //     $strDecChar = Carrier::getInstance()->getObjLang()->getLang("numberStyleDecimal", "system");
+        //     $strThousandsChar = Carrier::getInstance()->getObjLang()->getLang("numberStyleThousands", "system");
 
-        //4. Get decimal styles
-        $strDecChar = Carrier::getInstance()->getObjLang()->getLang("numberStyleDecimal", "system");
-        $strThousandsChar = Carrier::getInstance()->getObjLang()->getLang("numberStyleThousands", "system");
+        //     //5. Init Chart
+        //     $strCoreDirectory = Resourceloader::getInstance()->getWebPathForModule("module_jqplot");
+        //     $strReturn .= "<script type='text/javascript'>
+        //         require(['jqplot', 'loader'], function(jqplot, loader) {
 
-        //5. Init Chart
-        $strCoreDirectory = Resourceloader::getInstance()->getWebPathForModule("module_jqplot");
-        $strReturn .= "<script type='text/javascript'>
-            require(['jqplot', 'loader'], function(jqplot, loader) {
-                
-                loader.loadFile([
-                    '{$strCoreDirectory}/scripts/jqplot/jquery.jqplot.css',
-                    '{$strCoreDirectory}/scripts/kajona/jquery.jqplot.custom.css'
-                ], function() {});
-                
-                require(['jqlot.custom_helper'], function(jqplotHelper) {
-                        $.jqplot.sprintf.thousandsSeparator = '$strThousandsChar';
-                        $.jqplot.sprintf.decimalMark = '$strDecChar';
+        //             loader.loadFile([
+        //                 '{$strCoreDirectory}/scripts/jqplot/jquery.jqplot.css',
+        //                 '{$strCoreDirectory}/scripts/kajona/jquery.jqplot.custom.css'
+        //             ], function() {});
 
-                        var objChart_$strChartId = new jqplotHelper.jqPlotChart('$strChartId', '$strTooltipId', '$strResizeableId', '$this->bitIsResizeable', $strChartData, $strChartOptions, $strPostPlotOptions, $strDataPointObjects, '$this->bitIsResponsive');
-                        objChart_$strChartId.render();
-                });
-            });
-        </script>";
+        //             require(['jqlot.custom_helper'], function(jqplotHelper) {
+        //                     $.jqplot.sprintf.thousandsSeparator = '$strThousandsChar';
+        //                     $.jqplot.sprintf.decimalMark = '$strDecChar';
 
-        return $strReturn;
+        //                     var objChart_$strChartId = new jqplotHelper.jqPlotChart('$strChartId', '$strTooltipId', '$strResizeableId', '$this->bitIsResizeable', $strChartData, $strChartOptions, $strPostPlotOptions, $strDataPointObjects, '$this->bitIsResponsive');
+        //                     objChart_$strChartId.render();
+        //             });
+        //         });
+        //     </script>";
+
+        //     return $strReturn;
     }
-
 
     private function preGraphGeneration()
     {
@@ -625,7 +524,6 @@ class GraphJqplot implements GraphInterfaceFronted
             $this->arrOptions["seriesDefaults"]["rendererOptions"]["barDirection"] = "horizontal";
         }
 
-
         //2. Change padding and margin of bars, if the chart contains only one bar chart series
         $arrSeriesBarCharts = $this->getSeriesObjectsByChartType([GraphJqplotCharttype::BAR, GraphJqplotCharttype::BAR_HORIZONTAL]);
         if (count($arrSeriesBarCharts) == 1) {
@@ -671,7 +569,6 @@ class GraphJqplot implements GraphInterfaceFronted
         }
     }
 
-
     /**
      * Create a deep copy of the given array containing no elements with null values.
      * Also removes empty arrays from the given array.
@@ -713,7 +610,7 @@ class GraphJqplot implements GraphInterfaceFronted
         Sort the series data array
         Bar charts must be plotted before line charts
         Also consider the order in which the series were added)
-        */
+         */
         uasort($this->arrSeriesData, function (GraphJqplotSeriesdata $objLeft, GraphJqplotSeriesdata $objRight) {
             $intLeft = $objLeft->getIntChartType();
             $intRight = $objRight->getIntChartType();
@@ -743,9 +640,9 @@ class GraphJqplot implements GraphInterfaceFronted
             $arrDataPoints = [];
             foreach ($objSeriesData->getArrDataPoints() as $objDataPoint) {
                 $arrDataPoints[] = [
-                    "floatvalue"         => $objDataPoint->getFloatValue(),
+                    "floatvalue" => $objDataPoint->getFloatValue(),
                     "actionhandlervalue" => $objDataPoint->getObjActionHandlerValue(),
-                    "actionhandler"      => $objDataPoint->getObjActionHandler(),
+                    "actionhandler" => $objDataPoint->getObjActionHandler(),
                 ];
             }
             $arrSeries2DataPoints[] = $arrDataPoints;
@@ -770,7 +667,7 @@ class GraphJqplot implements GraphInterfaceFronted
 
         //now encode to JSON
         $strEncode = json_encode($this->arrOptions);
-        $strEncode = preg_replace('/\\"\\$\\.jqplot\\.([a-zA-Z]+)\\"/', "$.jqplot.$1", $strEncode);//remove '"' where a jquery call is executed
+        $strEncode = preg_replace('/\\"\\$\\.jqplot\\.([a-zA-Z]+)\\"/', "$.jqplot.$1", $strEncode); //remove '"' where a jquery call is executed
 
         return $strEncode;
     }
@@ -818,9 +715,7 @@ class GraphJqplot implements GraphInterfaceFronted
     }
 
     /**
-     * Set the title of the y-axis
-     *
-     * @param string $strTitle
+     * @inheritdoc
      */
     public function setStrY2AxisTitle($strTitle)
     {
@@ -1003,7 +898,6 @@ class GraphJqplot implements GraphInterfaceFronted
         $this->arrOptions["seriesColors"] = $arrSeriesColors;
     }
 
-
     /**
      * Sets the range for the xAxis.
      *
@@ -1023,7 +917,6 @@ class GraphJqplot implements GraphInterfaceFronted
             $this->arrOptions["axes"]["xaxis"]["tickInterval"] = $intTickInterval;
         }
     }
-
 
     /**
      * Sets the range for the yAxis.
@@ -1065,7 +958,6 @@ class GraphJqplot implements GraphInterfaceFronted
         }
     }
 
-
     /**
      * Method to render a horizontal bar chart
      *
@@ -1075,7 +967,6 @@ class GraphJqplot implements GraphInterfaceFronted
     {
         $this->bitIsHorizontalBar = $bitIsHorizontalBar;
     }
-
 
     /**
      * Hides the xAxis labels.
@@ -1094,7 +985,6 @@ class GraphJqplot implements GraphInterfaceFronted
             $this->arrOptions["axes"]["xaxis"]["label"] = null;
         }
     }
-
 
     /**
      * Hides the xAxis labels.
@@ -1157,12 +1047,10 @@ class GraphJqplot implements GraphInterfaceFronted
      * Enables general repsonsiveness of the chart. This includes that the chart takes up 100% width of the parent container.
      * @param bool $bitIsResponsive
      */
-    public function setBitIsResponsive($bitIsResponsive)
+    public function setBitIsResponsive(bool $bitIsResponsive)
     {
         $this->bitIsResponsive = $bitIsResponsive;
     }
-
-
 
     /**
      * @return boolean
@@ -1214,5 +1102,61 @@ class GraphJqplot implements GraphInterfaceFronted
             $countGraphs = count($this->arrSeriesData[0]->getArrDataPoints());
             $this->setIntHeight(10 + $countGraphs * 35);
         }
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setTickStepXAxis(int $intStep)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setTickStepYAxis(int $intStep)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setTickStepY2Axis(int $intStep)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setShowThousandSeparatorAxis(bool $addSeparator = true)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setHideGridLinesXAxis(bool $bitHideGridLines = true)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setHideGridLinesYAxis(bool $bitHideGridLines = true)
+    {
+        //not supported
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function setMaxXAxesTicksLimit(int $maxXAxesTicksLimit)
+    {
+        //not supported
     }
 }

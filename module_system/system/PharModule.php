@@ -80,11 +80,8 @@ class PharModule
                 }
             }
 
-            $strFullFilename = basename($strArchivePath);
-            $strClassname = substr($strFullFilename, 0, -4);
-
-            if (!isset($arrCodeFiles[$strClassname])) {
-                $arrCodeFiles[$strClassname] = $strPharPath;
+            if (!isset($arrCodeFiles[$strPharPath])) {
+                $arrCodeFiles[$strPharPath] = $strPharPath;
             }
         }
 

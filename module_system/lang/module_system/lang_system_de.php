@@ -32,7 +32,7 @@ $lang["_system_changehistory_enabled_"]  = "Änderungshistorie aktiv";
 $lang["_system_dbdump_amount_"]          = "Anzahl DB-Dumps";
 $lang["_system_dbdump_amount_hint"]      = "Definiert, wie viele Datenbank-Sicherungen vorgehalten werden sollen.";
 $lang["_system_graph_type_"]             = "Verwendete Chart-Bibliothek: ";
-$lang["_system_graph_type_hint"]         = "Gültige Werte: pchart, ezc, jqplot. pChart muss gesondern heruntergeladen und installiert werden, ezc benötigt im Optimalfall das PHP-Modul 'cairo'.<br />Siehe hierzu auch <a href=\"http://www.kajona.de/nicecharts.html\" taget=\"_blank\">http://www.kajona.de/nicecharts.html</a>";
+$lang["_system_graph_type_hint"]         = "Gültige Werte: pchart, ezc, jqplot. pChart muss gesondern heruntergeladen und installiert werden, ezc benötigt im Optimalfall das PHP-Modul 'cairo'.<br />Siehe hierzu auch <a href=\"http://www.kajona.de/nicecharts.html\" target=\"_blank\">http://www.kajona.de/nicecharts.html</a>";
 $lang["_system_lock_maxtime_"]           = "Maximale Sperrdauer";
 $lang["_system_lock_maxtime_hint"]       = "Nach der angegebenen Dauer in Sekunden werden gesperrte Datensätze automatisch wieder freigegeben.";
 $lang["_system_mod_rewrite_"]            = "URL-Rewriting";
@@ -55,6 +55,8 @@ $lang["_system_session_ipfixation_"]     = "Session an IP binden";
 $lang["_system_session_ipfixation_hint"] = "Normalerweise wird die Session an die IP des Clients gebunden. Bspw. beim Einsatz von Proxy Servern kann dies aber zu Problem (Logouts) führen.";
 $lang["_system_lists_clickable_"]        = "Standard-Listen klickbar";
 $lang["_system_lists_clickable_hint"]    = "Wenn aktiv wird bei Klick auf eine Listenzeile die erste Aktion automatisch ausgeführt";
+$lang["_system_permission_assignment_threshold_"]    = "Schwellenwert Zuweisungen";
+$lang["_system_permission_assignment_threshold_hint"]    = "Anzahl an User zu Gruppe Zuweisungen, bei der anstatt der OR-Abfrage der Berechtigungen ein Subselect verwendet wird.";
 $lang["about_part1"]                     = "<h2>Kajona V6 - Open Source Content Management System</h2>Kajona V 6.2<br /><br /><a href=\"http://www.kajona.de\" target=\"_blank\">www.kajona.de</a><br /><a href=\"mailto:info@kajona.de\" target=\"_blank\">info@kajona.de</a><br /><br />Für weitere Infomationen, Support oder bei Anregungen besuchen Sie einfach unsere Webseite.<br />Support erhalten Sie auch in unserem <a href=\"http://board.kajona.de/\" target=\"_blank\">Forum</a>.";
 $lang["about_part2_header"]              = "<h2>Entwicklungsleitung</h2>";
 $lang["about_part2a_header"]             = "<h2>Contributors / Entwickler</h2>";
@@ -77,7 +79,7 @@ $lang["action_system_settings"]          = "Systemeinstellungen";
 $lang["action_system_tasks"]             = "System-Tasks";
 $lang["action_systemlog"]                = "System-Log";
 $lang["action_unlock_record"]            = "Datensatz entsperren";
-$lang["anzahltabellen"]                  = "Anzahl Tabellen";
+
 $lang["delete_aspect_question"]          = "Möchten Sie den Aspekt &quot;<b>%%element_name%%</b>&quot; wirklich löschen?";
 $lang["aspect_isDefault"]                = "Standard Aspekt";
 $lang["aspect_list_empty"]               = "Keine Aspekete angelegt";
@@ -99,12 +101,6 @@ $lang["change_export_excel"]             = "Daten nach Excel exportieren";
 $lang["change_diff"]                     = "Vergleich";
 $lang["dateStyleLong"]                   = "d.m.Y H:i:s";
 $lang["dateStyleShort"]                  = "d.m.Y";
-$lang["datekajona"]                      = "System-Datum";
-$lang["datenbankclient"]                 = "Datenbankclient";
-$lang["datenbankserver"]                 = "Datenbankserver";
-$lang["datenbanktreiber"]                = "Datenbanktreiber";
-$lang["datenbankverbindung"]             = "Datenbankverbindung";
-$lang["db"]                              = "Datenbank";
 $lang["desc"]                            = "Rechte ändern an";
 $lang["dialog_cancelButton"]             = "Abbrechen";
 $lang["dialog_copyButton"]             = "Ja, kopieren";
@@ -114,10 +110,8 @@ $lang["dialog_deleteHeader"]             = "Löschen bestätigen";
 $lang["dialog_loadingHeader"]            = "Bitte warten";
 $lang["dialog_removeAssignmentButton"]   = "Ja, Zuordnung löschen";
 $lang["dialog_removeAssignmentHeader"]   = "Zuordnung löschen bestätigen";
-$lang["diskspace_free"]                  = " (frei/gesamt)";
+
 $lang["errorintro"]                      = "Bitte überarbeiten Sie die folgenden Felder";
-$lang["errorlevel"]                      = "Error Level";
-$lang["executiontimeout"]                = "Execution Timeout";
 $lang["fehler_setzen"]                   = "Fehler beim Speichern der Rechte";
 $lang["filebrowser"]                     = "Datei auswählen";
 $lang["form_aspect_default"]             = "Standard-Aspekt";
@@ -127,15 +121,6 @@ $lang["form_deletedrecordsfilter_systemid"] = "Systemid";
 $lang["form_deletedrecordsfilter_class"] = "Klasse";
 $lang["form_deletedrecordsfilter_comment"] = "Record Comment";
 $lang["form_default_group_name"]         = "Basisdaten";
-$lang["gd"]                              = "GD-Lib";
-$lang["geladeneerweiterungen"]           = "Geladene Erweiterungen";
-$lang["gifread"]                         = "GIF Read Support";
-$lang["gifwrite"]                        = "GIF Write Support";
-$lang["groessedaten"]                    = "Größe Daten";
-$lang["groessegesamt"]                   = "Größe Gesamt";
-$lang["inputtimeout"]                    = "Input Timeout";
-$lang["jpg"]                             = "JPG Support";
-$lang["keinegd"]                         = "Keine GD-Lib installiert";
 $lang["locked_record_info"]              = "Gesperrt seit: {0} &middot; Gesperrt durch: {1}";
 $lang["log_empty"]                       = "Keine Einträge im System-Logfile vorhanden";
 $lang["login_xml_error"]                 = "Login fehlgeschlagen";
@@ -147,7 +132,7 @@ $lang["mail_recipient"]                  = "Empfänger";
 $lang["mail_send_error"]                 = "Fehler beim Versenden der E-Mail. Bitte versuchen Sie die letzte Aktion erneut.";
 $lang["mail_send_success"]               = "E-Mail erfolgreich verschickt.";
 $lang["mail_subject"]                    = "Betreff";
-$lang["memorylimit"]                     = "Memory Limit";
+
 $lang["messageprovider_exceptions_name"] = "System-Fehlermeldungen";
 $lang["messageprovider_personalmessage_name"] = "Persönliche Nachrichten";
 $lang["modul_titel_aspect"]                = "Aspekte bearbeiten";
@@ -161,12 +146,9 @@ $lang["modul_titel"]                     = "System";
 $lang["moduleRightsTitle"]               = "Rechte";
 $lang["numberStyleDecimal"]              = ",";
 $lang["numberStyleThousands"]            = ".";
-$lang["operatingsystem"]                 = "Betriebssystem";
 $lang["pageview_forward"]                = "Weiter";
 $lang["pageview_total"]                  = "Gesamt: ";
-$lang["php"]                             = "PHP";
-$lang["png"]                             = "PNG Support";
-$lang["postmaxsize"]                     = "Post Max Size";
+
 $lang["quickhelp_change"]                = "Mit Hilfe dieses Formulares können die Rechte eines Datensatzes angepasst werden.";
 $lang["quickhelp_list"]                  = "Die Liste der Module gibt eine schnelle Übersicht über die aktuell im System installierten Module.<br />Zusätzlich werden die aktuell installierten Versionen der installierten Module genannt, ebenso das ursprüngliche Installationsdatum des Moduls.<br />Über die Rechte des Moduls kann der Modul-Rechte-Knoten bearbeitet werden, von welchem die Inhalte bei aktivierter Rechtevererbung ihre Einstellungen erben.<br />Durch Verschieben der Module in der Liste lässt sich die Reihenfolge in der Modulnavigation anpassen.";
 $lang["quickhelp_module_list"]           = "Die Liste der Module gibt eine schnelle Übersicht über die aktuell im System installierten Module.<br />Zusätzlich werden die aktuell installierten Versionen der installierten Module genannt, ebenso das ursprüngliche Installationsdatum des Moduls.<br />Über den Rechte-Button der Module können die jeweiligen Modul-Root-Rechte bearbeitet werden, welche an einzelne Datensätze des Moduls vererbt werden (solange die Rechteerbung des Datensatzes aktiviert ist).<br />Durch Verschieben der Module in der Liste lässt sich die Reihenfolge in der Modulnavigation anpassen.";
@@ -177,7 +159,7 @@ $lang["quickhelp_systemlog"]             = "Das Systemlogbuch gibt die Einträge
 $lang["quickhelp_title"]                 = "Schnellhilfe";
 $lang["quickhelp_updateCheck"]           = "Mit der Aktion Updatecheck werden die Versionsnummern der im System installierten Module mit den Versionsnummern der aktuell verfügbaren Module verglichen. Sollte ein Modul nicht mehr in der neusten Verion installiert sein, so gibt Kajona in der Zeile dieses Moduls einen Hinweis hierzu aus.";
 $lang["send"]                            = "Versenden";
-$lang["server"]                          = "Webserver";
+
 $lang["session_activity"]                = "Aktivität";
 $lang["session_admin"]                   = "Administration, Modul: ";
 $lang["session_loggedin"]                = "angemeldet";
@@ -192,17 +174,11 @@ $lang["setStatusError"]                  = "Fehler beim Ändern des Status";
 $lang["setStatusOk"]                     = "Ändern des Status erfolgreich";
 $lang["settings_updated"]                = "Einstellungen wurden geändert.";
 $lang["setzen_erfolg"]                   = "Rechte erfolgreich gespeichert";
-$lang["speicherplatz"]                   = "Speicherplatz";
+$lang["save_rights_success"]             = "Rechte erfolgreich gespeichert";
+$lang["save_rights_error"]               = "Fehler beim Speichern der Berechtigungen";
+
 $lang["status_active"]                   = "Status ändern (ist aktiv)";
 $lang["status_inactive"]                 = "Status ändern (ist inaktiv)";
-$lang["system_cache"]                    = "Cache";
-$lang["system_realpath"]                 = "System-Pfad im Dateisystem";
-$lang["system_webpath"]                  = "System-URL";
-$lang["systeminfo_php_regglobal"]        = "Register globals";
-$lang["systeminfo_php_safemode"]         = "Safe mode";
-$lang["systeminfo_php_urlfopen"]         = "Allow url fopen";
-$lang["systeminfo_webserver_modules"]    = "Geladene Module";
-$lang["systeminfo_webserver_version"]    = "Webserver";
 $lang["systemtask_cacheSource_source"]   = "Cache-Arten";
 $lang["systemtask_cacheSource_namespace"] = "Cache-Namespace";
 $lang["systemtask_cancel_execution"]     = "Ausführung beenden";
@@ -265,13 +241,6 @@ $lang["systemtask_systemstatus_systemid"] = "Systemid";
 $lang["systemtask_rightsinheritcheck_name"] = "Rechtevererbung optimieren";
 $lang["systemtask_rightsinheritcheck_intro"] = "Für nachfolgende Knoten wurde die Rechte-Vererbung wieder aktiviert. Die Knoten brachen die Vererbung auf, obwohl sie die selben Rechte wie ihr Eltern-Knoten verwendet hatten.";
 $lang["systemtask_rightsinheritcheck_empty"] = "Alle Knoten sind optimiert";
-$lang["time_localsystemtime"]            = "Lokale System-Zeit";
-$lang["time_phptimestamp"]               = "php-Zeit gem. time()";
-$lang["time_systemtime_UTC"]             = "Zeit nach UTC";
-$lang["time_systemtimezone"]             = "Zeitzone des Systems";
-$lang["time_systemzone_manual_setting"]  = "Manuell eingestellte Zeitzone";
-$lang["timeinfo"]                        = "Systemzeit";
-$lang["timezone"]                        = "Zeitzone";
 $lang["titel_erben"]                     = "Rechte erben";
 $lang["permissions_toggle_visible"]                     = "Nicht-konfigurierte Zeilen einblenden";
 $lang["permissions_toggle_hidden"]                     = "Nicht-konfigurierte Zeilen ausblenden";
@@ -294,10 +263,10 @@ $lang["update_module_remoteversion"]     = "Verfügbar";
 $lang["update_nodom"]                    = "Diese PHP-Installation unterstützt kein XML-DOM. Dies ist für den Update-Check erforderlich.";
 $lang["update_nofilefound"]              = "Die Liste der Updates konnte nicht geladen werden.<br />Gründe hierfür können sein, dass auf diesem System der PHP-Config-Wert 'allow_url_fopen' auf 'off' gesetzt wurde, oder das System keine Unterstützung für Sockets bietet.";
 $lang["update_nourlfopen"]               = "Für diese Funktion muss der Wert &apos;allow_url_fopen&apos; in der PHP-Konfiguration auf &apos;on&apos; gesetzt sein!";
-$lang["uploadmaxsize"]                   = "Upload Max Size";
+
 $lang["uploadfile"]                      = "Ausgewählte Datei";
-$lang["uploads"]                         = "Uploads";
-$lang["version"]                         = "Version";
+
+
 $lang["warnung_settings"]                = "ACHTUNG!!!<br />Bei folgenden Einstellungen können falsche Werte das System unbrauchbar machen!";
 $lang["systemtask_permissions_hint"]     = "Dieser Task ändert die Berechtigungen einer Gruppe rekursiv. Die Berechtigungen werden dabei unabhängig des Vererbungsstatus gesetzt, d.h. die Rechte werden entweder durch Vererbung oder durch direkte Manipulation angepasst. Die Berechtigungen anderer Gruppen bleiben unverändert.";
 $lang["systemtask_permissions_systemid"]     = "Start Systemid";
@@ -313,29 +282,13 @@ $lang["changelog_tooltipUnitPlural"] = "Änderungen";
 $lang["changelog_tooltipHtml"]       = "<span><strong>%count% %unit%</strong> am %date%</span>";
 $lang["changelog_tooltipColumn"]     = "Über die Kalender-Heatmap können Sie per Klick den Datensatz für ein bestimmtes Datum nachladen.";
 
-$lang["cache"]  = "Cache";
-$lang["cache_apc"]  = "APC";
-$lang["cache_filesystem"]  = "Filesystem";
-$lang["cache_hits"]  = "Hits";
-$lang["cache_misses"]  = "Misses";
-$lang["cache_uptime"]  = "Uptime";
-$lang["cache_usage"]  = "Usage";
-$lang["cache_available"]  = "Available";
-
+$lang["workflow_oracle_stats_title"]  = "Oracle Statistiken neu berechnen";
+$lang["workflow_oracle_stats_val1"]  = "Uhrzeit der Berechnung";
 
 $lang["workflow_messagequeue_title"]  = "Message-Queue Abarbeitung";
 $lang["workflow_queue_sender_val1"]  = "Stunden";
 $lang["workflow_queue_sender_val2"]  = "Minuten";
 
-$lang["smtp_config"]  = "SMTP-Config";
-$lang["smtp_enabled"]  = "SMTP aktiviert";
-$lang["smtp_host"]  = "Host";
-$lang["smtp_port"]  = "Port";
-$lang['smtp_encryption']      = "SMTP encryption";
-$lang['smtp_debug']           = "SMTP debug";
-$lang['smtp_auth_enabled']    = "SMTP auth_enabled";
-$lang['smtp_auth_username']   = "SMTP auth_username";
-$lang['smtp_auth_password']   = "SMTP auth_password";
 
 $lang["update_in_progress"] = "Das System wird gerade aktualisiert. Bitte warten Sie...";
 $lang["form_objectlist_add_search"]  = "{0} hinzufügen ...";
@@ -344,3 +297,12 @@ $lang["object_browser_reset"] = "Objekt entfernen";
 
 $lang["copy_to_clipboard"] = "In die Zwischenablage kopieren";
 $lang["copy_page_url"] = "Seiten-URL";
+$lang["link_was_copied"] = "Link wurde kopiert";
+
+$lang["error_model_not_found"] = "Fehler beim Verarbeiten der Anfrage, der zu ladende Datensatz ist nicht bekannt. Bitte starten Sie die letzte Aktion erneut.";
+
+$lang["systemtask_samplecontent_installer"] = "Samplecontent";
+$lang["systemtask_samplecontent_installer_name"] = "Samplecontent Installer";
+$lang["systemtask_samplecontent_installer_error"] = "Samplecontent konnte nicht installiert werden";
+
+$lang["systemtask_form_name"] = "Form-Demo";

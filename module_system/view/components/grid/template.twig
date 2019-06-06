@@ -11,9 +11,7 @@
     {% endfor %}
     {% if limitHeight == true %}
         <script type="text/javascript">
-            require(["jquery"], function($) {
-                $('#{{ id }} .col').css("max-height", ($(window).height()-150)).css("overflow-x", "auto");
-            });
+          $('#{{ id }} .col').css("max-height", ($(window).height()-150)).css("overflow-x", "auto");
         </script>
     {% endif %}
 </div>

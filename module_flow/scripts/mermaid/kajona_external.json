@@ -1,6 +1,6 @@
 {
     "name" : "mermaid",
-    "version" : "0.5.1",
+    "version" : "7.0.0",
     "source" : ["http://knsv.github.io/mermaid/", "https://github.com/knsv/mermaid"],
     "license" : "MIT",
     "licenseurl" : "https://github.com/knsv/mermaid/blob/master/LICENSE"

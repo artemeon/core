@@ -32,9 +32,9 @@ class Warningbox extends AbstractComponent
 
     /**
      * @param string $strContent
-     * @param string $strClass
+     * @param string $strClass one of alert-warning, alert-info, alert-danger
      */
-    public function __construct(string $strContent, string $strClass = "")
+    public function __construct(string $strContent, string $strClass = "alert-warning")
     {
         parent::__construct($strContent, $strClass);
 

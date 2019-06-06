@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*   $Id$                              *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *   $Id$                              *
+ ********************************************************************************************************/
 
 namespace Kajona\System\Admin;
 
@@ -14,6 +14,7 @@ use Kajona\System\System\ArraySectionIterator;
 use Kajona\System\System\AuthenticationException;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
+use Kajona\System\System\Filesystem;
 use Kajona\System\System\Link;
 use Kajona\System\System\Messageproviders\MessageproviderExtendedInterface;
 use Kajona\System\System\Messageproviders\MessageproviderPersonalmessage;
@@ -45,7 +46,6 @@ use Kajona\System\System\SystemChangelog;
 class MessagingAdmin extends AdminEvensimpler implements AdminInterface
 {
 
-
     /**
      * @return array
      */
@@ -65,12 +65,11 @@ class MessagingAdmin extends AdminEvensimpler implements AdminInterface
         $arrEntries = parent::getArrOutputNaviEntries();
         $objObject = Objectfactory::getInstance()->getObject($this->getSystemid());
         if ($objObject instanceof MessagingMessage) {
-            $arrEntries[] = Link::getLinkAdmin("messaging", "view", "&systemid=".$objObject->getSystemid(), $objObject->getStrDisplayName());
+            $arrEntries[] = Link::getLinkAdmin("messaging", "view", "&systemid=" . $objObject->getSystemid(), $objObject->getStrDisplayName());
         }
 
         return $arrEntries;
     }
-
 
     /**
      * Renders the form to configure each messageprovider
@@ -98,7 +97,7 @@ class MessagingAdmin extends AdminEvensimpler implements AdminInterface
             var param2 = 'messageprovidertype='+messageProviderType; //messageprovide type
             var postBody = param1+'&'+param2;
 
-            require('ajax').genericAjaxCall("messaging", "saveConfigAjax", "&"+postBody, require('ajax').regularCallback);
+            Ajax.genericAjaxCall("messaging", "saveConfigAjax", "&"+postBody, Ajax.regularCallback);
 
             if(inputId.indexOf("_enabled") > 0 ) {
                 $("#"+inputId).closest("tr").find("div.checkbox input:not(.blockEnable)").slice(1).bootstrapSwitch("disabled", state);
@@ -115,12 +114,16 @@ JS;
             $bitAlwaysEnabled = $objOneProvider instanceof MessageproviderExtendedInterface && $objOneProvider->isAlwaysActive();
             $bitAlwaysMail = $objOneProvider instanceof MessageproviderExtendedInterface && $objOneProvider->isAlwaysByMail();
 
+            if ($bitAlwaysEnabled && $bitAlwaysMail) {
+                continue;
+            }
+
             $strClassname = StringUtil::replace("\\", "-", get_class($objOneProvider));
 
             $arrRows[] = array(
                 $objOneProvider->getStrName(),
-                "inlineFormEntry 1" => $this->objToolkit->formInputOnOff($strClassname."_enabled", $this->getLang("provider_enabled"), $objConfig->getBitEnabled() == 1, $bitAlwaysEnabled, $strCallback),
-                "inlineFormEntry 2" => $this->objToolkit->formInputOnOff($strClassname."_bymail", $this->getLang("provider_bymail"), $objConfig->getBitBymail() == 1, $bitAlwaysMail, $strCallback, ($bitAlwaysMail ? "blockEnable" : ""))
+                "inlineFormEntry 1" => $this->objToolkit->formInputOnOff($strClassname . "_enabled", $this->getLang("provider_enabled"), $objConfig->getBitEnabled() == 1, $bitAlwaysEnabled, $strCallback),
+                "inlineFormEntry 2" => $this->objToolkit->formInputOnOff($strClassname . "_bymail", $this->getLang("provider_bymail"), $objConfig->getBitBymail() == 1, $bitAlwaysMail, $strCallback, ($bitAlwaysMail ? "blockEnable" : "")),
             );
 
         }
@@ -144,14 +147,13 @@ JS;
     {
         if ($objListEntry instanceof MessagingMessage) {
             return array(
-                $this->objToolkit->listButton(Link::getLinkAdmin($objListEntry->getArrModule("modul"), "view", "&systemid=".$objListEntry->getSystemid(), $this->getLang("action_edit"), $this->getLang("action_edit"), "icon_lens" )),
-                $this->objToolkit->listButton(Link::getLinkAdminDialog($this->getArrModule("modul"), "new", ["messaging_user_id" => $objListEntry->getStrSenderId(), "messaging_messagerefid" => $objListEntry->getSystemid(), "messaging_title" => "RE: ".$objListEntry->getStrTitle()], $this->getLang("message_reply"), $this->getLang("message_reply"), "icon_reply"))
+                $this->objToolkit->listButton(Link::getLinkAdmin($objListEntry->getArrModule("modul"), "view", "&systemid=" . $objListEntry->getSystemid(), $this->getLang("action_edit"), $this->getLang("action_edit"), "icon_lens")),
+                $this->objToolkit->listButton(Link::getLinkAdminDialog($this->getArrModule("modul"), "new", ["messaging_user_id" => $objListEntry->getStrSenderId(), "messaging_messagerefid" => $objListEntry->getSystemid(), "messaging_title" => "RE: " . $objListEntry->getStrTitle()], $this->getLang("message_reply"), $this->getLang("message_reply"), "icon_reply")),
             );
         }
 
         return array();
     }
-
 
     /**
      * @param string $strListIdentifier
@@ -174,7 +176,6 @@ JS;
         return "";
     }
 
-
     /**
      * Stores the submitted config-data back to the database
      *
@@ -193,8 +194,8 @@ JS;
             $strClassname = StringUtil::replace("\\", "", get_class($objOneProvider));
 
             $objConfig = MessagingConfig::getConfigForUserAndProvider($this->objSession->getUserID(), $objOneProvider);
-            $objConfig->setBitBymail($this->getParam($strClassname."_bymail") != "");
-            $objConfig->setBitEnabled($this->getParam($strClassname."_enabled") != "");
+            $objConfig->setBitBymail($this->getParam($strClassname . "_bymail") != "");
+            $objConfig->setBitEnabled($this->getParam($strClassname . "_enabled") != "");
             $this->objLifeCycleFactory->factory(get_class($objConfig))->update($objConfig);
 
         }
@@ -224,24 +225,24 @@ JS;
 
             //only update the message provider which is set in the param "messageprovidertype"
             if ($this->getParam("messageprovidertype") == $strClassname) {
-                if ($this->getParam($strClassname."_bymail") != "") {
-                    $bitA = $this->getParam($strClassname."_bymail") == "true";
+                if ($this->getParam($strClassname . "_bymail") != "") {
+                    $bitA = $this->getParam($strClassname . "_bymail") == "true";
                     $objConfig->setBitBymail($bitA);
                     $this->objLifeCycleFactory->factory(get_class($objConfig))->update($objConfig);
-                    $strMessage = $objOneProvider->getStrName()." ".$this->getLang("provider_bymail")."=".($bitA ? $this->getLang("systemtask_systemstatus_active", "system") : $this->getLang("systemtask_systemstatus_inactive", "system"));
+                    $strMessage = $objOneProvider->getStrName() . " " . $this->getLang("provider_bymail") . "=" . ($bitA ? $this->getLang("systemtask_systemstatus_active", "system") : $this->getLang("systemtask_systemstatus_inactive", "system"));
                     break;
 
-                } elseif ($this->getParam($strClassname."_enabled") != "") {
-                    $bitA = $this->getParam($strClassname."_enabled") == "true";
+                } elseif ($this->getParam($strClassname . "_enabled") != "") {
+                    $bitA = $this->getParam($strClassname . "_enabled") == "true";
                     $objConfig->setBitEnabled($bitA);
                     $this->objLifeCycleFactory->factory(get_class($objConfig))->update($objConfig);
-                    $strMessage = $objOneProvider->getStrName()." ".$this->getLang("provider_enabled")."=".($bitA ? $this->getLang("systemtask_systemstatus_active", "system") : $this->getLang("systemtask_systemstatus_inactive", "system"));
+                    $strMessage = $objOneProvider->getStrName() . " " . $this->getLang("provider_enabled") . "=" . ($bitA ? $this->getLang("systemtask_systemstatus_active", "system") : $this->getLang("systemtask_systemstatus_inactive", "system"));
                     break;
                 }
             }
         }
 
-        return "<message>".$strMessage."</message>";
+        return "<message>" . $strMessage . "</message>";
     }
 
     /**
@@ -268,7 +269,6 @@ JS;
         return "";
     }
 
-
     /**
      * Returns a list of the languages
      *
@@ -283,12 +283,11 @@ JS;
         //render two multi-buttons
         $strReturn = "";
 
-
         //create the list-button and the js code to show the dialog
         $strDeleteAllRead = $this->objToolkit->confirmationLink(
             $this->getLang("delete_all_read_question"),
             getLinkAdminHref($this->getArrModule("module"), "deleteAllRead"),
-            AdminskinHelper::getAdminImage("icon_delete").$this->getLang("action_delete_all_read"),
+            AdminskinHelper::getAdminImage("icon_delete") . $this->getLang("action_delete_all_read"),
             $this->getLang("dialog_deleteHeader", "system"),
             $this->getLang("dialog_deleteButton", "system")
         );
@@ -296,19 +295,19 @@ JS;
         $strDeleteAll = $this->objToolkit->confirmationLink(
             $this->getLang("delete_all_question"),
             getLinkAdminHref($this->getArrModule("module"), "deleteAll"),
-            AdminskinHelper::getAdminImage("icon_delete").$this->getLang("action_delete_all"),
+            AdminskinHelper::getAdminImage("icon_delete") . $this->getLang("action_delete_all"),
             $this->getLang("dialog_deleteHeader", "system"),
             $this->getLang("dialog_deleteButton", "system")
         );
 
         $strReturn .= $this->objToolkit->getContentToolbar(array(
-            Link::getLinkAdmin($this->getArrModule("module"), "setAllRead", "", AdminskinHelper::getAdminImage("icon_mail").$this->getLang("action_set_all_read")),
+            Link::getLinkAdmin($this->getArrModule("module"), "setAllRead", "", AdminskinHelper::getAdminImage("icon_mail") . $this->getLang("action_set_all_read")),
             $strDeleteAllRead,
-            $strDeleteAll
+            $strDeleteAll,
         ));
 
         $objArraySectionIterator = new ArraySectionIterator(MessagingMessage::getNumberOfMessagesForUser($this->objSession->getUserID()));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(
             MessagingMessage::getObjectListFiltered(
                 null, $this->objSession->getUserID(), $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()
@@ -433,7 +432,6 @@ JS;
         return parent::actionNew();
     }
 
-
     /**
      * @permissions edit
      * @return string
@@ -475,13 +473,11 @@ JS;
 
         $objMessageHandler->sendMessageObject($objMessage, $arrTo);
 
-
-        return $this->objToolkit->warningBox($this->getLang("message_sent_success")).
-            $this->objToolkit->formHeader("").
-            $this->objToolkit->formInputSubmit($this->getLang("commons_ok"), "", "parent.require('folderview').dialog.hide();").
+        return $this->objToolkit->warningBox($this->getLang("message_sent_success")) .
+            $this->objToolkit->formHeader("") .
+            $this->objToolkit->formInputSubmit($this->getLang("commons_ok"), "", "parent.Folderview.dialog.hide();") .
             $this->objToolkit->formClose();
     }
-
 
     /**
      * Creates a summary of the message
@@ -514,7 +510,6 @@ JS;
             return $strMessage;
         }
 
-
         if ($objMessage->getStrUser() == $this->objSession->getUserID()) {
 
             $strReturn = "";
@@ -530,7 +525,7 @@ JS;
                 $objRefMessage = new MessagingMessage($objMessage->getStrMessageRefId());
                 $strReference = $objRefMessage->getStrDisplayName();
                 if ($objRefMessage->rightView()) {
-                    $strReference = getLinkAdmin($this->getArrModule("modul"), "view", "&systemid=".$objRefMessage->getSystemid(), $strReference, "", "", false);
+                    $strReference = getLinkAdmin($this->getArrModule("modul"), "view", "&systemid=" . $objRefMessage->getSystemid(), $strReference, "", "", false);
                 }
             }
 
@@ -539,8 +534,24 @@ JS;
                 array($this->getLang("message_date"), dateToString($objMessage->getObjDate())),
                 array($this->getLang("message_type"), $objMessage->getObjMessageProvider()->getStrName()),
                 array($this->getLang("message_sender"), $objSender != null ? $objSender->getStrDisplayName() : ""),
-                array($this->getLang("message_reference"), $strReference)
             );
+
+            if (!empty($strReference)) {
+                $arrMetaData[] = [
+                    $this->getLang("message_reference"),
+                    $strReference
+                ];
+            }
+
+            $attachment = $objMessage->getStrAttachment();
+            if (!empty($attachment)) {
+                $fileName = pathinfo($attachment, PATHINFO_BASENAME);
+
+                $arrMetaData[] = [
+                    $this->getLang("message_attachment"),
+                    Link::getLinkAdmin("messaging", "downloadAttachment", ["systemid" => $objMessage->getSystemid()], $fileName),
+                ];
+            }
 
             $strReturn .= $this->objToolkit->dataTable(array(), $arrMetaData);
 
@@ -554,6 +565,25 @@ JS;
         }
     }
 
+    /**
+     * @permissions view
+     */
+    protected function actionDownloadAttachment()
+    {
+        $message = $this->objFactory->getObject($this->getSystemid());
+        if ($message instanceof MessagingMessage) {
+            $attachment = $message->getStrAttachment();
+
+            if (!empty($attachment)) {
+                (new Filesystem())->streamFile($attachment);
+                exit;
+            } else {
+                throw new \RuntimeException("Attachment not available");
+            }
+        } else {
+            throw new \RuntimeException("Invalid systemid");
+        }
+    }
 
     /**
      * Gets the number of unread messages for the current user.
@@ -571,7 +601,7 @@ JS;
 
         return json_encode([
             "count" => MessagingMessage::getNumberOfMessagesForUser($this->objSession->getUserID(), true),
-            "alert" => MessagingAlert::getNextAlertForUser($this->objSession->getUserID())
+            "alert" => MessagingAlert::getNextAlertForUser($this->objSession->getUserID()),
         ]);
     }
 
@@ -601,10 +631,9 @@ JS;
                 "systemid" => $objOneMessage->getSystemid(),
                 "title" => $objOneMessage->getStrDisplayName(),
                 "unread" => $objOneMessage->getBitRead(),
-                "details" => Link::getLinkAdminHref($objOneMessage->getArrModule("modul"), "edit", "&systemid=".$objOneMessage->getSystemid(), false, true)
+                "details" => Link::getLinkAdminHref($objOneMessage->getArrModule("modul"), "edit", "&systemid=" . $objOneMessage->getSystemid(), false, true),
             );
         }
-
 
         $arrReturn = array(
             "messages" => $arrReturn,
@@ -629,7 +658,6 @@ JS;
         throw new AuthenticationException("User is not allowed to delete action", Exception::$level_ERROR);
     }
 
-
     /**
      * Marks a message as read and returns a 1x1px transparent gif as a "read indicator"
      *
@@ -649,6 +677,5 @@ JS;
 
         return base64_decode("R0lGODlhAQABAIAAAP///////yH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==");
     }
-
 
 }

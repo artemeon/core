@@ -1,14 +1,11 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="lang"/>
-
-import * as $ from "jquery";
-import CacheManager = require("./CacheManager");
+import $ from 'jquery'
+import CacheManager from './CacheManager'
 
 interface QueueEntry {
-    text: string,
-    module: string,
-    params?: Array<string>,
-    callback?: Function,
+    text: string
+    module: string
+    params?: Array<string>
+    callback?: Function
     scope?: any
 }
 
@@ -16,13 +13,12 @@ interface QueueEntry {
  * language module to load properties / localized strings from the backend
  */
 class Lang {
-
     /**
      * Contains the list of lang properties which must be resolved
      *
      * @type {Array}
      */
-    private static queue: Array<QueueEntry> = [];
+    private static queue: Array<QueueEntry> = []
 
     /**
      * Searches inside the container for all data-lang-property attributes and loads the specific property and replaces the
@@ -32,38 +28,40 @@ class Lang {
      * @param {HTMLElement} containerEl
      * @param {function} onReady
      */
-    public static initializeProperties(containerEl?: any, onReady?: Function){
+    public static initializeProperties (containerEl?: any, onReady?: Function) {
         if (!containerEl) {
-            containerEl = "body";
+            containerEl = 'body'
         }
-        $(containerEl).find("*[data-lang-property]").each(function(){
-            var strProperty = $(this).data("lang-property");
-            if (strProperty) {
-                var arrValues = strProperty.split(":", 2);
-                if (arrValues.length == 2) {
-                    var arrParams = [];
-                    var strParams = $(this).data("lang-params");
-                    if (strParams) {
-                        arrParams = strParams.split("|");
+        $(containerEl)
+            .find('*[data-lang-property]')
+            .each(function () {
+                var strProperty = $(this).data('lang-property')
+                if (strProperty) {
+                    var arrValues = strProperty.split(':', 2)
+                    if (arrValues.length === 2) {
+                        var arrParams = []
+                        var strParams = $(this).data('lang-params')
+                        if (strParams) {
+                            arrParams = strParams.split('|')
+                        }
+
+                        var objCallback = function (strText: string) {
+                            $(this).html(strText)
+                        }
+
+                        Lang.queue.push({
+                            text: arrValues[1],
+                            module: arrValues[0],
+                            params: arrParams,
+                            callback: objCallback,
+                            scope: this
+                        })
                     }
-
-                    var objCallback = function(strText: string){
-                        $(this).html(strText);
-                    };
-
-                    Lang.queue.push({
-                        text: arrValues[1],
-                        module: arrValues[0],
-                        params: arrParams,
-                        callback: objCallback,
-                        scope: this
-                    });
                 }
-            }
-        });
+            })
 
-        this.fetchProperties(onReady);
-    };
+        this.fetchProperties(onReady)
+    }
 
     /**
      * Fetches a single property and passes the value to the callback as soon as the entry was loaded from the backend
@@ -72,16 +70,20 @@ class Lang {
      * @param key
      * @param callback
      */
-    public static fetchSingleProperty(module: string, key: string, callback: Function) {
+    public static fetchSingleProperty (
+        module: string,
+        key: string,
+        callback: Function
+    ) {
         this.queue.push({
             text: key,
             module: module,
             params: [],
             callback: callback
-        });
+        })
 
-        this.fetchProperties();
-    };
+        this.fetchProperties()
+    }
 
     /**
      * Fetches all properties for the given module and stores them in the local storage. Calls then the callback with the
@@ -90,73 +92,95 @@ class Lang {
      *
      * @param {function} onReady
      */
-    public static fetchProperties(onReady?: Function){
-        if (this.queue.length == 0) {
+    public static fetchProperties (onReady?: Function) {
+        if (this.queue.length === 0) {
             if (onReady) {
-                onReady.apply(this);
+                onReady.apply(this)
             }
-            return;
+            return
         }
 
-        var arrData = this.queue[0];
-        var strKey = arrData.module + '_' + KAJONA_LANGUAGE + '_' + KAJONA_BROWSER_CACHEBUSTER;
-        var objCache = CacheManager.get(strKey);
+        var arrData = this.queue[0]
+        var strKey =
+            arrData.module +
+            '_' +
+            KAJONA_LANGUAGE +
+            '_' +
+            KAJONA_BROWSER_CACHEBUSTER
+        var objCache = CacheManager.get(strKey)
 
-        if(objCache) {
-            objCache = $.parseJSON(objCache);
-            var strResp = null;
+        if (objCache) {
+            objCache = $.parseJSON(objCache)
+            var strResp = null
             for (var strCacheKey in objCache) {
-                if (arrData.text == strCacheKey) {
-                    strResp = objCache[strCacheKey];
+                if (arrData.text === strCacheKey) {
+                    strResp = objCache[strCacheKey]
                 }
             }
         }
 
         if (strResp) {
-            arrData = this.queue.shift();
+            arrData = this.queue.shift()
 
-            strResp = this.replacePropertyParams(strResp, arrData.params);
-            if (typeof arrData.callback === "function") {
-                arrData.callback.apply(arrData.scope ? arrData.scope : this, [strResp, arrData.module, arrData.text]);
+            strResp = this.replacePropertyParams(strResp, arrData.params)
+            if (typeof arrData.callback === 'function') {
+                arrData.callback.apply(arrData.scope ? arrData.scope : this, [
+                    strResp,
+                    arrData.module,
+                    arrData.text
+                ])
             }
 
-            this.fetchProperties(onReady);
-            return;
+            this.fetchProperties(onReady)
+            return
         }
 
         $.ajax({
             type: 'POST',
-            url: KAJONA_WEBPATH + '/xml.php?admin=1&module=system&action=fetchProperty',
-            data: {target_module : arrData.module},
+            url:
+                KAJONA_WEBPATH +
+                '/xml.php?admin=1&module=system&action=fetchProperty',
+            data: { target_module: arrData.module },
             dataType: 'json',
-            success: function(objResp) {
-                var arrData = Lang.queue.shift();
-                if(arrData === undefined) {
-                    Lang.fetchProperties(onReady);
-                    return;
+            success: function (objResp) {
+                var arrData = Lang.queue.shift()
+                if (arrData === undefined) {
+                    Lang.fetchProperties(onReady)
+                    return
                 }
 
-                CacheManager.set(arrData.module + '_' + KAJONA_LANGUAGE + '_' + KAJONA_BROWSER_CACHEBUSTER, JSON.stringify(objResp));
+                CacheManager.set(
+                    arrData.module +
+                        '_' +
+                        KAJONA_LANGUAGE +
+                        '_' +
+                        KAJONA_BROWSER_CACHEBUSTER,
+                    JSON.stringify(objResp)
+                )
 
-                var strResp = null;
+                var strResp = null
                 for (strKey in objResp) {
-                    if (arrData.text == strKey) {
-                        strResp = objResp[strKey];
+                    if (arrData.text === strKey) {
+                        strResp = objResp[strKey]
                     }
                 }
                 if (strResp !== null) {
-                    strResp = Lang.replacePropertyParams(strResp, arrData.params);
-                    if (typeof arrData.callback === "function") {
-                        arrData.callback.apply(arrData.scope ? arrData.scope : this, [strResp, arrData.module, arrData.text]);
+                    strResp = Lang.replacePropertyParams(
+                        strResp,
+                        arrData.params
+                    )
+                    if (typeof arrData.callback === 'function') {
+                        arrData.callback.apply(
+                            arrData.scope ? arrData.scope : this,
+                            [strResp, arrData.module, arrData.text]
+                        )
                     }
                 }
 
-                Lang.fetchProperties(onReady);
+                Lang.fetchProperties(onReady)
             }
-        });
-
-
-    };
+        })
+    }
 
     /**
      * Replaces all wildcards i.e. {0} with the value of the array
@@ -164,14 +188,15 @@ class Lang {
      * @param {String} strText
      * @param {Array} arrParams
      */
-    public static replacePropertyParams(strText: string, arrParams: Array<string>){
+    public static replacePropertyParams (
+        strText: string,
+        arrParams: Array<string>
+    ) {
         for (var i = 0; i < arrParams.length; i++) {
-            strText = strText.replace("{" + i + "}", arrParams[i]);
+            strText = strText.replace('{' + i + '}', arrParams[i])
         }
-        return strText;
-    };
-
+        return strText
+    }
 }
-
-export = Lang;
-
+;(<any>window).Lang = Lang
+export default Lang

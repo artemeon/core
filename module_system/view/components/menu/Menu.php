@@ -22,7 +22,7 @@ class Menu extends AbstractComponent
     /**
      * @var array
      */
-    private $items;
+    private $items = [];
 
     private $renderMenuContainer = true;
 

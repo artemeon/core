@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$	                                    *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                        *
+ ********************************************************************************************************/
 
 namespace Kajona\Dashboard\Admin\Widgets;
 
@@ -63,7 +63,6 @@ abstract class Adminwidget
      */
     private $objLang;
 
-
     private $bitBlockSessionClose = false;
 
     public function __construct()
@@ -81,7 +80,7 @@ abstract class Adminwidget
      *
      * @param array $arrKeys
      */
-    protected final function setPersistenceKeys($arrKeys)
+    final protected function setPersistenceKeys($arrKeys)
     {
         $this->arrPersistenceKeys = $arrKeys;
     }
@@ -91,7 +90,7 @@ abstract class Adminwidget
      *
      * @param string $strKey
      */
-    protected final function addPersistenceKey($strKey)
+    final protected function addPersistenceKey($strKey)
     {
         $this->arrPersistenceKeys[] = $strKey;
     }
@@ -102,7 +101,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    public final function generateWidgetOutput()
+    final public function generateWidgetOutput()
     {
         return $this->getWidgetOutput();
     }
@@ -123,7 +122,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    public final function getFieldsAsString()
+    final public function getFieldsAsString()
     {
         $arrFieldsToPersist = array();
         foreach ($this->arrPersistenceKeys as $strOneKey) {
@@ -139,7 +138,7 @@ abstract class Adminwidget
      *
      * @param string $strContent
      */
-    public final function setFieldsAsString($strContent)
+    final public function setFieldsAsString($strContent)
     {
         $arrFieldsToLoad = unserialize(stripslashes($strContent));
         foreach ($this->arrPersistenceKeys as $strOneKey) {
@@ -155,13 +154,12 @@ abstract class Adminwidget
      *
      * @param array $arrFields
      */
-    public final function loadFieldsFromArray($arrFields)
+    final public function loadFieldsFromArray($arrFields)
     {
         foreach ($this->arrPersistenceKeys as $strOneKey) {
             if (isset($arrFields[$strOneKey])) {
                 $this->setFieldValue($strOneKey, $arrFields[$strOneKey]);
-            }
-            else {
+            } else {
                 $this->setFieldValue($strOneKey, "");
             }
         }
@@ -175,7 +173,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    public final function getLang($strKey, $arrParameters = array())
+    final public function getLang($strKey, $arrParameters = array())
     {
         return $this->objLang->getLang($strKey, "adminwidget", $arrParameters);
     }
@@ -187,12 +185,11 @@ abstract class Adminwidget
      *
      * @return mixed
      */
-    protected final function getFieldValue($strFieldName)
+    final protected function getFieldValue($strFieldName)
     {
         if (isset($this->arrFields[$strFieldName])) {
             return $this->arrFields[$strFieldName];
-        }
-        else {
+        } else {
             return "";
         }
     }
@@ -203,7 +200,7 @@ abstract class Adminwidget
      * @param string $strFieldName
      * @param mixed $mixedValue
      */
-    protected final function setFieldValue($strFieldName, $mixedValue)
+    final protected function setFieldValue($strFieldName, $mixedValue)
     {
         $this->arrFields[$strFieldName] = $mixedValue;
     }
@@ -213,7 +210,7 @@ abstract class Adminwidget
      *
      * @param string $strSystemid
      */
-    public final function setSystemid($strSystemid)
+    final public function setSystemid($strSystemid)
     {
         $this->strSystemid = $strSystemid;
     }
@@ -223,7 +220,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    public final function getSystemid()
+    final public function getSystemid()
     {
         return $this->strSystemid;
     }
@@ -250,7 +247,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    protected final function widgetText($strText)
+    final protected function widgetText($strText)
     {
         return $this->objToolkit->getTextRow($strText, "widgetText");
     }
@@ -261,7 +258,7 @@ abstract class Adminwidget
      *
      * @return string
      */
-    protected final function widgetSeparator()
+    final protected function widgetSeparator()
     {
         return $this->objToolkit->divider();
     }
@@ -296,12 +293,12 @@ abstract class Adminwidget
     {
         $fileName = $this->getImgFileName();
 
-        $path = Resourceloader::getInstance()->getAbsolutePathForModule($this->getModuleName()).self::STR_IMG_SOURCE_PATH.$fileName;
+        $path = Resourceloader::getInstance()->getAbsolutePathForModule($this->getModuleName()) . self::STR_IMG_SOURCE_PATH . $fileName;
         $fs = new Filesystem();
-        if (!file_exists(_realpath_.self::STR_IMG_FILE_PATH.$fileName)) {
-            $fs->fileCopy($path, self::STR_IMG_FILE_PATH.$fileName, true);
+        if (!file_exists(_realpath_ . self::STR_IMG_FILE_PATH . $fileName)) {
+            $fs->fileCopy($path, self::STR_IMG_FILE_PATH . $fileName, true);
         }
-        return self::STR_IMG_FILE_PATH.$fileName;
+        return self::STR_IMG_FILE_PATH . $fileName;
     }
 
     /**
@@ -311,16 +308,19 @@ abstract class Adminwidget
     public function getEditWidgetForm()
     {
         // create the form
-        $objFormgenerator = new AdminFormgenerator("edit".$this->getWidgetName(), null);
+        $objFormgenerator = new AdminFormgenerator("edit" . $this->getWidgetName(), null);
 
-
-        $objFormgenerator->setStrOnSubmit("require('dashboard').updateWidget(this, '{$this->getSystemid()}');return false");
+$strAdditionalContent = $this->getWidgetNameAdditionalContent();
+        if (!empty($strAdditionalContent)) {
+            $objFormgenerator->setStrOnSubmit("Dashboard.updateWidget(this, '{$this->getSystemid()}', true);return false");
+        } else {
+            $objFormgenerator->setStrOnSubmit("Dashboard.updateWidget(this, '{$this->getSystemid()}');return false");
+        }
 
         $this->getEditFormContent($objFormgenerator);
 
         //render filter
         $strReturn = $objFormgenerator->renderForm(Link::getLinkAdminHref("dashboard", "updateWidgetContent"), AdminFormgenerator::BIT_BUTTON_SUBMIT);
-
 
         return $strReturn;
     }
@@ -352,5 +352,3 @@ abstract class Adminwidget
     }
 
 }
-
-

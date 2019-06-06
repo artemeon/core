@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://apidocs.kajona.de/xsd/package_v2.xsd"
+        >
+    <title>devops</title>
+    <description>Common systeminfo plugins</description>
+    <version>7.1</version>
+    <author>ARTEMEON</author>
+    <providesInstaller>FALSE</providesInstaller>
+    <requiredModules>
+        <module name="system" version="7.1" />
+    </requiredModules>
+    <constants>
+        <constant name="_devops_module_id_" value="20160916" />
+    </constants>
+</package>

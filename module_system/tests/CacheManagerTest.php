@@ -8,6 +8,7 @@ namespace Kajona\System\Tests;
 
 use Kajona\System\System\CacheManager;
 use Kajona\System\System\Exception;
+use Kajona\System\System\Filesystem;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -86,6 +87,35 @@ class CacheManagerTest extends TestCase
         $objCacheManager->flushCache(CacheManager::TYPE_ARRAY);
 
         $this->assertFalse($objCacheManager->getValue("foo", CacheManager::TYPE_ARRAY));
+    }
+
+    public function testFlushCacheHard()
+    {
+        $objCacheManager = new CacheManager();
+
+        $this->assertFalse($objCacheManager->getValue("foo", CacheManager::TYPE_FILESYSTEM));
+
+        $objCacheManager->addValue("foo", "bar", 180, CacheManager::TYPE_FILESYSTEM);
+
+        $this->assertEquals("bar", $objCacheManager->getValue("foo", CacheManager::TYPE_FILESYSTEM));
+
+        //creating the copy-folders that should be removed by test with a cache
+        $strCacheDir = _realpath_."project/temp/";
+        $strCacheFolderCopy1 = "cache1";
+        $strCacheFolderCopy2 = "cache2";
+        $objFileSys = new Filesystem();
+        $objFileSys->folderCreate($strCacheDir.$strCacheFolderCopy1);
+        $objFileSys->folderCreate($strCacheDir.$strCacheFolderCopy2);
+
+        $objCacheManager->flushCache(CacheManager::TYPE_FILESYSTEM, CacheManager::NS_GLOBAL, true);
+
+        $arrFileList = $objFileSys->getCompleteList($strCacheDir, null, null, [".", ".."], true, false);
+        $isStrCacheFolderCopy1InList = in_array($strCacheFolderCopy1, $arrFileList['folders']);
+        $isStrCacheFolderCopy2InList = in_array($strCacheFolderCopy2, $arrFileList['folders']);
+
+        $this->assertFalse($objCacheManager->getValue("foo", CacheManager::TYPE_ARRAY));
+        $this->assertFalse($isStrCacheFolderCopy1InList);
+        $this->assertFalse($isStrCacheFolderCopy2InList);
     }
 
     public function testFlushAll()

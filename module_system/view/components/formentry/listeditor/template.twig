@@ -7,7 +7,7 @@
             <div class="item">
                 {% if not readOnly %}
                 <div class="input-group">
-                    <input type="text" name="{{ name }}[{{ key }}]" value="{{ item }}" class="form-control">
+                    <input type="text" name="{{ name }}[{{ key }}]" value="{{ item }}" data-entryindex="{{ key }}" class="form-control">
                     <div class="input-group-addon">
                         <a href="#" onclick="$(this).closest('.item').remove();return false;">
                             <span class="kj-icon fa fa-trash-o"></span>
@@ -20,7 +20,7 @@
                     </div>
                 </div>
                 {% else %}
-                <input type="text" name="{{ name }}[{{ key }}]" value="{{ item }}" readonly class="form-control">
+                <input type="text" name="{{ name }}[{{ key }}]" value="{{ item }}" data-entryindex="{{ key }}" readonly class="form-control">
                 {% endif %}
             </div>
             {% endfor %}
@@ -36,12 +36,22 @@
 
     {% if not readOnly %}
     <script type="text/javascript">
-        require(['jquery', 'util', 'jquery-ui'], function($, util) {
+
             $("#{{ name }}-add").click(function(){
-                var id = util.generateSystemId();
+                var id = Util.generateSystemId();
+                {% if continuousIndexes %}
+                    var maxIndex = $("#{{ name }}-container .item").length + 1;
+                    $("#{{ name }}-container .item .form-control").each(function() {
+                        var cur = $(this).data('entryindex');
+                        if (cur >= maxIndex) {
+                            maxIndex = cur+1;
+                        }
+                    });
+                    id = maxIndex;
+                {% endif %}
                 var html = "<div class=\"item\">";
                 html+= "<div class=\"input-group\">";
-                html+= "    <input type=\"text\" name=\"{{ name }}[" + id + "]\" value=\"\" class=\"form-control\">";
+                html+= "    <input type=\"text\" name=\"{{ name }}[" + id + "]\" value=\"\" data-entryindex=\""+id+"\" class=\"form-control\">";
                 html+= "    <div class=\"input-group-addon\">";
                 html+= "        <a href=\"#\" onclick=\"$(this).closest('.item').remove();return false;\">";
                 html+= "            <span class=\"kj-icon fa fa-trash-o\"></span>";
@@ -60,7 +70,6 @@
                 handle: 'span.fa-arrows',
                 cursor: 'move'
             });
-        });
     </script>
     {% endif %}
 </div>

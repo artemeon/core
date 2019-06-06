@@ -3,10 +3,8 @@
 namespace Kajona\Jqplot\Debug;
 
 use Kajona\Jqplot\System\GraphJqplot;
-use Kajona\System\Admin\AdminHelper;
 use Kajona\System\System\GraphFactory;
 use Kajona\System\System\Resourceloader;
-use Kajona\System\System\StringUtil;
 use Kajona\System\System\SystemSetting;
 
 class ChartsJqPlot
@@ -15,23 +13,19 @@ class ChartsJqPlot
     public function testCharts()
     {
 
-
-        srand((double)microtime() * 1000000);
+        srand((double) microtime() * 1000000);
         //--- system kernel -------------------------------------------------------------------------------------
         echo "\tcreating a few charts...\n";
 
-
         //JS-Imports for minimal system setup
-        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_system/scripts/jqueryui/css/smoothness/jquery-ui.custom.css\"></link>";
-        echo "<script type=\"text/javascript\">KAJONA_WEBPATH = '"._webpath_."'; KAJONA_BROWSER_CACHEBUSTER = '".SystemSetting::getConfigValue("_system_browser_cachebuster_")."';</script>\n";
-        echo "<script type=\"text/javascript\">KAJONA_PHARMAP = ".json_encode(array_values(\Kajona\System\System\Classloader::getInstance()->getArrPharModules())).";</script>";
-        echo "<script type=\"text/javascript\" src=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_system/scripts/agp.min.js\"></script>";
+        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_system/scripts/jqueryui/css/smoothness/jquery-ui.custom.css\"></link>";
+        echo "<script type=\"text/javascript\">KAJONA_WEBPATH = '" . _webpath_ . "'; KAJONA_BROWSER_CACHEBUSTER = '" . SystemSetting::getConfigValue("_system_browser_cachebuster_") . "';</script>\n";
+        echo "<script type=\"text/javascript\">KAJONA_PHARMAP = " . json_encode(array_values(\Kajona\System\System\Classloader::getInstance()->getArrPharModules())) . ";</script>";
+        echo "<script type=\"text/javascript\" src=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_system/scripts/agp.min.js\"></script>";
         echo "<script type=\"text/javascript\">
-            require(['app'], function(app) { app.init(); });
+            App.init();
         </script>
 ";
-
-
 
         /** @var GraphJqplot $objGraph */
         $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_JQPLOT);
@@ -150,7 +144,6 @@ class ChartsJqPlot
         $objGraph->setStrFont("open sans");
         echo $objGraph->renderGraph();
 
-
         $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_JQPLOT);
         $objGraph->setStrGraphTitle("A Horizontal Bar Chart no xAxis and yAxis");
         $objGraph->setStrXAxisTitle("My new X-Axis");
@@ -231,7 +224,6 @@ class ChartsJqPlot
         $objGraph->setStrFont("open sans");
         echo $objGraph->renderGraph();
 
-
         //create pie chart
         $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_JQPLOT);
         $objGraph->setStrGraphTitle("A Pie Chart 2");
@@ -269,7 +261,5 @@ class ChartsJqPlot
     }
 }
 
-
 $objCharts = new ChartsJqPlot();
 $objCharts->testCharts();
-

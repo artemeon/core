@@ -1,14 +1,12 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$	                                            *
-********************************************************************************************************/
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                                *
+ ********************************************************************************************************/
 
 namespace Kajona\System\Admin;
-
-
 
 /**
  * A massaction is a single, descriptive object to be rendered by the admin-toolkit.
@@ -21,50 +19,61 @@ namespace Kajona\System\Admin;
  * @since 4.0
  * @package module_system
  */
-class AdminBatchaction {
+class AdminBatchaction
+{
 
     private $strIcon;
     private $strTitle;
     private $strTargetUrl;
     private $bitRenderInfo;
     private $strOnClickHandler = "";
+    private $reloadOnFinish = "";
 
-    function __construct($strIcon, $strTargetUrl, $strTitle, $bitRenderInfo = false) {
+    public function __construct($strIcon, $strTargetUrl, $strTitle, $bitRenderInfo = false, $reloadOnFinish = false)
+    {
         $this->strIcon = $strIcon;
         $this->strTargetUrl = $strTargetUrl;
         $this->strTitle = $strTitle;
         $this->bitRenderInfo = $bitRenderInfo;
+        $this->reloadOnFinish = $reloadOnFinish;
         $this->updateOnClick();
     }
 
     private function updateOnClick()
     {
-        $this->strOnClickHandler = "require('lists').triggerAction('{$this->strTitle}', '{$this->strTargetUrl}', ".($this->getBitRenderInfo() ? "1" : "0").");";
+        $this->strOnClickHandler = "Lists.triggerAction('{$this->strTitle}', '{$this->strTargetUrl}', " . ($this->getBitRenderInfo() ? "1" : "0") . ", ".($this->reloadOnFinish ? 'true' : 'false').");";
     }
 
-    public function setStrIcon($strIcon) {
+
+    public function setStrIcon($strIcon)
+    {
         $this->strIcon = $strIcon;
     }
 
-    public function getStrIcon() {
+    public function getStrIcon()
+    {
         return $this->strIcon;
     }
 
-    public function setStrTargetUrl($strTargetUrl) {
+    public function setStrTargetUrl($strTargetUrl)
+    {
         $this->updateOnClick();
         $this->strTargetUrl = $strTargetUrl;
     }
 
-    public function getStrTargetUrl() {
+    public function getStrTargetUrl()
+    {
         return $this->strTargetUrl;
     }
 
-    public function setStrTitle($strTitle) {
+    public function setStrTitle($strTitle)
+    {
         $this->updateOnClick();
         $this->strTitle = $strTitle;
     }
 
-    public function getStrTitle() {
+    public function getStrTitle()
+    {
         return $this->strTitle;
     }
 
@@ -94,6 +103,5 @@ class AdminBatchaction {
     {
         $this->strOnClickHandler = $strOnClickHandler;
     }
-
 
 }

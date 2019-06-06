@@ -51,6 +51,14 @@ class PDFTable extends AbstractComponent
     private $columnWidths;
 
     /**
+     * @var string
+     */
+    private $borderWidth = '0.5px';
+
+    private $cellPadding = 4;
+    private $cellSpacing = 4;
+
+    /**
      * @param DTable $dataTable
      */
     public function __construct(DTable $dataTable)
@@ -79,7 +87,7 @@ class PDFTable extends AbstractComponent
     /**
      * @return string
      */
-    public function getOddBgColor(): string
+    public function getOddBgColor(): ?string
     {
         return $this->oddBgColor;
     }
@@ -87,7 +95,7 @@ class PDFTable extends AbstractComponent
     /**
      * @return string
      */
-    public function getOddFontColor(): string
+    public function getOddFontColor(): ?string
     {
         return $this->oddFontColor;
     }
@@ -105,7 +113,7 @@ class PDFTable extends AbstractComponent
     /**
      * @return string
      */
-    public function getEvenBgColor(): string
+    public function getEvenBgColor(): ?string
     {
         return $this->evenBgColor;
     }
@@ -113,7 +121,7 @@ class PDFTable extends AbstractComponent
     /**
      * @return string
      */
-    public function getEvenFontColor(): string
+    public function getEvenFontColor(): ?string
     {
         return $this->evenFontColor;
     }
@@ -157,8 +165,63 @@ class PDFTable extends AbstractComponent
             "evenBgColor" => $this->getEvenBgColor(),
             "evenFontColor" => $this->getEvenFontColor(),
             "columnWidths" => $this->getColumnWidths(),
+            "cellpadding" => $this->getCellPadding(),
+            "cellspacing" => $this->getCellSpacing(),
+            "borderWidth" => $this->getBorderWidth(),
         ];
 
         return $this->renderTemplate($data);
     }
+
+    /**
+     * @return int
+     */
+    public function getCellPadding(): int
+    {
+        return $this->cellPadding;
+    }
+
+    /**
+     * @param int $cellPadding
+     */
+    public function setCellPadding(int $cellPadding): void
+    {
+        $this->cellPadding = $cellPadding;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCellSpacing(): int
+    {
+        return $this->cellSpacing;
+    }
+
+    /**
+     * @param int $cellSpacing
+     */
+    public function setCellSpacing(int $cellSpacing): void
+    {
+        $this->cellSpacing = $cellSpacing;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBorderWidth(): string
+    {
+        return $this->borderWidth;
+    }
+
+    /**
+     * @param string $borderWidth
+     */
+    public function setBorderWidth(string $borderWidth): void
+    {
+        $this->borderWidth = $borderWidth;
+    }
+
+
+
+
 }

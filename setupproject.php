@@ -15,7 +15,7 @@ class class_project_setup
 
         self::$strRealPath = __DIR__ . "/../";
 
-        echo "<b>Kajona V7 project setup.</b>\nCreates the folder-structure required to build a new project.\n\n";
+        echo "<b>ARTEMEON core V7 project setup.</b>\nCreates the folder-structure required to build a new project.\n\n";
 
         $strCurFolder = __DIR__;
 
@@ -27,9 +27,9 @@ class class_project_setup
         }
 
 
-        $arrExcludedModules = array();
-        if (is_file(self::$strRealPath . "project/packageconfig.php")) {
-            include self::$strRealPath . "project/packageconfig.php";
+        $arrIncludedModules = null;
+        if (is_file(self::$strRealPath . "project/packageconfig.json")) {
+            $arrIncludedModules = json_decode(file_get_contents(self::$strRealPath."project/packageconfig.json"), true);
         }
 
         //Module-Constants
@@ -44,35 +44,22 @@ class class_project_setup
             }
 
             foreach (scandir(self::$strRealPath . "/" . $strRootFolder) as $strOneModule) {
-                if (preg_match("/^(module|element|_)+.*/i", $strOneModule) && !in_array($strOneModule, $arrExcludedModules[$strRootFolder])) {
+                if (preg_match("/^(module|_)+.*/i", $strOneModule) && (!is_array($arrIncludedModules) || (isset($arrIncludedModules[$strRootFolder]) && in_array($strOneModule, $arrIncludedModules[$strRootFolder])))) {
                     $arrModules[] = $strRootFolder . "/" . $strOneModule;
                 }
             }
         }
 
-        self::checkDir("/bin");
+        self::checkDir("/bin", false);
         self::createBinReadme();
-        self::checkDir("/project");
-        self::checkDir("/project/log");
-        self::makeWritable("/project/log");
-        self::checkDir("/project/dbdumps");
-        self::makeWritable("/project/dbdumps");
-        self::checkDir("/project/module_system");
-        self::checkDir("/project/module_system/system");
-        self::checkDir("/project/module_system/system/config");
-        self::makeWritable("/project/module_system/system/config");
-        self::checkDir("/project/temp");
-        self::makeWritable("/project/temp");
-        self::checkDir("/files");
-        self::checkDir("/files/cache");
-        self::makeWritable("/files/cache");
-        self::checkDir("/files/downloads");
-        self::checkDir("/files/downloads/default");
-        self::makeWritable("/files/downloads/default");
-        self::checkDir("/files/images");
-        self::makeWritable("/files/images");
-        self::checkDir("/files/extract");
-        self::makeWritable("/files/extract");
+        self::checkDir("/project/log", true);
+        self::checkDir("/project/dbdumps", true);
+        self::checkDir("/project/module_system/system/config", true);
+        self::checkDir("/project/temp", true);
+        self::checkDir("/files/cache", true);
+        self::checkDir("/files/downloads/default", true);
+        self::checkDir("/files/images", true);
+        self::checkDir("/files/extract", true);
 
         echo "searching for files on root/project-path...\n";
         foreach ($arrModules as $strSingleModule) {
@@ -83,12 +70,10 @@ class class_project_setup
             $arrContent = scandir(self::$strRealPath . "/" . $strSingleModule);
             foreach ($arrContent as $strSingleEntry) {
                 if (substr($strSingleEntry, -5) == ".root" && !is_file(self::$strRealPath . "/" . substr($strSingleEntry, 0, -5))) {
-                    //echo "copy ".$strSingleEntry." to ".self::$strRealPath."/".substr($strSingleEntry, 0, -5)."\n";
                     copy(self::$strRealPath . "/" . $strSingleModule . "/" . $strSingleEntry, self::$strRealPath . "/" . substr($strSingleEntry, 0, -5));
                 }
 
                 if (substr($strSingleEntry, -8) == ".project" && !is_file(self::$strRealPath . "/project/" . substr($strSingleEntry, 0, -8))) {
-                    //echo "copy ".$strSingleEntry." to ".self::$strRealPath."/".substr($strSingleEntry, 0, -5)."\n";
                     copy(self::$strRealPath . "/" . $strSingleModule . "/" . $strSingleEntry, self::$strRealPath . "/project/" . substr($strSingleEntry, 0, -8));
                 }
             }
@@ -107,12 +92,114 @@ class class_project_setup
         self::createDenyHtaccess("/project/.htaccess");
         self::createDenyHtaccess("/files/.htaccess");
 
+        self::createTokenKey();
+        self::createRootGitIgnore();
+        self::createDefaultPackageconfig();
+        self::createRootTsconfig();
+        self::creatRootEslintConfig();
         self::loadNpmDependencies();
         self::scanComposer();
-        self::buildSkinStyles();
-        self::buildJavascript();
 
         echo "\n<b>Done.</b>\nIf everything went well, <a href=\"../installer.php\">open the installer</a>\n";
+    }
+
+
+    private static function createRootGitIgnore()
+    {
+        if (is_file(self::$strRealPath . "/.gitignore")) {
+            return;
+        }
+        $content = <<<TEXT
+project/temp
+project/vendor
+project/log
+project/dbdumps
+files/cache
+.vscode
+tsconfig.json
+.eslintrc.json
+TEXT;
+        file_put_contents(self::$strRealPath . "/.gitignore", $content);
+    }
+
+
+    private static function createRootTsconfig()
+    {
+        if (is_file(self::$strRealPath . "/tsconfig.json")) {
+            return;
+        }
+        $content = <<<JSON
+{
+  "extends": "./core/_buildfiles/tsconfig"
+}
+JSON;
+        file_put_contents(self::$strRealPath . "/tsconfig.json", $content);
+    }
+
+    private static function creatRootEslintConfig(){
+        $content = <<<JSON
+{
+  "env": {
+    "node": true
+  },
+  "extends": ["plugin:vue/essential", "@vue/standard", "@vue/typescript"],
+  "rules": {
+    "semi": ["error", "never"],
+    "indent": [
+      "error",
+      4,
+      {
+        "SwitchCase": 1,
+        "VariableDeclarator": 1,
+        "outerIIFEBody": 1,
+        "MemberExpression": 1,
+        "FunctionDeclaration": { "parameters": 1, "body": 1 },
+        "FunctionExpression": { "parameters": 1, "body": 1 },
+        "CallExpression": { "arguments": 1 },
+        "ArrayExpression": 1,
+        "ObjectExpression": 1,
+        "ImportDeclaration": 1,
+        "flatTernaryExpressions": false,
+        "ignoreComments": false
+      }
+    ],
+    "quotes": [
+      "error",
+      "single",
+      { "avoidEscape": true, "allowTemplateLiterals": true }
+    ]
+  },
+  "parserOptions": {
+    "parser": "@typescript-eslint/parser"
+  }
+}
+
+
+JSON;
+        file_put_contents(self::$strRealPath . "/.eslintrc.json", $content);
+    }
+
+
+    private static function createDefaultPackageconfig()
+    {
+        if (is_file(self::$strRealPath . "/project/packageconfig.json")) {
+            return;
+        }
+
+        $cfg = new class {
+            public $core = [];
+        };
+        foreach (scandir(self::$strRealPath."/core") as $strOneEntry) {
+            if ($strOneEntry == "." || $strOneEntry == "..") {
+                continue;
+            }
+
+            if (is_dir(self::$strRealPath."/core" . "/" . $strOneEntry)) {
+                $cfg->core[] = $strOneEntry;
+            }
+        }
+
+        file_put_contents(self::$strRealPath . "/project/packageconfig.json", json_encode($cfg, JSON_PRETTY_PRINT));
     }
 
 
@@ -130,28 +217,25 @@ TEXT;
         file_put_contents(self::$strRealPath . "/bin/README.md", $strContent);
     }
 
-    private static function checkDir($strFolder)
+    private static function checkDir($strFolder, $writeable)
     {
         echo "checking dir " . self::$strRealPath . $strFolder . "\n";
         if (!is_dir(self::$strRealPath . $strFolder)) {
-            mkdir(self::$strRealPath . $strFolder, 0777);
+            mkdir(self::$strRealPath . $strFolder, 0777, true);
             echo " \t\t... directory created\n";
         } else {
             echo " \t\t... already existing.\n";
         }
+        if ($writeable) {
+            chmod(self::$strRealPath . $strFolder, 0777);
+        }
     }
-
-    private static function makeWritable($strFolder)
-    {
-        chmod(self::$strRealPath . $strFolder, 0777);
-    }
-
 
     private static function copyFolder($strSourceFolder, $strTargetFolder, $arrExcludeSuffix = array())
     {
         $arrEntries = scandir($strSourceFolder);
         foreach ($arrEntries as $strOneEntry) {
-            if ($strOneEntry == "." || $strOneEntry == ".." || $strOneEntry == ".svn" || in_array(substr($strOneEntry, strrpos($strOneEntry, ".")), $arrExcludeSuffix)) {
+            if ($strOneEntry == "." || $strOneEntry == ".."  || in_array(substr($strOneEntry, strrpos($strOneEntry, ".")), $arrExcludeSuffix)) {
                 continue;
             }
 
@@ -167,6 +251,15 @@ TEXT;
                 self::copyFolder($strSourceFolder . "/" . $strOneEntry, $strTargetFolder . "/" . $strOneEntry, $arrExcludeSuffix);
             }
         }
+    }
+
+    private static function createTokenKey()
+    {
+        // generate also token file for the installer api
+        echo "Generate token key\n";
+
+        $tokenFile = self::$strRealPath . "project/token.key";
+        file_put_contents($tokenFile, bin2hex(random_bytes(16)));
     }
 
     private static function createDenyHtaccess($strPath)
@@ -195,52 +288,22 @@ TEXT;
     {
         echo "Installing node dependencies" . PHP_EOL;
 
-        //only if required
-        if (is_dir(self::$strRealPath."/core/_buildfiles/jstests/node_modules/clean-css") && is_dir(self::$strRealPath."/core/_buildfiles/jstests/node_modules/less") && is_dir( self::$strRealPath . "/core/_buildfiles/jstests/node_modules/typescript/")) {
-            echo "  not required".PHP_EOL;
-            return;
-        }
-
         $arrOutput = array();
-        exec("ant -f ".escapeshellarg(self::$strRealPath."/core/_buildfiles/build.xml")." installNpmBuildDependencies ", $arrOutput, $exitCode);
+
+        $workingDirectory = \getcwd();
+        \chdir(__DIR__ . '/_buildfiles');
+        exec('npm config set registry "http://packages.artemeon.int:4873/"');
+        exec('npm install', $arrOutput, $exitCode);
+        \chdir($workingDirectory);
+
         if ($exitCode !== 0) {
             echo "Error exited with a non successful status code";
             exit(1);
         }
+
         echo "   " . implode("\n   ", $arrOutput);
     }
 
-    private static function buildSkinStyles()
-    {
-        if (is_file(__DIR__ . "/_buildfiles/bin/buildSkinStyles.php")) {
-            echo "Building skin css styles" . PHP_EOL;
-            $arrOutput = array();
-            exec("php -f " . escapeshellarg(self::$strRealPath . "/core/_buildfiles/bin/buildSkinStyles.php"), $arrOutput, $exitCode);
-            if ($exitCode !== 0) {
-                echo "Error exited with a non successful status code";
-                exit(1);
-            }
-            echo "   " . implode("\n   ", $arrOutput);
-        } else {
-            echo "<span style='color: red;'>Missing buildSkinStyles.php helper</span>";
-        }
-    }
-
-    private static function buildJavascript()
-    {
-        if (is_file(__DIR__ . "/_buildfiles/bin/buildJavascript.php")) {
-            echo "Compress and merge js files" . PHP_EOL;
-            $arrOutput = array();
-            exec("php -f " . escapeshellarg(self::$strRealPath . "/core/_buildfiles/bin/buildJavascript.php"), $arrOutput, $exitCode);
-            if ($exitCode !== 0) {
-                echo "Error exited with a non successful status code";
-                exit(1);
-            }
-            echo "   " . implode("\n   ", $arrOutput);
-        } else {
-            echo "<span style='color: red;'>Missing buildJavascript.php helper</span>";
-        }
-    }
 
     private static function scanComposer()
     {

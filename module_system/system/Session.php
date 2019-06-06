@@ -407,6 +407,10 @@ final class Session
      */
     public function loginUser(UserUser $objUser)
     {
+        //validate if the user is assigned to at least a single group
+        if (empty($objUser->getArrGroupIds())) {
+            throw new AuthenticationException("user ".$objUser->getStrDisplayName()." is not assigned to at least a single group", AuthenticationException::$level_ERROR);
+        }
         return $this->internalLoginHelper($objUser);
     }
 

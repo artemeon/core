@@ -327,7 +327,7 @@ class StringUtil
      */
     public static function jsSafeString($strString)
     {
-        $strJson = json_encode((string)$strString);
+        $strJson = json_encode((string)$strString, JSON_UNESCAPED_UNICODE);
         $strJson = trim($strJson, '"');
         $strJson = addcslashes($strJson, "'");
 

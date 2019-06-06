@@ -1,9 +1,9 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\Flow\System;
 
@@ -32,7 +32,7 @@ class FlowGraphWriter
     {
         //ugly hack to fetch old IE versions. used to inject some special options and css definitions
         $strUA = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
-        if (preg_match('~MSIE|Internet Explorer~i', $strUA) || (strpos($strUA, 'Trident/7.0; rv:11.0') !== false)) {
+        if (stripos($strUA, 'MSIE') !== false || (stripos($strUA, 'Trident/7.0') !== false) || stripos($strUA, 'WOW64') !== false || stripos($strUA, 'Internet Explorer') !== false) {
             self::$bitIsIe = true;
         }
         //return self::writeCytoscape($objFlow, $objHighlite);
@@ -44,153 +44,153 @@ class FlowGraphWriter
      * @param FlowStatus|FlowTransition $objHighlite
      * @return string
      */
-    private static function writeCytoscape(FlowConfig $objFlow, $objHighlite)
-    {
-        $arrStatus = $objFlow->getArrStatus();
+    // private static function writeCytoscape(FlowConfig $objFlow, $objHighlite)
+    // {
+    //         $arrStatus = $objFlow->getArrStatus();
 
-        // sort status
-        usort($arrStatus, function (FlowStatus $objA, FlowStatus $objB) {
-            if ($objA->getIntIndex() == 1) {
-                return 1;
-            }
-            if ($objA->getIntIndex() == $objB->getIntIndex()) {
-                return 0;
-            }
-            return ($objA->getIntIndex() < $objB->getIntIndex()) ? -1 : 1;
-        });
+//         // sort status
+    //         usort($arrStatus, function (FlowStatus $objA, FlowStatus $objB) {
+    //             if ($objA->getIntIndex() == 1) {
+    //                 return 1;
+    //             }
+    //             if ($objA->getIntIndex() == $objB->getIntIndex()) {
+    //                 return 0;
+    //             }
+    //             return ($objA->getIntIndex() < $objB->getIntIndex()) ? -1 : 1;
+    //         });
 
-        $arrNodes = [];
-        foreach ($arrStatus as $objStatus) {
-            $strBgColor = "#fff";
-            $strBorder = "2";
-            if ($objHighlite instanceof FlowStatus && $objHighlite->getSystemid() == $objStatus->getSystemid()) {
-                $strBgColor = "#eee";
-                $strBorder = "4";
-            } elseif ($objHighlite instanceof FlowTransition && $objHighlite->getParentStatus()->getSystemid() == $objStatus->getSystemid()) {
-                $strBgColor = "#eee";
-                $strBorder = "4";
-            }
+//         $arrNodes = [];
+    //         foreach ($arrStatus as $objStatus) {
+    //             $strBgColor = "#fff";
+    //             $strBorder = "2";
+    //             if ($objHighlite instanceof FlowStatus && $objHighlite->getSystemid() == $objStatus->getSystemid()) {
+    //                 $strBgColor = "#eee";
+    //                 $strBorder = "4";
+    //             } elseif ($objHighlite instanceof FlowTransition && $objHighlite->getParentStatus()->getSystemid() == $objStatus->getSystemid()) {
+    //                 $strBgColor = "#eee";
+    //                 $strBorder = "4";
+    //             }
 
-            $arrNodes[] = [
-                'data' => [
-                    'id' => $objStatus->getSystemid(),
-                    'name' => $objStatus->getStrName(),
-                    'color' => $objStatus->getStrIconColor(),
-                    'bgcolor' => $strBgColor,
-                    'border' => $strBorder,
-                ],
-                'grabbable' => false
-            ];
-        }
+//             $arrNodes[] = [
+    //                 'data' => [
+    //                     'id' => $objStatus->getSystemid(),
+    //                     'name' => $objStatus->getStrName(),
+    //                     'color' => $objStatus->getStrIconColor(),
+    //                     'bgcolor' => $strBgColor,
+    //                     'border' => $strBorder,
+    //                 ],
+    //                 'grabbable' => false
+    //             ];
+    //         }
 
-        $arrTrans = [];
+//         $arrTrans = [];
 
-        foreach ($arrStatus as $objStatus) {
-            /** @var FlowStatus $objStatus */
-            $arrTransitions = $objStatus->getArrTransitions();
-            foreach ($arrTransitions as $objTransition) {
-                if (!$objTransition->isVisible()) {
-                    continue;
-                }
+//         foreach ($arrStatus as $objStatus) {
+    //             /** @var FlowStatus $objStatus */
+    //             $arrTransitions = $objStatus->getArrTransitions();
+    //             foreach ($arrTransitions as $objTransition) {
+    //                 if (!$objTransition->isVisible()) {
+    //                     continue;
+    //                 }
 
-                /** @var $objTransition FlowTransition */
-                $objParentStatus = $objTransition->getParentStatus();
-                $objTargetStatus = $objTransition->getTargetStatus();
+//                 /** @var $objTransition FlowTransition */
+    //                 $objParentStatus = $objTransition->getParentStatus();
+    //                 $objTargetStatus = $objTransition->getTargetStatus();
 
-                $arrTrans[] = [
-                    'data' => [
-                        'id' => $objTransition->getSystemid(),
-                        'source' => $objParentStatus->getSystemid(),
-                        'target' => $objTargetStatus->getSystemid(),
-                        //'label' => "A: ".count($objTransition->getArrActions())." C: ".count($objTransition->getArrConditions()),
-                    ]
-                ];
-            }
-        }
+//                 $arrTrans[] = [
+    //                     'data' => [
+    //                         'id' => $objTransition->getSystemid(),
+    //                         'source' => $objParentStatus->getSystemid(),
+    //                         'target' => $objTargetStatus->getSystemid(),
+    //                         //'label' => "A: ".count($objTransition->getArrActions())." C: ".count($objTransition->getArrConditions()),
+    //                     ]
+    //                 ];
+    //             }
+    //         }
 
-        $strNodes = json_encode($arrNodes);
-        $strTransitions = json_encode($arrTrans);
+//         $strNodes = json_encode($arrNodes);
+    //         $strTransitions = json_encode($arrTrans);
 
-        $strTmpSystemId = generateSystemid();
-        $strLinkTransition = Link::getLinkAdminHref("flow", "listTransition", "&systemid=" . $strTmpSystemId);
+//         $strTmpSystemId = generateSystemid();
+    //         $strLinkTransition = Link::getLinkAdminHref("flow", "listTransition", "&systemid=" . $strTmpSystemId);
 
-        $strLayout = json_encode([
-            'name' => 'dagre',
-            'fit' => false,
-        ]);
+//         $strLayout = json_encode([
+    //             'name' => 'dagre',
+    //             'fit' => false,
+    //         ]);
 
-        /*
-        $strLayout = json_encode([
-            'name' => 'grid',
-            'rows' => 4
-        ]);
-        */
+//         /*
+    //         $strLayout = json_encode([
+    //             'name' => 'grid',
+    //             'rows' => 4
+    //         ]);
+    //         */
 
-        return <<<HTML
-<div style='width: 90%; height: 600px; overflow-y: scroll;'><div id='flow-graph' style='width:100%;height:1000px;border:0px solid #999;'></div></div>
-<script type="text/javascript">
-    require(['cytoscape', 'cytoscape-dagre', 'dagre'], function(cytoscape, cd, dagre){
-        
-        cd(cytoscape, dagre);
+//         return <<<HTML
+    // <div style='width: 90%; height: 600px; overflow-y: scroll;'><div id='flow-graph' style='width:100%;height:1000px;border:0px solid #999;'></div></div>
+    // <script type="text/javascript">
+    //     require(['cytoscape', 'cytoscape-dagre', 'dagre'], function(cytoscape, cd, dagre){
 
-        var cy = cytoscape({
-          container: document.getElementById('flow-graph'),
-          style: [{
-            selector: 'node',
-            style: {
-              'font-size': '13',
-              'font-family': 'Open Sans, Helvetica Neue, Helvetica, Arial, sans-serif',
-              'label': 'data(name)',
-              'text-valign': 'center',
-              'shape': 'rectangle',
-              'width': 'label',
-              'padding' : '10',
-              'height': 'label',
-              'border-width': 'data(border)',
-              'border-style': 'solid',
-              'border-color': 'data(color)',
-              'background-color': 'data(bgcolor)'
-            }
-           }, {
-            selector: 'edge',
-            style: {
-              'width': 2,
-              'target-arrow-shape': 'triangle',
-              'line-color': '#525252',
-              'target-arrow-color': '#525252',
-              'curve-style': 'bezier',
-              'control-point-step-size': 40,
-              'font-size' : '10',
-              'text-margin-x' : '0',
-              'text-margin-y' : '0',
-              'label': 'data(label)'
-            }
-          }],
-          elements: {
-            nodes: {$strNodes}, 
-            edges: {$strTransitions}
-          },
-          layout: {$strLayout},
-          zoom: 1,
-          pan: { x: ($('#flow-graph').innerWidth() / 2) - 90, y: 40 },
-          boxSelectionEnabled: false,
-          autounselectify: true,
-          zoomingEnabled: true,
-          userZoomingEnabled: false,
-          panningEnabled: true,
-          userPanningEnabled: true
-        });
+//         cd(cytoscape, dagre);
 
-        /*
-        cy.$('node').on('click', function(e){
-          var ele = e.target;
-          location.href = "{$strLinkTransition}".replace('{$strTmpSystemId}', ele.id());
-        });
-        */
-    });
-</script>
-HTML;
-    }
+//         var cy = cytoscape({
+    //           container: document.getElementById('flow-graph'),
+    //           style: [{
+    //             selector: 'node',
+    //             style: {
+    //               'font-size': '13',
+    //               'font-family': 'Open Sans, Helvetica Neue, Helvetica, Arial, sans-serif',
+    //               'label': 'data(name)',
+    //               'text-valign': 'center',
+    //               'shape': 'rectangle',
+    //               'width': 'label',
+    //               'padding' : '10',
+    //               'height': 'label',
+    //               'border-width': 'data(border)',
+    //               'border-style': 'solid',
+    //               'border-color': 'data(color)',
+    //               'background-color': 'data(bgcolor)'
+    //             }
+    //            }, {
+    //             selector: 'edge',
+    //             style: {
+    //               'width': 2,
+    //               'target-arrow-shape': 'triangle',
+    //               'line-color': '#525252',
+    //               'target-arrow-color': '#525252',
+    //               'curve-style': 'bezier',
+    //               'control-point-step-size': 40,
+    //               'font-size' : '10',
+    //               'text-margin-x' : '0',
+    //               'text-margin-y' : '0',
+    //               'label': 'data(label)'
+    //             }
+    //           }],
+    //           elements: {
+    //             nodes: {$strNodes},
+    //             edges: {$strTransitions}
+    //           },
+    //           layout: {$strLayout},
+    //           zoom: 1,
+    //           pan: { x: ($('#flow-graph').innerWidth() / 2) - 90, y: 40 },
+    //           boxSelectionEnabled: false,
+    //           autounselectify: true,
+    //           zoomingEnabled: true,
+    //           userZoomingEnabled: false,
+    //           panningEnabled: true,
+    //           userPanningEnabled: true
+    //         });
+
+//         /*
+    //         cy.$('node').on('click', function(e){
+    //           var ele = e.target;
+    //           location.href = "{$strLinkTransition}".replace('{$strTmpSystemId}', ele.id());
+    //         });
+    //         */
+    //     });
+    // </script>
+    // HTML;
+    // }
 
     private static function writeMermaid(FlowConfig $objFlow, $objHighlite = null, $bitPreview = false)
     {
@@ -247,9 +247,9 @@ HTML;
 
         foreach ($arrUsed as $strSystemId => $objStatus) {
             if ($strHighliteId !== null && $strSystemId == $strHighliteId) {
-                $arrList["style ".$strHighliteId] = "style {$strHighliteId} fill:#f9f9f9,stroke:{$strHighliteColor},stroke-width:3px;";
+                $arrList["style " . $strHighliteId] = "style {$strHighliteId} fill:#f9f9f9,stroke:{$strHighliteColor},stroke-width:3px;";
             } else {
-                $arrList["style ".$strSystemId] = "style {$strSystemId} fill:#f9f9f9,stroke:{$objStatus->getStrIconColor()},stroke-width:1px;";
+                $arrList["style " . $strSystemId] = "style {$strSystemId} fill:#f9f9f9,stroke:{$objStatus->getStrIconColor()},stroke-width:1px;";
             }
         }
 
@@ -280,7 +280,6 @@ HTML;
             $strHeight = "height: 900px;";
         }
 
-
         return <<<HTML
 <div id='flow-graph' class='mermaid' style='color:#fff; {$strHeight} '>{$strGraph}</div>
 <script type="text/javascript">
@@ -291,8 +290,7 @@ HTML;
         }
     };
 
-    require(['mermaid', 'loader', 'jquery'], function(mermaid, loader, $){
-        loader.loadFile(["/core/module_flow/scripts/mermaid/mermaid.forest.css"], function(){
+    Loader.loadFile(["/core/module_flow/scripts/mermaid/mermaid.forest.css"], function(){
             mermaid.initialize({$strInit});
             mermaid.init(undefined, $("#flow-graph"));
 
@@ -325,10 +323,9 @@ HTML;
                     location.href = link.replace('{$strTmpSystemId}', statusId);
                 }
             });
-            
+
             $('.node div').css('cursor', 'pointer');
         });
-    });
 </script>
 <style type="text/css">
 .mermaid .label {
@@ -337,7 +334,7 @@ HTML;
     font-size: 13px;
 }
 
-</style> 
+</style>
 HTML;
     }
 

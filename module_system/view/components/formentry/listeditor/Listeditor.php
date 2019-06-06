@@ -25,6 +25,8 @@ class Listeditor extends FormentryComponentAbstract
      */
     protected $items;
 
+    private $continuousIndexes = false;
+
     /**
      * @param string $name
      * @param string $title
@@ -56,8 +58,27 @@ class Listeditor extends FormentryComponentAbstract
 
         $context = parent::buildContext();
         $context["items"] = $items;
+        $context["continuousIndexes"] = $this->continuousIndexes;
 
         return $context;
     }
+
+    /**
+     * @return bool
+     */
+    public function isContinuousIndexes(): bool
+    {
+        return $this->continuousIndexes;
+    }
+
+    /**
+     * @param bool $continuousIndexes
+     */
+    public function setContinuousIndexes(bool $continuousIndexes): void
+    {
+        $this->continuousIndexes = $continuousIndexes;
+    }
+
+
 
 }

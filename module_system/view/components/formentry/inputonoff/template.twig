@@ -12,13 +12,11 @@
     </div>
     {% endif %}
     <script type="text/javascript">
-        require(["jquery", "bootstrap-switch"], function($){
             var divId = '{{ name }}';
             divId = '#' + divId.replace( /(:|\.|\[|\])/g, "\\$1" );
             $(divId).bootstrapSwitch();
             $(divId).on('switchChange.bootstrapSwitch', function (event, state) {
                 {{ callback|raw }}
             });
-        });
     </script>
 </div>

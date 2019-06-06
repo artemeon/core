@@ -129,18 +129,39 @@ class Rights
         $strQuery = "UPDATE agp_system
             SET right_inherit=?, right_view=?, right_edit=?, right_delete=?, right_right=?, right_right1=?, right_right2=?, right_right3=?, right_right4=?, right_right5=?, right_changelog=? WHERE system_id=?";
 
-        if (SystemModule::getModuleByName("system") !== null && version_compare(SystemModule::getModuleByName("system")->getStrVersion(), "6.2.3", "<")) {
-            $strQuery = "UPDATE agp_system_right
-            SET right_inherit=?, right_view=?, right_edit=?, right_delete=?, right_right=?, right_right1=?, right_right2=?, right_right3=?, right_right4=?, right_right5=?, right_changelog=? WHERE right_id=?";
-
-        }
-
 
         if ($this->objDb->_pQuery($strQuery, $arrParams)) {
             //Flush the cache so later lookups will match the new rights
             $this->objDb->flushQueryCache();
             //unset in cache
             unset(self::$arrPermissionMap[$strSystemid]);
+
+
+            $systemModule = SystemModule::getModuleByName("system");
+            if ($systemModule != null && version_compare($systemModule->getStrVersion(), "7.1.4", "ge")) {
+                //update permission assignment tables
+                foreach ([
+                             self::$STR_RIGHT_VIEW => ["agp_permissions_view", "view_id", "view_shortgroup"],
+                             self::$STR_RIGHT_RIGHT2 => ["agp_permissions_right2", "right2_id", "right2_shortgroup"]
+                         ] as $permission => $permSet) {
+                    //remove entries from current map
+                    $this->objDb->_pQuery("DELETE FROM {$permSet[0]} WHERE {$permSet[1]} = ?", [$strSystemid]);
+                    $insert = [];
+                    //re-insert updated list
+                    $groups = explode(",", trim($arrRights[$permission], ','));
+                    foreach ($groups as $shortid) {
+                        if (is_numeric($shortid) && $shortid !== "") {
+                            if (validateSystemid(UserGroup::getGroupIdForShortId((int)$shortid))) {
+                                $insert[$strSystemid.$shortid] = [$strSystemid, $shortid];
+                            }
+                        }
+                    }
+
+                    if (!empty($insert)) {
+                        $this->objDb->multiInsert($permSet[0], [$permSet[1], $permSet[2]], $insert);
+                    }
+                }
+            }
 
             return true;
         } else {

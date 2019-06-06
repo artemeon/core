@@ -14,30 +14,38 @@ echo "| DB Query Panel                                                          
 echo "|                                                                               |\n";
 echo "+-------------------------------------------------------------------------------+\n";
 
-if(issetPost("doquery")) {
-	$strQuery = getPost("dbquery");
+if (issetPost("doquery")) {
+    $objDb = \Kajona\System\System\Carrier::getInstance()->getObjDB();
+    if (!empty(getPost("dbquery"))) {
+        echo "query to run ".getPost("dbquery")."\n";
 
-    if(get_magic_quotes_gpc() == 1)
-        $strQuery = stripslashes($strQuery);
+        if ($objDb->_query(getPost("dbquery"))) {
+            echo "\n\nquery successfull.\n";
+        } else {
+            echo "\n\nquery failed.\n";
+        }
+    }
 
-	$objDb = \Kajona\System\System\Carrier::getInstance()->getObjDB();
-	echo "query to run ".$strQuery."\n";
+    if (!empty(getPost("dbselect"))) {
+        echo "query to run ".getPost("dbselect")."\n";
 
-	if($objDb->_query($strQuery))
-		echo "\n\nquery successfull.\n";
-	else
-		echo "\n\nquery failed.\n";
-}
-else {
+        var_dump($objDb->getPArray(getPost("dbselect"), []));
+    }
+} else {
+    echo "Provide the query to execute.\nPlease be aware of the consequences!\n\n";
 
-	echo "Provide the query to execute.\nPlease be aware of the consequences!\n\n";
+    echo "<form method=\"post\">";
+    echo "pQuery<br />";
+    echo "<textarea name=\"dbquery\" cols=\"75\" rows=\"10\">";
+    echo "</textarea><br />";
 
-	echo "<form method=\"post\">";
-	echo "<textarea name=\"dbquery\" cols=\"75\" rows=\"10\">";
-	echo "</textarea><br />";
-	echo "<input type=\"hidden\" name=\"doquery\" value=\"1\" />";
-	echo "<input type=\"submit\" value=\"Execute\" />";
-	echo "</form>";
+
+    echo "getArray<br />";
+    echo "<textarea name=\"dbselect\" cols=\"75\" rows=\"10\">";
+    echo "</textarea><br />";
+    echo "<input type=\"hidden\" name=\"doquery\" value=\"1\" />";
+    echo "<input type=\"submit\" value=\"Execute\" />";
+    echo "</form>";
 }
 
 

@@ -400,6 +400,25 @@ class Reflection
     }
 
     /**
+     * @param string $strAnnotation
+     * @return array
+     */
+    public function getMethodsWithAnnotation($strAnnotation)
+    {
+        $methods = $this->objReflectionClass->getMethods();
+        $result = [];
+
+        foreach ($methods as $method) {
+            $value = $this->getMethodAnnotationValue($method->getName(), $strAnnotation);
+            if ($value !== false) {
+                $result[$method->getName()] = $value;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Searches a given annotation for a specified property. If given, the value is returned, otherwise (when not found) null is returned.
      *
      * @param string $strProperty

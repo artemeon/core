@@ -1,0 +1,33 @@
+
+<div class="form-group core-component-formentry-datesingle">
+    <label for="{{ name|e('html_attr') }}" class="col-sm-3 control-label">{{ title }}</label>
+    <div class="col-sm-6 {{ class|e('html_attr') }}">
+        <div class="input-group">
+            <div class="input-group-addon"><i class="fa fa-calendar-o"></i></div>
+            <input id="{{ name|e('html_attr') }}" name="{{ name|e('html_attr') }}" class="form-control {{ class|e('html_attr') }}" size="16" type="text" value="{{ value|date_to_string(false) }}" {% if readOnly %}disabled{% endif %} autocomplete="off">
+        </div>
+    </div>
+    {% if opener %}
+    <div class="col-sm-2 form-opener">
+        {{ opener|raw }}
+    </div>
+    {% endif %}
+    <script type="text/javascript">
+            $('#{{ name }}').datepicker({
+                    format: Util.transformDateFormat('{{ format }}', "bootstrap-datepicker"),
+                    weekStart: 1,
+                    autoclose: true,
+                    language: '{{ lang }}',
+                    todayHighlight: true,
+                    container: '#content',
+                    todayBtn: "linked",
+                    daysOfWeekHighlighted: "0,6",
+                    calendarWeeks: true
+                });
+
+                if ($('#{{ name }}').is(':focus')) {
+                    $('#{{ name }}').blur();
+                    $('#{{ name }}').focus();
+                }
+    </script>
+</div>

@@ -23,6 +23,7 @@ $lang["action_group_edit"]               = "Edit group";
 $lang["action_group_member"]             = "Show members of the group";
 $lang["action_group_new"]                = "Create group";
 $lang["action_new_user"]                 = "Create user";
+$lang["action_show_report"]                 = "Analysis";
 $lang["fehler_speichern"]                = "An error occurred while saving profile!";
 $lang["form_group_desc"]                 = "Description";
 $lang["form_user_city"]                  = "City";
@@ -172,3 +173,9 @@ $lang["user_password_validate_passwordhistory"] = "The password was previously u
 $lang["user_password_validate_username"] = "The password must not contain characters from the user name";
 
 $lang["reset_reason_expired"] = "Your password is expired. Please choose a new password along with providing your user name.";
+
+
+$lang["report_hinweis_parametrisierung"] = "This report ignores the current parametrization!";
+$lang["report_userrights"]               = "Userlist including assigned groups";
+$lang["user_active"]                     = "active";
+$lang["user_inactive"]                   = "inactive";

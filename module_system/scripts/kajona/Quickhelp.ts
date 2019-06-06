@@ -1,32 +1,30 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="quickhelp"/>
-
-import * as $ from "jquery";
-import "bootstrap";
+import $ from 'jquery'
 
 /**
  * Module to handle the general quickhelp entry
  */
 class Quickhelp {
-
-    public static setQuickhelp(strTitle: string, strText: string) {
-        if(strText.trim() == "" ) {
-            return;
+    public static setQuickhelp (strTitle: string, strText: string) {
+        if (strText.trim() === '') {
+            return
         }
-        $('#quickhelp').popover({
-            title: strTitle,
-            content: strText,
-            placement: 'bottom',
-            trigger: 'hover',
-            html: true
-        }).css("cursor", "help").show();
+        $('#quickhelp')
+            .popover({
+                title: strTitle,
+                content: strText,
+                placement: 'bottom',
+                trigger: 'hover',
+                html: true
+            })
+            .css('cursor', 'help')
+            .show()
+    }
 
-    };
-
-    public static resetQuickhelp() {
-        $('#quickhelp').hide().popover('destroy');
-    };
-
+    public static resetQuickhelp () {
+        $('#quickhelp')
+            .hide()
+            .popover('destroy')
+    }
 }
-
-export = Quickhelp;
+;(<any>window).Quickhelp = Quickhelp
+export default Quickhelp

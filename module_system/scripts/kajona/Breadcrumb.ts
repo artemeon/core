@@ -1,55 +1,63 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="breadcrumb"/>
-
-import * as $ from "jquery";
+import $ from 'jquery'
 
 class Breadcrumb {
-    private static breadcrumbEl: JQuery<HTMLElement> = $("div.pathNaviContainer ul.breadcrumb");
+    private static breadcrumbEl: JQuery<HTMLElement> = $(
+        'div.pathNaviContainer ul.breadcrumb'
+    )
 
-    public static updateEllipsis() {
-        this.updatePathNavigationEllipsis();
+    public static updateEllipsis () {
+        this.updatePathNavigationEllipsis()
     }
 
-    public static appendLinkToPathNavigation(linkContent: string) {
-        let link = $("<li class='pathentry'></li>").append(linkContent + "&nbsp;");
-        this.breadcrumbEl.append(link);
-        this.updatePathNavigationEllipsis();
+    public static appendLinkToPathNavigation (linkContent: string) {
+        this.breadcrumbEl = $('div.pathNaviContainer ul.breadcrumb')
+
+        let link = $("<li class='pathentry'></li>").append(
+            linkContent + '&nbsp;'
+        )
+        this.breadcrumbEl.append(link)
+        this.updatePathNavigationEllipsis()
     }
 
-    public static resetBar() {
-        this.breadcrumbEl.find("li.pathentry:not(.home)").remove();
+    public static resetBar () {
+        this.breadcrumbEl = $('div.pathNaviContainer ul.breadcrumb')
+        this.breadcrumbEl.find('li.pathentry:not(.home)').remove()
     }
 
-    private static updatePathNavigationEllipsis() {
-        let $arrPathLIs = $(".pathNaviContainer  .breadcrumb  li.pathentry");
+    private static updatePathNavigationEllipsis () {
+        this.breadcrumbEl = $('div.pathNaviContainer ul.breadcrumb')
+        let $arrPathLIs = $('.pathNaviContainer  .breadcrumb  li.pathentry')
 
-        //first run: get the number of entries and a first styling
-        let intEntries = ($arrPathLIs.length);
-        let intWidth = this.breadcrumbEl.width();
-        let intMaxWidth = Math.ceil(intWidth / intEntries);
+        // first run: get the number of entries and a first styling
+        let intEntries = $arrPathLIs.length
+        let intWidth = this.breadcrumbEl.width()
+        let intMaxWidth = Math.ceil(intWidth / intEntries)
 
-        $arrPathLIs.css("max-width", intMaxWidth);
+        $arrPathLIs.css('max-width', intMaxWidth)
 
-        //second run: calc the remaining x-space
-        let intTotalUnused = this.getUnusedSpace(intMaxWidth);
+        // second run: calc the remaining x-space
+        let intTotalUnused = this.getUnusedSpace(intMaxWidth)
 
         if (intTotalUnused > intMaxWidth) {
-            intMaxWidth = Math.ceil(intWidth / (intEntries - (Math.floor(intTotalUnused / intMaxWidth))));
-            $arrPathLIs.css("max-width", intMaxWidth);
+            intMaxWidth = Math.ceil(
+                intWidth /
+                    (intEntries - Math.floor(intTotalUnused / intMaxWidth))
+            )
+            $arrPathLIs.css('max-width', intMaxWidth)
         }
-    };
+    }
 
-    private static getUnusedSpace(intMaxWidth: number): number {
-        let intTotalUnused = 0;
-        $(".pathNaviContainer  .breadcrumb  li.pathentry").each(function () {
-            let $li = $(this);
+    private static getUnusedSpace (intMaxWidth: number): number {
+        let intTotalUnused = 0
+        $('.pathNaviContainer  .breadcrumb  li.pathentry').each(function () {
+            let $li = $(this)
             if ($li.width() < intMaxWidth) {
-                intTotalUnused += (intMaxWidth - $li.width());
+                intTotalUnused += intMaxWidth - $li.width()
             }
-        });
+        })
 
-        return intTotalUnused;
-    };
+        return intTotalUnused
+    }
 }
-
-export = Breadcrumb
+;(<any>window).Breadcrumb = Breadcrumb
+export default Breadcrumb

@@ -1,8 +1,8 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2015-2016 by Kajona, www.kajona.de                                                         *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2015-2016 by Kajona, www.kajona.de                                                         *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\System\System;
 
@@ -12,6 +12,7 @@ use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\ChainCache;
 use Doctrine\Common\Cache\ClearableCache;
+use Doctrine\Common\Cache\FileCache;
 use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\Common\Cache\FlushableCache;
 use Doctrine\Common\Cache\PhpFileCache;
@@ -110,7 +111,9 @@ class CacheManager
     /**
      * @param string $strKey
      * @param int $intType
+     * @param string $strNamespace
      * @return mixed The cached data or FALSE, if no cache entry exists for the given id.
+     * @throws \Exception
      */
     public function getValue($strKey, $intType = null, $strNamespace = self::NS_GLOBAL)
     {
@@ -121,7 +124,9 @@ class CacheManager
      * Validates if the cache provides a value without fetching the value itself
      * @param string $strKey
      * @param int $intType
+     * @param string $strNamespace
      * @return bool
+     * @throws \Exception
      */
     public function containsValue($strKey, $intType = null, $strNamespace = self::NS_GLOBAL)
     {
@@ -135,7 +140,9 @@ class CacheManager
      *                         If zero (the default), the entry never expires (although it may be deleted from the cache
      *                         to make place for other entries).
      * @param int $intType
+     * @param string $strNamespace
      * @return bool
+     * @throws \Exception
      */
     public function addValue($strKey, $objValue, $intTtl = 180, $intType = null, $strNamespace = self::NS_GLOBAL)
     {
@@ -145,7 +152,9 @@ class CacheManager
     /**
      * @param string $strKey
      * @param int $intType
+     * @param string $strNamespace
      * @return bool
+     * @throws \Exception
      */
     public function removeValue($strKey, $intType = null, $strNamespace = self::NS_GLOBAL)
     {
@@ -158,13 +167,41 @@ class CacheManager
      *
      * @param integer $intType
      * @param string $strNamespace
+     * @param bool $bitHard
+     * @throws \Exception
      */
-    public function flushCache($intType = null, $strNamespace = self::NS_GLOBAL)
+    public function flushCache($intType = null, $strNamespace = self::NS_GLOBAL, $bitHard = false)
     {
         $objCache = $this->getCache($intType, $strNamespace);
         if ($objCache instanceof ClearableCache) {
-            $objCache->deleteAll();
+            if ($bitHard && $objCache instanceof FileCache) {
+                $this->deleteAllCacheFolders($objCache->getDirectory());
+            } else {
+                $objCache->deleteAll();
+            }
         }
+    }
+
+    /**
+     * @param string $strCacheDir
+     * @return bool
+     */
+    private function deleteAllCacheFolders(string $strCacheDir)
+    {
+        if (empty($strCacheDir)) {
+            return false;
+        }
+
+        $arrPathInfo = pathinfo($strCacheDir);
+        $objFileSys = new Filesystem();
+        $arrFileList = $objFileSys->getCompleteList($arrPathInfo['dirname'], null, null, [".", ".."], true, false);
+        foreach ($arrFileList['folders'] as $strFolderName) {
+            // if a folder name has the file cache name at very beginning then we are deleting the folder as a copy of our cache
+            if (StringUtil::indexOf($strFolderName, $arrPathInfo['filename']) === 0) {
+                $objFileSys->folderDeleteRecursive($arrPathInfo['dirname'].DIRECTORY_SEPARATOR.$strFolderName);
+            }
+        }
+        return true;
     }
 
     /**
@@ -172,7 +209,7 @@ class CacheManager
      * carefully
      *
      * @param integer $intType
-     * @param string $strNamespace
+     * @throws \Exception
      */
     public function flushAll($intType = null)
     {
@@ -193,10 +230,11 @@ class CacheManager
     }
 
     /**
-     * Returns stats informations for a specific type
+     * Returns stats information for a specific type
      *
      * @param integer $intType
      * @return array|null
+     * @throws \Exception
      */
     public function getStats($intType)
     {
@@ -207,7 +245,9 @@ class CacheManager
      * Returns a specific cache system
      *
      * @param integer $intType
+     * @param $strNamespace
      * @return \Doctrine\Common\Cache\Cache
+     * @throws \Exception
      */
     protected function getCache($intType, $strNamespace)
     {
@@ -223,6 +263,12 @@ class CacheManager
         }
     }
 
+    /**
+     * @param $intType
+     * @param $strNamespace
+     * @return ChainCache|mixed|null
+     * @throws \Exception
+     */
     protected function buildDriver($intType, $strNamespace)
     {
         $arrDriver = array();
@@ -244,7 +290,7 @@ class CacheManager
 
         if ($intType & self::TYPE_FILESYSTEM) {
             try {
-                $arrDriver[] = new FilesystemCache(_realpath_."project/temp/cache", ".cache");
+                $arrDriver[] = new FilesystemCache(_realpath_ . "project/temp/cache", ".cache");
             } catch (\InvalidArgumentException $objEx) {
                 $arrDriver[] = new ArrayCache();
             }
@@ -252,7 +298,7 @@ class CacheManager
 
         if ($intType & self::TYPE_PHPFILE) {
             try {
-                $arrDriver[] = new PhpFileCache(_realpath_."project/temp/cache", ".cache.php");
+                $arrDriver[] = new PhpFileCache(_realpath_ . "project/temp/cache", ".cache.php");
             } catch (\InvalidArgumentException $objEx) {
                 $arrDriver[] = new ArrayCache();
             }
@@ -268,15 +314,15 @@ class CacheManager
         }
 
         if ($objCache instanceof CacheProvider) {
-            $objCache->setNamespace($this->strSystemKey . $strNamespace);
+            $objCache->setNamespace($this->strSystemKey.$strNamespace);
         }
 
         return $objCache;
     }
 
     /**
-     * @deprecated if possible use the cache manager instance from the DI container "@inject system_cache_manager"
      * @return CacheManager
+     * @deprecated if possible use the cache manager instance from the DI container "@inject system_cache_manager"
      */
     public static function getInstance()
     {
@@ -314,4 +360,3 @@ class CacheManager
         );
     }
 }
-

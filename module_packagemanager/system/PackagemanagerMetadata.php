@@ -8,13 +8,11 @@
 
 namespace Kajona\Packagemanager\System;
 
-
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\PharModule;
 use Kajona\System\System\StringUtil;
-use Kajona\System\System\XmlParser;
 use Kajona\System\System\Zip;
 use Phar;
 
@@ -26,7 +24,7 @@ use Phar;
  * @since 4.0
  * @package module_packagemanager
  */
-class PackagemanagerMetadata implements AdminListableInterface
+class PackagemanagerMetadata implements AdminListableInterface, \JsonSerializable
 {
 
     private $strTitle;
@@ -122,6 +120,27 @@ class PackagemanagerMetadata implements AdminListableInterface
     public function __toString()
     {
         return "Title: ".$this->getStrTitle()." Version: ".$this->getStrVersion()." Type: ".$this->getStrType()." Target: ".$this->getStrTarget()." Dependencies: ".print_r($this->getArrRequiredModules(), true);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize()
+    {
+        $manager = new PackagemanagerManager();
+        $handler = $manager->getPackageManagerForPath($this->getStrPath());
+
+        return [
+            "title" => $this->strTitle,
+            "description" => $this->strDescription,
+            "versionAvailable" => $this->strVersion,
+            "author" => $this->strAuthor,
+            "requires" => (object) $this->arrRequiredModules,
+            "path" => $this->strPath,
+            "providesInstaller" => $this->bitProvidesInstaller,
+            "versionInstalled" => $handler->getVersionInstalled(),
+            "isInstallable" => $handler->isInstallable()
+        ];
     }
 
     /**

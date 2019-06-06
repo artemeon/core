@@ -14,7 +14,7 @@
         {% for group in groups %}
         <tr data-groupid="{{ group.systemId }}">
             <td>
-                <a href="#" onclick="require('permissions').removeGroup('{{ group.systemId }}',this);return false;"><i class="kj-icon fa fa-trash-o"></i></a>
+                <a href="#" onclick="Permissions.removeGroup('{{ group.systemId }}',this);return false;"><i class="kj-icon fa fa-trash-o"></i></a>
             </td>
             <td>{{ group.strDisplayName|raw }}</td>
             {% for right, header in headerRows %}

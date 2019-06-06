@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://apidocs.kajona.de/xsd/package_v2.xsd"
+    >
+    <title>api</title>
+    <description>Provides an entry point to access API endpoints</description>
+    <version>1.0</version>
+    <author>Artemeon Team</author>
+    <type>MODULE</type>
+    <providesInstaller>FALSE</providesInstaller>
+    <requiredModules>
+        <module name="system" version="7.1" />
+    </requiredModules>
+    <constants>
+        <constant name="_api_module_id_" value="1420146491" />
+    </constants>
+</package>

@@ -1,13 +1,10 @@
-///<reference path="../../../_buildfiles/jstests/definitions/kajona.d.ts" />
-///<amd-module name="oauth2"/>
-
 class Oauth2 {
     /**
      * @param {string} url
      */
-    public static redirect(url: string) {
-        location.href = url;
+    public static redirect (url: string) {
+        location.href = url
     }
 }
-
-export = Oauth2;
+;(<any>window).Oauth2 = Oauth2
+export default Oauth2

@@ -1,0 +1,16 @@
+<?php
+/*"******************************************************************************************************
+*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+*-------------------------------------------------------------------------------------------------------*
+*	$Id$                                               *
+********************************************************************************************************/
+
+if(is_dir("./core/module_api/")) {
+    require_once './core/module_system/bootstrap.php';
+    require_once './core/module_api/api.php';
+}
+else {
+    require_once 'phar://'.__DIR__.'/core/module_system.phar/bootstrap.php';
+    require_once 'phar://'.__DIR__.'/core/module_api.phar/api.php';
+}

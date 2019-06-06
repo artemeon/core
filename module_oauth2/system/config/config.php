@@ -16,7 +16,8 @@ $config["providers"][0] = [
         \Kajona\Oauth2\System\ProviderManager::CLAIM_EMAIL => "email",
         \Kajona\Oauth2\System\ProviderManager::CLAIM_FIRSTNAME => "first_name",
         \Kajona\Oauth2\System\ProviderManager::CLAIM_LASTNAME => "last_name",
-    ]
+    ],
+    'redirect_detector' => new DefaultRedirectDetector()
 ];
 */
 

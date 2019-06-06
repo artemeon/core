@@ -58,6 +58,11 @@ class Provider
     private $claimMapping;
 
     /**
+     * @var RedirectDetectorInterface
+     */
+    private $redirectDetector;
+
+    /**
      * @return string
      */
     public function getId()
@@ -200,5 +205,23 @@ class Provider
     {
         $this->claimMapping = $claimMapping;
     }
+
+    /**
+     * @return RedirectDetectorInterface
+     */
+    public function getRedirectDetector(): RedirectDetectorInterface
+    {
+        return $this->redirectDetector;
+    }
+
+    /**
+     * @param RedirectDetectorInterface $redirectDetector
+     */
+    public function setRedirectDetector(RedirectDetectorInterface $redirectDetector)
+    {
+        $this->redirectDetector = $redirectDetector;
+    }
+
+
 }
 

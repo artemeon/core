@@ -8,18 +8,17 @@
         {% endfor %}
     </div>
     <script type="text/javascript">
-        require(['jquery', 'folderview', 'tooltip'], function ($, folderview, tooltip) {
             var onClickURLHandler = function () {
                 dataPointHandler = $(this).attr('data-handler');
                 if (dataPointHandler && dataPointHandler != null && dataPointHandler != "") {
-                    folderview.dialog.setContentIFrame(dataPointHandler);
-                    folderview.dialog.setTitle('');
-                    folderview.dialog.init();
+                    Folderview.dialog.setContentIFrame(dataPointHandler);
+                    Folderview.dialog.setTitle('');
+                    Folderview.dialog.init();
                 }
             };
 
             {% for val in data %}
-            tooltip.addTooltip($('#{{ val.id }}'), "<div>{{ title }}<br>{{ val.label }}: <b>{{ val.value }}</b></div>");
+            Tooltip.addTooltip($('#{{ val.id }}'), "<div>{{ title }}<br>{{ val.label }}: <b>{{ val.value }}</b></div>");
             $("#{{ val.id }}").click(onClickURLHandler);
             {% endfor %}
 
@@ -30,6 +29,6 @@
                     });
                 }, 50);
             });
-        });
+        
     </script>
 </div>

@@ -26,7 +26,6 @@ class DatabaseMultiInsertTest extends Testbase
 
         //echo "current driver: " . Carrier::getInstance()->getObjConfig()->getConfig("dbdriver") . "\n";
 
-
         $arrFields = array();
         $arrFields["temp_id"] = array("char20", false);
         $arrFields["temp_int"] = array("int", true);
@@ -39,7 +38,11 @@ class DatabaseMultiInsertTest extends Testbase
         $arrFields["temp_char500"] = array("char500", true);
         $arrFields["temp_text"] = array("text", true);
         $arrFields["temp_longtext"] = array("longtext", true);
+        $arrFields["temp_json"] = array("longtext", true);
 
+        $escapeValues = array_fill(0, count($arrFields), false);
+
+        $this->assertEquals(count($arrFields), count($escapeValues));
         $this->assertTrue($objDB->createTable("agp_temp_autotest", $arrFields, array("temp_id")), "testDataBase createTable");
 
         $strQuery = "DELETE FROM agp_temp_autotest";
@@ -60,10 +63,11 @@ class DatabaseMultiInsertTest extends Testbase
                 "char500",
                 "text",
                 "longtext",
+                '{"structure":"json","valid":"escaping"}'
             );
         }
 
-        $this->assertTrue($objDB->multiInsert("agp_temp_autotest", array_keys($arrFields), $arrValues));
+        $this->assertTrue($objDB->multiInsert("agp_temp_autotest", array_keys($arrFields), $arrValues, $escapeValues));
 
         $arrRow = $objDB->getPRow("SELECT COUNT(*) AS cnt FROM agp_temp_autotest", array());
         $this->assertEquals($arrRow["cnt"], 50);
@@ -81,6 +85,7 @@ class DatabaseMultiInsertTest extends Testbase
             $this->assertEquals("char500", $arrRow["temp_char500"]);
             $this->assertEquals("text", $arrRow["temp_text"]);
             $this->assertEquals("longtext", $arrRow["temp_longtext"]);
+            $this->assertEquals('{"structure":"json","valid":"escaping"}', $arrRow["temp_json"]);
         }
 
         $strQuery = "DELETE FROM agp_temp_autotest";

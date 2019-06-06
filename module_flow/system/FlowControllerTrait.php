@@ -1,9 +1,9 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ ********************************************************************************************************/
 
 namespace Kajona\Flow\System;
 
@@ -11,10 +11,12 @@ use Kajona\System\Admin\AdminFormgenerator;
 use Kajona\System\Admin\Formentries\FormentryHeadline;
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Alert\MessagingAlertActionRedirect;
+use Kajona\System\System\Alert\MessagingAlertActionUpdateStatus;
 use Kajona\System\System\Alert\MessagingAlertActionVoid;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Link;
 use Kajona\System\System\MessagingAlert;
+use Kajona\System\System\MessagingExecution;
 use Kajona\System\System\MessagingMessagehandler;
 use Kajona\System\System\MessagingNotification;
 use Kajona\System\System\Model;
@@ -75,6 +77,8 @@ trait FlowControllerTrait
             $this->objToolkit->listButton($strIcon),
             Link::getLinkAdminXml($objListEntry->getArrModule('module'), "showStatusMenu", ["systemid" => $objListEntry->getSystemid()])
         );
+        $menu->setClass("flow-status-icon");
+        $menu->setSystemId($objListEntry->getSystemid());
 
         $strReturn = $menu->renderComponent();
         return $strReturn;
@@ -210,39 +214,20 @@ trait FlowControllerTrait
                 }
 
                 // validation
-                $objResult = $objFlow->getHandler()->validateStatusTransition($objObject, $objTransition);
+                $objResult = $objFlow->getHandler()->validateStatusTransition($objObject, $objTransition, true);
 
-                $strValidation = "";
                 if (!$objResult->isValid()) {
-                    $arrErrors = $objResult->getErrors();
-                    if (!empty($arrErrors)) {
-                        $strTooltip = "<div class='alert alert-danger'>";
-                        $strTooltip.= "<ul>";
-                        foreach ($arrErrors as $strError) {
-                            if (!empty($strError)) {
-                                $strError = htmlspecialchars($strError);
-                                $strTooltip.= "<li>{$strError}</li>";
-                            }
-                        }
-                        $strTooltip.= "</ul>";
-                        $strTooltip.= "</div>";
-                        $strValidation.= '<span class="' . $strClass . '" data-validation-errors="' . $strTooltip . '"></span>';
-                    } else {
-                        // in case the result is not valid and we have no error message we skip the menu entry
-                        continue;
-                    }
-                }
+                    $link = Link::getLinkAdminDialog($objObject->getArrModule("module"), "showTransitionErrors", ["systemid" => $objObject->getSystemid(), "transition_id" => $objTransition->getSystemid()], AdminskinHelper::getAdminImage("icon_flag_hex_disabled_" . $objTargetStatus->getStrIconColor()) . " " . $objTargetStatus->getStrDisplayName());
 
-                if (!empty($strValidation)) {
                     $menuItem = new MenuItem();
-                    $menuItem->setName(AdminskinHelper::getAdminImage("icon_flag_hex_disabled_" . $objTargetStatus->getStrIconColor()) . " " . $objTargetStatus->getStrDisplayName() . $strValidation);
-                    $menuItem->setLink("#");
-                    $menuItem->setOnClick("return false;");
+                    $menuItem->setFullEntry($link);
                     $statusItems[] = $menuItem;
                 } else {
+                    $link = Link::getLinkAdminHref($this->getArrModule("modul"), "setStatus", ["systemid" => $objObject->getStrSystemid(), "transition_id" => $objTransition->getSystemid()]);
+
                     $menuItem = new MenuItem();
                     $menuItem->setName(AdminskinHelper::getAdminImage($objTargetStatus->getStrIcon()) . " " . $objTargetStatus->getStrDisplayName());
-                    $menuItem->setLink(Link::getLinkAdminHref($this->getArrModule("modul"), "setStatus", "&systemid=" . $objObject->getStrSystemid() . "&transition_id=" . $objTransition->getSystemid()));
+                    $menuItem->setLink($link);
                     $statusItems[] = $menuItem;
                 }
 
@@ -276,28 +261,44 @@ trait FlowControllerTrait
         $menu->setRenderMenuContainer(false);
         $strHtml = $menu->renderComponent();
 
-        // js to init the tooltip for validation errors
-        $strTitle = json_encode($objObject->getStrDisplayName());
-        $strJs = <<<HTML
-<script type='text/javascript'>
-    require(['jquery', 'dialogHelper'], function($, dialogHelper){
-        $('.{$strClass}').parent().on('click', function(){
-            var errors = $(this).find('.{$strClass}').data('validation-errors');
-            dialogHelper.showConfirmationDialog({$strTitle}, errors, "OK", function(){
-                $('#jsDialog_1').modal('hide');
-            });
-        });
-    });
-</script>
-HTML;
+        return $strHtml;
+    }
 
-        return $strHtml . $strJs;
+    /**
+     * @permissions view
+     * @return string
+     */
+    protected function actionShowTransitionErrors()
+    {
+        $object = Objectfactory::getInstance()->getObject($this->getSystemid());
+        $transition = Objectfactory::getInstance()->getObject($this->getParam("transition_id"));
+
+        $flow = $this->objFlowManager->getFlowForModel($object);
+
+        // validation
+        $result = $flow->getHandler()->validateStatusTransition($object, $transition);
+
+        $return = "";
+        $errors = $result->getErrors();
+        if (!empty($errors)) {
+            $return = "<div class='alert alert-danger'>";
+            $return.= "<ul>";
+            foreach ($errors as $error) {
+                if (!empty($error)) {
+                    $return.= "<li>{$error}</li>";
+                }
+            }
+            $return.= "</ul>";
+            $return.= "</div>";
+        }
+
+        return $return;
     }
 
     /**
      * Ajax endpoint to trigger a status transition
      *
-     * @return string
+     * @return array
      * @permissions view
      * @responseType json
      * @xml
@@ -316,7 +317,10 @@ HTML;
             }
 
             if (!$bitHasRight) {
-                return json_encode(["success" => false, "message" => $this->getLang("commons_error_permissions", "commons")]);
+                return [
+                    "success" => false,
+                    "message" => $this->getLang("commons_error_permissions", "commons")
+                ];
             }
 
             $strTransitionId = $this->getParam("transition_id");
@@ -356,10 +360,10 @@ HTML;
                                 foreach ($arrErrors as $strError) {
                                     if (!empty($strError)) {
                                         $strError = htmlspecialchars($strError);
-                                        $strTooltip.= "<li>{$strError}</li>";
+                                        $strTooltip .= "<li>{$strError}</li>";
                                     }
                                 }
-                                $strTooltip.= "</ul>";
+                                $strTooltip .= "</ul>";
 
                                 $objAlert = new MessagingAlert();
                                 $objAlert->setStrTitle($this->getLang("action_status_change_title", "flow"));
@@ -402,6 +406,14 @@ HTML;
             $this->objMessageHandler->sendAlertToUser($objAlert, $this->objSession->getUser());
         }
 
-        return json_encode(["success" => true]);
+        $status = $this->objFlowManager->getCurrentStepForModel($objObject);
+        $icon = $this->objToolkit->listButton(AdminskinHelper::getAdminImage($status->getStrIcon(), $status->getStrDisplayName()));
+
+        return [
+            "success" => true,
+            "actions" => [
+                (new MessagingAlertActionUpdateStatus($objObject->getSystemid(), $icon))->getAsActionArray()
+            ]
+        ];
     }
 }

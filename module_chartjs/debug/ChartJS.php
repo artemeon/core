@@ -1,38 +1,37 @@
 <?php
 
-declare(strict_types = 1);
+declare (strict_types = 1);
 
 namespace Kajona\Chartjs\Debug;
-
 
 use Kajona\Chartjs\System\GraphChartjs;
 use Kajona\System\Admin\AdminHelper;
 use Kajona\System\System\GraphFactory;
 use Kajona\System\System\Resourceloader;
-use Kajona\System\System\StringUtil;
 use Kajona\System\System\SystemSetting;
 
 class ChartJS
 {
     public function testCharts()
     {
-        srand((int)microtime() * 1000000);
+        srand((int) microtime() * 1000000);
         //--- system kernel -------------------------------------------------------------------------------------
         echo "\tcreating a few charts...\n";
 
         //JS-Imports for minimal system setup
-        echo "<script type=\"text/javascript\">KAJONA_WEBPATH = '"._webpath_."'; KAJONA_BROWSER_CACHEBUSTER = '".SystemSetting::getConfigValue("_system_browser_cachebuster_")."';</script>\n";
-        echo "<script type=\"text/javascript\">KAJONA_PHARMAP = ".json_encode(array_values(\Kajona\System\System\Classloader::getInstance()->getArrPharModules())).";</script>";
-        echo "<script language=\"javascript\" type=\"text/javascript\" src=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_system/scripts/agp.min.js\"></script>";
+        echo "<script type=\"text/javascript\">KAJONA_LANGUAGE = 'de'</script>\n";
+        echo "<script type=\"text/javascript\">KAJONA_WEBPATH = '" . _webpath_ . "'; KAJONA_BROWSER_CACHEBUSTER = '" . SystemSetting::getConfigValue("_system_browser_cachebuster_") . "';</script>\n";
+        echo "<script type=\"text/javascript\">KAJONA_PHARMAP = " . json_encode(array_values(\Kajona\System\System\Classloader::getInstance()->getArrPharModules())) . ";</script>";
+        echo "<script language=\"javascript\" type=\"text/javascript\" src=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_system/scripts/agp.min.js\"></script>";
 
-        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_system/scripts/jqueryui/css/smoothness/jquery-ui.custom.css\"></link>";
-        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_v4skin/admin/skins/kajona_v4/less/styles.min.css\"></link>";
+        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_system/scripts/jqueryui/css/smoothness/jquery-ui.custom.css\"></link>";
+        echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_v4skin/admin/skins/kajona_v4/less/styles.min.css\"></link>";
 
         $objAdminHelper = new AdminHelper();
 
-        echo "<script language=\"javascript\" type=\"text/javascript\" src=\""._webpath_.Resourceloader::getInstance()->getCorePathForModule("module_system")."/module_system/scripts/requirejs/require.js\"></script>";
+        echo "<script language=\"javascript\" type=\"text/javascript\" src=\"" . _webpath_ . Resourceloader::getInstance()->getCorePathForModule("module_system") . "/module_system/scripts/requirejs/require.js\"></script>";
         echo "<script type=\"text/javascript\">
-            require(['app'], function(app) { app.init(); });
+        App.init();
         </script>
         ";
 
@@ -63,7 +62,7 @@ class ChartJS
         $objGraph->addLinePlot(array(4, 3, 2, 1), "");
         $objGraph->addLinePlot(array(-5, 3, -2, 1), "");
         $objGraph->setBitRenderLegend(true);
-        $objGraph->setIntXAxisAngle(-20);  // not works
+        $objGraph->setIntXAxisAngle(-20); // not works
         $objGraph->setStrXAxisTitle("XXX");
         $objGraph->setStrYAxisTitle("YYY");
         $objGraph->setStrBackgroundColor("#F0F0F0");
@@ -83,7 +82,7 @@ class ChartJS
         $objGraph->addBarChartSet(array(6, 7, 3, 20), "serie 5");
         $objGraph->addBarChartSet(array(9, 2, 3, 40), "serie 9");
         $objGraph->setArrXAxisTickLabels(array("v1", "v2", "v3", "v4"));
-        $objGraph->setIntXAxisAngle(-20);  // not works
+        $objGraph->setIntXAxisAngle(-20); // not works
         $objGraph->setIntHeight(350);
         $objGraph->setIntWidth(300);
         $objGraph->setBitRenderLegend(true);
@@ -95,7 +94,7 @@ class ChartJS
         $objGraph->setStrGraphTitle("04. One Bar Chart (In this case each bar has a differetn color)");
         $objGraph->addBarChartSet(array(9, 2, 3, 40), "serie 9");
         $objGraph->setArrXAxisTickLabels(array("v1", "v2", "v3", "v4"));
-        $objGraph->setIntXAxisAngle(-20);  // not works
+        $objGraph->setIntXAxisAngle(-20); // not works
         $objGraph->setIntHeight(350);
         $objGraph->setIntWidth(300);
         $objGraph->setBitRenderLegend(true);
@@ -201,7 +200,7 @@ class ChartJS
         $objGraph->addStackedBarChartSet(array(0, -5, 7, 8, 4, 12, 1, 1, 1, 3, 4, 5, 6), "serie 1");
         $objGraph->addStackedBarChartSet(array(3, -4, 6, 2, 5, 2, 2, 2, 2, 3, 4, 5, 6), "serie 2");
         $objGraph->setArrXAxisTickLabels(array("v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13"));
-        $objGraph->setIntXAxisAngle(-20);  // not works
+        $objGraph->setIntXAxisAngle(-20); // not works
         $objGraph->setStrFont("open sans");
         echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
 
@@ -215,7 +214,7 @@ class ChartJS
         $objGraph->addStackedBarChartSet(array(3, 0, 6, 2, 5, 2, 2, 2, 2, 3, 4, 5, 6), "serie 2");
         $objGraph->addStackedBarChartSet(array(3, -4, 6, 2, 5, 2, 2, 2, 2, 3, 4, 5, 6), "serie 3");
         $objGraph->setArrXAxisTickLabels(array("v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10", "v11", "v12", "v13"), 5);
-        $objGraph->setIntXAxisAngle(-20);  // not works
+        $objGraph->setIntXAxisAngle(-20); // not works
         $objGraph->setStrFont("open sans");
         $objGraph->setBarHorizontal(true);
         echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
@@ -295,6 +294,18 @@ class ChartJS
         $objGraph->setAsHorizontalInLineStackedChart(true);
         echo $objGraph->renderGraph();
         // ==== JQPLOT VS CHARTJS == END
+
+        /** @var GraphChartjs $objGraph */
+        $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_CHARTJS);
+        $objGraph->addLinePlot(array(8112, 12000, 22000, 4000), "");
+        $objGraph->addLinePlot(array(11500, 2500, 330, 4780), "");
+        $objGraph->addLinePlot(array(45880, 7100, 1000, 20000), "");
+        $objGraph->setBitRenderLegend(true);
+        $objGraph->setStrBackgroundColor("#F0F0F0");
+        $objGraph->setStrGraphTitle("19. Test thousand Separator");
+        $objGraph->setArrXAxisTickLabels(array("5000", "6000", "7000", "8000"));
+        $objGraph->setShowThousandSeparatorAxis();
+        echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
 
     }
 }

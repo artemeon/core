@@ -26,6 +26,7 @@ class FormentryListeditor extends FormentryBase implements FormentryPrintableInt
 {
 
     private $arrValue = [];
+    private $continuousIndexes = false;
 
     /**
      * @return mixed
@@ -76,6 +77,7 @@ class FormentryListeditor extends FormentryBase implements FormentryPrintableInt
         $value = $this->arrValue;
 
         $listEditor = new Listeditor($this->getStrEntryName(), $this->getStrLabel(), is_array($value) ? $value : []);
+        $listEditor->setContinuousIndexes($this->continuousIndexes);
 
         $strReturn .= $listEditor->renderComponent();
         return $strReturn;
@@ -91,4 +93,22 @@ class FormentryListeditor extends FormentryBase implements FormentryPrintableInt
 
         return is_array($value) ? implode(", ", $value) : "-";
     }
+
+    /**
+     * @return bool
+     */
+    public function getContinuousIndexes(): bool
+    {
+        return $this->continuousIndexes;
+    }
+
+    /**
+     * @param bool $continuousIndexes
+     */
+    public function setContinuousIndexes(bool $continuousIndexes): void
+    {
+        $this->continuousIndexes = $continuousIndexes;
+    }
+
+
 }

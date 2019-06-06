@@ -32,7 +32,7 @@ $lang["_system_changehistory_enabled_"]  = "Changetrack enabled";
 $lang["_system_dbdump_amount_"]          = "Number of DB-dumps";
 $lang["_system_dbdump_amount_hint"]      = "Defines how many DB-dumps should be kept.";
 $lang["_system_graph_type_"]             = "Chart-library used";
-$lang["_system_graph_type_hint"]         = "Valid values: pchart, ezc, jqplot. pChat has to be downloaded manually, for optimal images ezc makes use of the php-module 'cairo'.<br />See also <a href=\"http://www.kajona.de/nicecharts.html\" taget=\"_blank\">http://www.kajona.de/nicecharts.html</a>";
+$lang["_system_graph_type_hint"]         = "Valid values: pchart, ezc, jqplot. pChat has to be downloaded manually, for optimal images ezc makes use of the php-module 'cairo'.<br />See also <a href=\"http://www.kajona.de/nicecharts.html\" target=\"_blank\">http://www.kajona.de/nicecharts.html</a>";
 $lang["_system_lock_maxtime_"]           = "Maximum locktime";
 $lang["_system_lock_maxtime_hint"]       = "After the given duration in seconds, locked records will be unlocked automatically.";
 $lang["_system_mod_rewrite_"]            = "URL-rewriting";
@@ -55,6 +55,8 @@ $lang["_system_session_ipfixation_"]     = "Bind session to ip";
 $lang["_system_session_ipfixation_hint"] = "Normally, sessions are bound to the clients source ip. When using procy servers, this could lead to problems (logouts).";
 $lang["_system_lists_clickable_"]        = "Clickable default lists";
 $lang["_system_lists_clickable_hint"]    = "If enabled, a click on a list row triggers the first action (icon) automatically";
+$lang["_system_permission_assignment_threshold_"]    = "Permissions threshold";
+$lang["_system_permission_assignment_threshold_hint"]    = "Nr of user to group assignments required to switch from or based permission queries to table based one";
 $lang["about_part1"]                     = "<h2>Kajona V6 - Open Source Content Management System</h2>Kajona V 6.2<br /><br /><a href=\"http://www.kajona.de\" target=\"_blank\">www.kajona.de</a><br /><a href=\"mailto:info@kajona.de\" target=\"_blank\">info@kajona.de</a><br /><br />For further information, support or proposals, please visit our website.<br />Additional support is provided using our <a href=\"http://board.kajona.de/\" target=\"_blank\">board</a>.";
 $lang["about_part2"]                     = "<ul><li><a href=\"https://www.xing.com/profile/Stefan_Idler\" target=\"_blank\">Stefan Idler</a>, <a href=\"mailto:sidler@kajona.de\">sidler@kajona.de</a> (project management, technical administration, development)</li></ul>";
 $lang["about_part2_header"]              = "<h2>Head developers</h2>";
@@ -84,7 +86,7 @@ $lang["action_system_settings"]          = "System settings";
 $lang["action_system_tasks"]             = "System tasks";
 $lang["action_systemlog"]                = "System logfile";
 $lang["action_unlock_record"]            = "Unlock record";
-$lang["anzahltabellen"]                  = "Number of tables";
+
 $lang["delete_aspect_question"]          = "Do you really want to delete the aspect &quot;<b>%%element_name%%</b>&quot;?";
 $lang["aspect_isDefault"]                = "default aspect";
 $lang["aspect_list_empty"]               = "No aspects created";
@@ -106,12 +108,6 @@ $lang["change_export_excel"]             = "Excel export";
 $lang["change_diff"]                     = "Compare";
 $lang["dateStyleLong"]                   = "m/d/Y H:i:s";
 $lang["dateStyleShort"]                  = "m/d/Y";
-$lang["datekajona"]                      = "System date";
-$lang["datenbankclient"]                 = "Database client";
-$lang["datenbankserver"]                 = "Database server";
-$lang["datenbanktreiber"]                = "Database driver";
-$lang["datenbankverbindung"]             = "Database connection";
-$lang["db"]                              = "Database";
 $lang["desc"]                            = "Edit permissions of";
 $lang["dialog_cancelButton"]             = "Cancel";
 $lang["dialog_copyButton"]             = "Yes, copy";
@@ -121,10 +117,8 @@ $lang["dialog_deleteHeader"]             = "Confirm deletion";
 $lang["dialog_loadingHeader"]            = "Please wait";
 $lang["dialog_removeAssignmentButton"]   = "Yes, remove assignment";
 $lang["dialog_removeAssignmentHeader"]   = "Confirm assignment removal";
-$lang["diskspace_free"]                  = " (free/total)";
+
 $lang["errorintro"]                      = "Please complete the following fields";
-$lang["errorlevel"]                      = "Error level";
-$lang["executiontimeout"]                = "Execution timeout";
 $lang["fehler_setzen"]                   = "Error saving permissions";
 $lang["filebrowser"]                     = "Select a file";
 $lang["form_aspect_default"]             = "Default aspect";
@@ -134,15 +128,6 @@ $lang["form_deletedrecordsfilter_systemid"] = "Systemid";
 $lang["form_deletedrecordsfilter_class"] = "Class";
 $lang["form_deletedrecordsfilter_comment"] = "Record comment";
 $lang["form_default_group_name"]         = "Basic data";
-$lang["gd"]                              = "GD-Lib";
-$lang["geladeneerweiterungen"]           = "Extensions loaded";
-$lang["gifread"]                         = "GIF read-support";
-$lang["gifwrite"]                        = "GIF write-support";
-$lang["groessedaten"]                    = "Size of data";
-$lang["groessegesamt"]                   = "Size in total";
-$lang["inputtimeout"]                    = "Input timeout";
-$lang["jpg"]                             = "JPG support";
-$lang["keinegd"]                         = "GD-Lib not installed";
 $lang["locked_record_info"]              = "Locked since: {0} &middot; Locked by: {1}";
 $lang["log_empty"]                       = "No entries in the system-logfile";
 $lang["login_xml_error"]                 = "Login failed";
@@ -154,7 +139,7 @@ $lang["mail_recipient"]                  = "Recipient";
 $lang["mail_send_error"]                 = "Error sending the email. Please retry the last action.";
 $lang["mail_send_success"]               = "Email sent successfully.";
 $lang["mail_subject"]                    = "Subject";
-$lang["memorylimit"]                     = "Memory limit";
+
 $lang["messageprovider_exceptions_name"] = "System-Exceptions";
 $lang["messageprovider_personalmessage_name"] = "Personal messages";
 $lang["modul_titel_aspect"]                = "Edit aspects";
@@ -173,12 +158,9 @@ $lang["permissons_add_group"]                     = "Add group";
 $lang["moduleRightsTitle"]               = "Permissions";
 $lang["numberStyleDecimal"]              = ".";
 $lang["numberStyleThousands"]            = ",";
-$lang["operatingsystem"]                 = "Operating system";
 $lang["pageview_forward"]                = "Forward";
 $lang["pageview_total"]                  = "Total: ";
-$lang["php"]                             = "PHP";
-$lang["png"]                             = "PNG support";
-$lang["postmaxsize"]                     = "Post max size";
+
 $lang["quickhelp_change"]                = "The permissions of a record are adjustable within this page";
 $lang["quickhelp_list"]                  = "The list of modules provides an overview of the modules currently installed.<br />Additionally, the modules versions and the installation dates are displayed.<br />You are able to modify the permissons of the module-rights-record, the base for all contents to inherit their permissions from (if activated).<br />It's also possible to reorder the modules in the module navigation by changing the position of a module in this list.";
 $lang["quickhelp_module_list"]           = "The list of modules provides an overview of the modules currently installed.<br />Additionally, the modules versions and the installation dates are displayed.<br />You are able to modify the permissons of the module-rights-record, the base for all contents to inherit their permissions from (if activated).<br />It's also possible to reorder the modules in the module navigation by changing the position of a module in this list.";
@@ -189,7 +171,7 @@ $lang["quickhelp_systemlog"]             = "The system-log shows the entries of 
 $lang["quickhelp_title"]                 = "Quickhelp";
 $lang["quickhelp_updateCheck"]           = "By using the update-check, the version of the modules installed locally and the versions of the modules available online are compared. If there's a new version available, Kajona displays a hint at the concerning module.";
 $lang["send"]                            = "Send";
-$lang["server"]                          = "Webserver";
+
 $lang["session_activity"]                = "Activity";
 $lang["session_admin"]                   = "Administration, module: ";
 $lang["session_loggedin"]                = "logged in";
@@ -204,17 +186,11 @@ $lang["setStatusError"]                  = "Error changing the status";
 $lang["setStatusOk"]                     = "Changing the status succeeded";
 $lang["settings_updated"]                = "Settings changed successfully";
 $lang["setzen_erfolg"]                   = "Permissions saved successfully";
-$lang["speicherplatz"]                   = "Disk space";
+$lang["save_rights_success"]             = "Permissions saved successfully";
+$lang["save_rights_error"]               = "Error on changing permissions";
+
 $lang["status_active"]                   = "Change status (is active)";
 $lang["status_inactive"]                 = "Change status (is inactive)";
-$lang["system_cache"]                    = "Cache";
-$lang["system_realpath"]                 = "System path in filesystem";
-$lang["system_webpath"]                  = "System URL";
-$lang["systeminfo_php_regglobal"]        = "Register globals";
-$lang["systeminfo_php_safemode"]         = "Safe mode";
-$lang["systeminfo_php_urlfopen"]         = "Allow url fopen";
-$lang["systeminfo_webserver_modules"]    = "Modules loaded";
-$lang["systeminfo_webserver_version"]    = "Webserver";
 $lang["systemtask_cacheSource_source"]   = "Cache-Types";
 $lang["systemtask_cacheSource_namespace"] = "Cache-Namespace";
 $lang["systemtask_cancel_execution"]     = "Cancel execution";
@@ -277,13 +253,6 @@ $lang["systemtask_systemstatus_systemid"] = "Systemid";
 $lang["systemtask_rightsinheritcheck_name"] = "Optimize permission inheritance";
 $lang["systemtask_rightsinheritcheck_intro"] = "For the following nodes, inheritance of permissions was re-enabled. The nodes breaked the permission-inheritance even while using the same permission configuration as their parent node.";
 $lang["systemtask_rightsinheritcheck_empty"] = "All nodes are optimized";
-$lang["time_localsystemtime"]            = "Local sytem time";
-$lang["time_phptimestamp"]               = "php-time acc. to time()";
-$lang["time_systemtime_UTC"]             = "Time acc. to UTC";
-$lang["time_systemtimezone"]             = "Timezone of the local system";
-$lang["time_systemzone_manual_setting"]  = "Manually setup timezone";
-$lang["timeinfo"]                        = "System time";
-$lang["timezone"]                        = "Timezone";
 $lang["titel_erben"]                     = "Inherit rights";
 $lang["titel_leer"]                      = "<em>No title defined</em>";
 $lang["titel_root"]                      = "Rights root-record";
@@ -301,10 +270,10 @@ $lang["update_module_remoteversion"]     = "Available";
 $lang["update_nodom"]                    = "This PHP-installation does not support XML-DOM. This is required for the update-check to work.";
 $lang["update_nofilefound"]              = "The list of updates failed to load.<br />Possible reasons can be having the php-config value 'allow_url_fopen' set to 'off' or using a system without support for sockets.";
 $lang["update_nourlfopen"]               = "To make this function work, the value &apos;allow_url_fopen&apos; must be set to &apos;on&apos; in the php-config file!";
-$lang["uploadmaxsize"]                   = "Upload max size";
+
 $lang["uploadfile"]                      = "Selected file";
-$lang["uploads"]                         = "Uploads";
-$lang["version"]                         = "Version";
+
+
 $lang["warnung_settings"]                = "ATTENTION!!!<br />Using wrong values for the following settings could make the system become unusable!";
 $lang["systemtask_permissions_hint"]     = "This systemtask allows to change permissions for a single group recursively. The permission is changed regardless of a possible inheritance. This means, the value is written to each subdnode, either by inheritance or by a direct manipulation of the permissions. The permissions of other groups won't be changed.";
 $lang["systemtask_permissions_systemid"]     = "Starting systemid";
@@ -320,28 +289,13 @@ $lang["changelog_tooltipUnitPlural"] = "changes";
 $lang["changelog_tooltipHtml"]       = "<span><strong>%count% %unit%</strong> on %date%</span>";
 $lang["changelog_tooltipColumn"]     = "Click on the calendar heatmap to load a record for a specific date.";
 
-$lang["cache"]  = "Cache";
-$lang["cache_apc"]  = "APC";
-$lang["cache_filesystem"]  = "Filesystem";
-$lang["cache_hits"]  = "Hits";
-$lang["cache_misses"]  = "Misses";
-$lang["cache_uptime"]  = "Uptime";
-$lang["cache_usage"]  = "Usage";
-$lang["cache_available"]  = "Available";
+$lang["workflow_oracle_stats_title"]  = "Gather oracle statistics";
+$lang["workflow_oracle_stats_val1"]  = "Hour to start gathering";
 
 $lang["workflow_messagequeue_title"]  = "Message-Queue sender";
 $lang["workflow_queue_sender_val1"]  = "Hours";
 $lang["workflow_queue_sender_val2"]  = "Minutes";
 
-$lang["smtp_config"]  = "SMTP-Config";
-$lang["smtp_enabled"]  = "SMTP enabled";
-$lang["smtp_host"]  = "Host";
-$lang["smtp_port"]  = "Port";
-$lang['smtp_encryption']      = "SMTP encryption";
-$lang['smtp_debug']           = "SMTP debug";
-$lang['smtp_auth_enabled']    = "SMTP auth_enabled";
-$lang['smtp_auth_username']   = "SMTP auth_username";
-$lang['smtp_auth_password']   = "SMTP auth_password";
 
 $lang["update_in_progress"] = "System update in progress, please wait...";
 
@@ -351,3 +305,12 @@ $lang["object_browser_reset"] = "Remove object";
 
 $lang["copy_to_clipboard"] = "Copy to clipboard";
 $lang["copy_page_url"] = "Page URL";
+$lang["link_was_copied"] = "Link was copied";
+
+$lang["error_model_not_found"] = "Error handling request, the object to be loaded is unknown. Please restart your action.";
+
+$lang["systemtask_samplecontent_installer"] = "Samplecontent";
+$lang["systemtask_samplecontent_installer_name"] = "Samplecontent Installer";
+$lang["systemtask_samplecontent_installer_error"] = "Could not install samplecontent";
+
+$lang["systemtask_form_name"] = "Form-Demo";

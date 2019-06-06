@@ -156,13 +156,12 @@
     </target>
 
     <target name="installNpmBuildDependencies">
-        <!--echo>npm Build Dependencies</echo>
-        <echo>Execute npm</echo -->
-        <exec dir="${basedir}${jsPath}" executable="${path.npm}" failonerror="on">
-            <arg line=" config set registry ${npmLocalRegistry}"/>
-        </exec>
-        <exec dir="${basedir}${jsPath}" executable="${path.npm}" failonerror="on">
+        <exec dir="${basedir}" executable="${path.npm}" failonerror="on">
             <arg line=" install"/>
+        </exec>
+
+        <exec dir="${basedir}" executable="${path.npm}" failonerror="on">
+            <arg line=" run build "/>
         </exec>
     </target>
 
@@ -197,24 +196,24 @@
     <!-- possible params: targetDir -->
     <target name="copy2project">
         <copy todir="${targetDir}" overwrite="true"  includeEmptyDirs="true" >
-            <fileset id="sources.dirs" dir="${basedir}${sourcesPath}">		              
-                <exclude name=".git"/>		              
-                <exclude name="files/extract/**"/>		              
-                <exclude name="files/cache/**"/>		              
-                <exclude name="project/log/**"/>		              
-                <exclude name="project/dbdumps"/>		              
-                <exclude name="project/temp/**"/>		              
-                <include name="core*/module_*/*/**"/>		 
-                <include name="core*/_debugging/*/**"/>	
+            <fileset id="sources.dirs" dir="${basedir}${sourcesPath}">
+                <exclude name=".git"/>
+                <exclude name="files/extract/**"/>
+                <exclude name="files/cache/**"/>
+                <exclude name="project/log/**"/>
+                <exclude name="project/dbdumps"/>
+                <exclude name="project/temp/**"/>
+                <include name="core*/module_*/*/**"/>
+                <include name="core*/_debugging/*/**"/>
                 <include name="core*/_buildfiles/bin/*/**"/>
                 <include name="core*/_buildfiles/*.xml"/>
                 <include name="core*/_buildfiles/jstests/*/**"/>
                 <include name="core*/*.php"/>
-                <include name="core*/*.htaccess"/>	
-                <include name="files/**"/>	
-                <include name="project/**"/>	
-                <include name=".htaccess"/>	
-            </fileset>		              
+                <include name="core*/*.htaccess"/>
+                <include name="files/**"/>
+                <include name="project/**"/>
+                <include name=".htaccess"/>
+            </fileset>
         </copy>
     </target>
 
@@ -237,7 +236,7 @@
 
         <antcall target="buildPackageHelper" />
         <antcall target="modulePharHelper" />
-    
+
         <zip destfile="${basedir}${packagesPath}/build_${DSTAMP}-${TSTAMP}.zip">
             <fileset dir="${basedir}${tempPath}/../" />
         </zip>
@@ -260,13 +259,9 @@
         <exec executable="php" dir="${basedir}"  failonerror="on" >
             <arg line="-f buildProject.php ${tempPath} onlySetup"/>
         </exec>
-        <parallel>
-            <antcall target="compressCss" />
-        </parallel>
         <antcall target="cleanZipContent" />
     </target>
 
-    
 
     <!-- triggers the installation of the project aka. creating the db-structure -->
 
@@ -329,27 +324,7 @@
     </target>
 
 
-    <target name="compressCss" description="Minifies the css files using the cleancss compressor">
-        <echo>Compressing css files</echo>
 
-        <copy todir="${basedir}${tempPath}">
-            <fileset dir="${basedir}${tempPath}">
-                <include name="**/*.css"/>
-                <exclude name="**/build/**/*.css"/>
-                <exclude name="**/composer/**/*.css"/>
-                <exclude name="**/jstests/**/*.css"/>
-            </fileset>
-            <globmapper from="*.css" to="*-full.css"/>
-        </copy>
-
-        <apply executable="${basedir}${jsPath}/node_modules/.bin/cleancss${script-suffix-cmd}" parallel="false" dest="${basedir}${tempPath}" verbose="false" failonerror="true">
-            <fileset dir="${basedir}${tempPath}" includes="**/*-full.css"/>
-            <arg line="--output"/>
-            <mapper type="glob" from="*-full.css" to="*.css"/>
-            <targetfile/>
-            <srcfile/>
-        </apply>
-    </target>
 
     <target name="lint" description="Perform syntax check of sourcecode files">
         <apply executable="${path.php}" failonerror="true" output="${basedir}${buildPath}/logs/lint.log">

@@ -226,57 +226,44 @@ class DbSqlite3 extends DbBase
         return $this->buildAndCopyTempTables($strTable, $arrTargetTableInfo, $arrTargetTableInfo);
     }
 
-
     /**
      * Creates a single query in order to insert multiple rows at one time.
      * For most databases, this will create s.th. like
-     * INSERT INTO $strTable ($arrColumns) VALUES (?, ?), (?, ?)...
+     * INSERT INTO $tableName($columns) VALUES (?, ?), (?, ?)...
      * Please note that this method is used to create the query itself, based on the Kajona-internal syntax.
      * The query is fired to the database by Database
      *
-     * @param string $strTable
-     * @param string[] $arrColumns
-     * @param array $arrValueSets
-     * @param Database $objDb
+     * @param string $tableName
+     * @param string[] $columns
+     * @param array $valueSets
+     * @param Database $db
      *
-     * @param array|null $arrEscapes
+     * @param array|null $escapes
      * @return bool
      */
-    public function triggerMultiInsert($strTable, $arrColumns, $arrValueSets, Database $objDb, ?array $arrEscapes)
+    public function triggerMultiInsert($tableName, $columns, $valueSets, Database $db, ?array $escapes): bool
     {
-        $arrVersion = SQLite3::version();
-        if (version_compare("3.7.11", $arrVersion["versionString"], "<=")) {
-            return parent::triggerMultiInsert($strTable, $arrColumns, $arrValueSets, $objDb, $arrEscapes);
-        } else {
-            //legacy code
-            $arrSafeColumns = array();
-            $arrPlaceholder = array();
-            foreach ($arrColumns as $strOneColumn) {
-                $arrSafeColumns[] = $this->encloseColumnName($strOneColumn);
-                $arrPlaceholder[] = "?";
-            }
-
-            $arrParams = array();
-
-            $strQuery = "INSERT INTO ".$this->encloseTableName($strTable)."  (".implode(",", $arrSafeColumns).") ";
-            for ($intI = 0; $intI < count($arrValueSets); $intI++) {
-                $arrTemp = array();
-                for ($intK = 0; $intK < count($arrColumns); $intK++) {
-                    $arrTemp[] = " ? AS ".$this->encloseColumnName($arrColumns[$intK]);
-                }
-
-                if ($intI == 0) {
-                    $strQuery .= " SELECT ".implode(", ", $arrTemp);
-                } else {
-                    $strQuery .= " UNION SELECT ".implode(", ", $arrTemp);
-                }
-
-                $arrParams = array_merge($arrParams, array_values($arrValueSets[$intI]));
-            }
-
-            return $objDb->_pQuery($strQuery, $arrParams, $arrEscapes ?? []);
+        $sqliteVersion = SQLite3::version();
+        if (version_compare('3.7.11', $sqliteVersion['versionString'], '<=')) {
+            return parent::triggerMultiInsert($tableName, $columns, $valueSets, $db, $escapes);
         }
+        //legacy code
+        $safeColumns = array_map(function ($column) { return $this->encloseColumnName($column); }, $columns);
+        $params = [];
+        $escapeValues = [];
+        $insertStatement = 'INSERT INTO ' . $this->encloseTableName($tableName) . '  (' . implode(',', $safeColumns) . ') ';
+        foreach ($valueSets as $key => $valueSet) {
+            $selectStatement = $key === 0 ? ' SELECT ' : ' UNION SELECT ';
+            $insertStatement .= $selectStatement . implode(', ', array_map(function ($column) { return ' ? AS ' . $column; }, $safeColumns));
+            $params[] = array_values($valueSet);
+            if ($escapes !== null) {
+                $escapeValues[] = $escapes;
+            }
+        }
+
+        return $db->_pQuery($insertStatement, array_merge(...$params), $escapeValues !== [] ? array_merge(...$escapeValues) : []);
     }
+
 
     /**
      * @inheritDoc

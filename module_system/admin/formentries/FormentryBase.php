@@ -29,7 +29,7 @@ use Kajona\System\System\ValidatorInterface;
  * @since 4.0
  * @package module_formgenerator
  */
-abstract class FormentryBase
+abstract class FormentryBase implements \JsonSerializable
 {
 
     /**
@@ -235,6 +235,21 @@ abstract class FormentryBase
             );
     }
 
+    /**
+     * @return array
+     */
+    public function jsonSerialize()
+    {
+        return [
+            "type" => str_replace("\\", "", get_class($this)),
+            "name" => $this->getStrEntryName(),
+            "label" => $this->getStrLabel(),
+            "readonly" => $this->getBitReadonly(),
+            "mandatory" => $this->getBitMandatory(),
+            "hint" => $this->getStrHint(),
+            "value" => $this->getStrValue(),
+        ];
+    }
 
     /**
      * @param bool $bitMandatory

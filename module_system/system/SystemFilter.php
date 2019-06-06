@@ -17,7 +17,7 @@ class SystemFilter extends FilterBase
 {
     /**
      * @var string
-     * @tableColumn system.system_class
+     * @tableColumn agp_system.system_class
      * @filterCompareOperator EQ
      */
     private $class = null;

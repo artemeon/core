@@ -4,7 +4,7 @@
  *       Published under the GNU LGPL v2.1
  ********************************************************************************************************/
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace Kajona\System\View\Components\Formentry\Submit;
 
@@ -28,8 +28,7 @@ class Submit extends FormentryComponentAbstract
     protected $value;
 
     protected $withWrapper = true;
-    protected $onClick = "require('jquery')(this).addClass('clicked')";
-
+    protected $onClick = "$(this).addClass('clicked')";
 
     /**
      * @param string $name
@@ -51,7 +50,7 @@ class Submit extends FormentryComponentAbstract
      */
     public function renderComponent(): string
     {
-        $template =  parent::renderComponent();
+        $template = parent::renderComponent();
 
         if ($this->withWrapper) {
             $wrapper = new Buttonwrapper($template);
@@ -60,7 +59,6 @@ class Submit extends FormentryComponentAbstract
 
         return $template;
     }
-
 
     /**
      * @inheritdoc
@@ -117,6 +115,5 @@ class Submit extends FormentryComponentAbstract
         $this->onClick = $onClick;
         return $this;
     }
-
 
 }

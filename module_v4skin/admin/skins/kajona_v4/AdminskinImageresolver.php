@@ -332,6 +332,11 @@ class AdminskinImageresolver implements AdminskinImageresolverInterface
         "icon_ampel_grau_4" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_grau'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i></span>",
         "icon_ampel_schwarz_4" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_schwarz'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle black'></i></span>",
 
+        "icon_ampel_rot_2" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_rot'><i class='kj-icon fa fa-circle red' ></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i></span>",
+        "icon_ampel_rot_gelb_2" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_rot_gelb'><i class='kj-icon fa fa-circle red' ></i><i class='kj-icon fa fa-circle orange'></i><i class='kj-icon fa fa-circle-thin'></i></span>",
+        "icon_ampel_gelb_2" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_gelb'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle orange'></i><i class='kj-icon fa fa-circle-thin'></i></span>",
+        "icon_ampel_gruen_gelb_2" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_gruen_gelb'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle orange'></i><i class='kj-icon fa fa-circle green'></i></span>",
+        "icon_ampel_gruen_2" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_gruen'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle green'></i></span>",
 
     ];
 

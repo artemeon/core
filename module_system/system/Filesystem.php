@@ -175,6 +175,19 @@ class Filesystem
     }
 
     /**
+     * check if file exists
+     *
+     * @param string $file
+     * @return bool
+     */
+    public function fileExists(string $file): bool
+    {
+        $file = $this->prependRealpath($file);
+
+        return is_file($file);
+    }
+
+    /**
      * Returns detailed info about a file
      *
      * @param string $strFile
@@ -536,7 +549,7 @@ class Filesystem
     public function readLineByCustomDelimiterFromFile($strDelimiter)
     {
         if ($this->objFilePointer != null) {
-            return stream_get_line($this->objFilePointer, 4096*20, $strDelimiter);
+            return stream_get_line($this->objFilePointer, 4096*200, $strDelimiter);
         }
         return false;
     }

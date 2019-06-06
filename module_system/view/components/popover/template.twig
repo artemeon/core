@@ -4,18 +4,20 @@
 
     {% if contentEndpoint %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}"><div class="lc_{{ id|escape("html_attr") }}"></div></div>
-        <script type="text/javascript">require(['jquery', 'bootstrap'], function($)  { $('#{{ id|escape("html_attr") }}').popover({ content: function() { return $('#pc_{{ id|escape("html_attr") }}').html()}}).on('show.bs.popover', function() {
+        <script type="text/javascript">
+         $('#{{ id|escape("html_attr") }}').popover({ content: function() { return $('#pc_{{ id|escape("html_attr") }}').html()}}).on('show.bs.popover', function() {
 
                 if($('#pc_{{ id|escape("js") }}').hasClass('loadDone')) {
                     return;
                 }
-                require(['jquery', 'bootstrap', 'ajax'], function($, bs, ajax)  {
-                    ajax.loadUrlToElement('.lc_{{ id|escape("html_attr") }}', '{{ contentEndpoint|raw }}', '', false, 'post', function() {});
-                });
+                Ajax.loadUrlToElement('.lc_{{ id|escape("html_attr") }}', '{{ contentEndpoint|raw }}', '', false, 'post', function() {});
                 $('#pc_{{ id|escape("html_attr") }}').addClass('loadDone');
-            }) });   </script>
+            })
+        </script>
     {% else %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}">{{ content|raw }}</div>
-        <script type="text/javascript">require(['jquery', 'bootstrap'], function($)  { $('#{{ id|escape("html_attr") }}').popover({ content: $('#pc_{{ id|escape("html_attr") }}').html()}) });</script>
+        <script type="text/javascript">
+        $('#{{ id|escape("html_attr") }}').popover({ content: $('#pc_{{ id|escape("html_attr") }}').html()})
+        </script>
     {% endif %}
 </div>

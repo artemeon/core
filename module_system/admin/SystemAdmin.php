@@ -1,11 +1,11 @@
 <?php
 /*"******************************************************************************************************
-*   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
-*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
-*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
-*-------------------------------------------------------------------------------------------------------*
-*	$Id$                                *
-********************************************************************************************************/
+ *   (c) 2004-2006 by MulchProductions, www.mulchprod.de                                                 *
+ *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+ *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+ *-------------------------------------------------------------------------------------------------------*
+ *    $Id$                                *
+ ********************************************************************************************************/
 
 namespace Kajona\System\Admin;
 
@@ -55,17 +55,18 @@ use Kajona\System\System\SystemSetting;
 use Kajona\System\System\UserGroup;
 use Kajona\System\System\Validators\EmailValidator;
 use Kajona\System\System\VersionableInterface;
+use Kajona\System\View\Components\Formentry\Datesingle\Datesingle;
+use Kajona\System\View\Components\Formentry\Datetime\Datetime;
+use Kajona\System\View\Components\Formentry\Buttonbar\Buttonbar;
 use Kajona\System\View\Components\Formentry\Dropdown\Dropdown;
 use Kajona\System\View\Components\Formentry\Inputcheckbox\Inputcheckbox;
-use Kajona\System\View\Components\Formentry\Inputonoff\Inputonoff;
 use Kajona\System\View\Components\Formentry\Inputcolorpicker\Inputcolorpicker;
-use Kajona\System\View\Components\Formentry\Buttonbar\Buttonbar;
+use Kajona\System\View\Components\Formentry\Inputonoff\Inputonoff;
 use Kajona\System\View\Components\Formentry\Inputtext\Inputtext;
-use Kajona\System\View\Components\Formentry\Radiogroup\Radiogroup;
 use Kajona\System\View\Components\Formentry\Listeditor\Listeditor;
 use Kajona\System\View\Components\Formentry\Objectlist\Objectlist;
 use Kajona\System\View\Components\Formentry\Objectselector\Objectselector;
-
+use Kajona\System\View\Components\Formentry\Radiogroup\Radiogroup;
 
 /**
  * Class to handle infos about the system and to set systemwide properties
@@ -127,7 +128,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         }
     }
 
-
     /**
      * Renders the form to edit an existing entry
      *
@@ -149,7 +149,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
             $this->adminReload(Link::getLinkAdminHref($this->getArrModule("modul"), "list"));
         }
     }
-
 
     /**
      * Creates a list of all installed modules
@@ -185,15 +184,15 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
     {
         if ($objListEntry instanceof SystemModule) {
             $arrReturn = array();
-            $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdminDialog("system", "moduleAspect", "&systemid=".$objListEntry->getSystemid(), "", $this->getLang("modul_aspectedit"), "icon_aspect", $this->getLang("modul_aspectedit")));
+            $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdminDialog("system", "moduleAspect", "&systemid=" . $objListEntry->getSystemid(), "", $this->getLang("modul_aspectedit"), "icon_aspect", $this->getLang("modul_aspectedit")));
 
             if ($objListEntry->rightEdit() && Carrier::getInstance()->getObjSession()->isSuperAdmin()) {
                 if ($objListEntry->getStrName() == "system") {
                     $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdmin("system", "moduleList", "", "", $this->getLang("modul_status_system"), "icon_enabled"));
                 } elseif ($objListEntry->getIntRecordStatus() == 0) {
-                    $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdmin("system", "moduleStatus", "&systemid=".$objListEntry->getSystemid(), "", $this->getLang("modul_status_disabled"), "icon_disabled"));
+                    $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdmin("system", "moduleStatus", "&systemid=" . $objListEntry->getSystemid(), "", $this->getLang("modul_status_disabled"), "icon_disabled"));
                 } else {
-                    $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdmin("system", "moduleStatus", "&systemid=".$objListEntry->getSystemid(), "", $this->getLang("modul_status_enabled"), "icon_enabled"));
+                    $arrReturn[] = $this->objToolkit->listButton(Link::getLinkAdmin("system", "moduleStatus", "&systemid=" . $objListEntry->getSystemid(), "", $this->getLang("modul_status_enabled"), "icon_enabled"));
                 }
             }
 
@@ -218,7 +217,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         return parent::renderStatusAction($objListEntry, $strAltActive, $strAltInactive);
     }
 
-
     /**
      * @param Model $objListEntry
      * @param bool $bitDialog
@@ -235,7 +233,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
 
         return parent::renderEditAction($objListEntry, $bitDialog, $arrParams);
     }
-
 
     /**
      * @param ModelInterface $objListEntry
@@ -276,7 +273,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         return "";
     }
 
-
     /**
      * Creates the form to manipulate the aspects of a single module
      *
@@ -292,7 +288,7 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         $strReturn .= $this->objToolkit->formHeader(Link::getLinkAdminHref($this->getArrModule("modul"), "saveModuleAspect"));
         $arrAspects = SystemAspect::getObjectListFiltered();
         foreach ($arrAspects as $objOneAspect) {
-            $strReturn .= $this->objToolkit->formInputCheckbox("aspect_".$objOneAspect->getSystemid(), $objOneAspect->getStrName(), in_array($objOneAspect->getSystemid(), $arrAspectsSet));
+            $strReturn .= $this->objToolkit->formInputCheckbox("aspect_" . $objOneAspect->getSystemid(), $objOneAspect->getStrName(), in_array($objOneAspect->getSystemid(), $arrAspectsSet));
         }
 
         $strReturn .= $this->objToolkit->formInputHidden("systemid", $this->getSystemid());
@@ -322,7 +318,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         $this->objLifeCycleFactory->factory(get_class($objModule))->update($objModule);
         $this->adminReload(Link::getLinkAdminHref($this->getArrModule("modul"), "list", "peClose=1&blockAction=1"));
     }
-
 
     /**
      * Shows information about the current system
@@ -386,8 +381,8 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
             }
             //Build the rows
             //Print a help-text?
-            $strHelper = $this->getLang($objOneSetting->getStrName()."hint", $objCurrentModule->getStrName());
-            if ($strHelper != "!".$objOneSetting->getStrName()."hint!") {
+            $strHelper = $this->getLang($objOneSetting->getStrName() . "hint", $objCurrentModule->getStrName());
+            if ($strHelper != "!" . $objOneSetting->getStrName() . "hint!") {
                 $strRows .= $this->objToolkit->formTextRow($strHelper);
             }
 
@@ -396,11 +391,11 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
                 $arrDD = array();
                 $arrDD["true"] = $this->getLang("commons_yes");
                 $arrDD["false"] = $this->getLang("commons_no");
-                $strRows .= $this->objToolkit->formInputDropdown("set[".$objOneSetting->getSystemid()."]", $arrDD, $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", true, "", "", "", $objOneSetting->getSystemid()."#strValue");
+                $strRows .= $this->objToolkit->formInputDropdown("set[" . $objOneSetting->getSystemid() . "]", $arrDD, $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", true, "", "", "", $objOneSetting->getSystemid() . "#strValue");
             } elseif ($objOneSetting->getIntType() == 3) {
-                $strRows .= $this->objToolkit->formInputPageSelector("set[".$objOneSetting->getSystemid()."]", $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", false, true, "", $objOneSetting->getSystemid()."#strValue");
+                $strRows .= $this->objToolkit->formInputPageSelector("set[" . $objOneSetting->getSystemid() . "]", $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", false, true, "", $objOneSetting->getSystemid() . "#strValue");
             } else {
-                $strRows .= $this->objToolkit->formInputText("set[".$objOneSetting->getSystemid()."]", $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", "", false, $objOneSetting->getSystemid()."#strValue");
+                $strRows .= $this->objToolkit->formInputText("set[" . $objOneSetting->getSystemid() . "]", $this->getLang($objOneSetting->getStrName(), $objCurrentModule->getStrName()), $objOneSetting->getStrValue(), "", "", false, $objOneSetting->getSystemid() . "#strValue");
             }
         }
         //Build a form to return -> include the last module
@@ -412,12 +407,10 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
 
         $strReturn .= $this->objToolkit->getTabbedContent($arrTabs);
 
-        $strReturn .= "<script type='text/javascript'>require(['instantSave'], function(is) {is.init()});</script>";
-
+        $strReturn .= "<script type='text/javascript'>InstantSave.init()</script>";
 
         return $strReturn;
     }
-
 
     /**
      * Loads the list of all systemtasks available and creates the form required to trigger a task
@@ -464,8 +457,7 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
                 $strGroupName = "default";
             }
 
-
-            $strReturn .= $this->objToolkit->formHeadline($this->getLang("systemtask_group_".$strGroupName));
+            $strReturn .= $this->objToolkit->formHeadline($this->getLang("systemtask_group_" . $strGroupName));
             $strReturn .= $this->objToolkit->listHeader();
             /** @var $objOneTask AdminSystemtaskInterface */
             foreach ($arrTasks as $objOneTask) {
@@ -473,7 +465,7 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
                 $strLink = Link::getLinkAdmin(
                     "system",
                     "systemTasks",
-                    "&task=".$objOneTask->getStrInternalTaskName(),
+                    "&task=" . $objOneTask->getStrInternalTaskName(),
                     $objOneTask->getStrTaskname(),
                     $this->getLang("systemtask_run"),
                     "icon_accept"
@@ -491,7 +483,7 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
 
         //include js-code & stuff to handle executions
         $strReturn .= self::getTaskDialogCode();
-        $strReturn = $strTaskOutput.$strReturn;
+        $strReturn = $strTaskOutput . $strReturn;
 
         return $strReturn;
     }
@@ -514,7 +506,6 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
         $objLang = Carrier::getInstance()->getObjLang();
         $strTaskOutput = "";
 
-
         //If the task is going to be executed, validate the form first (if form is of type AdminFormgenerator)
         $objAdminForm = null;
         if ($bitExecute) {
@@ -533,10 +524,8 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
             } else {
                 $strTaskOutput .= "
                 <script type=\"text/javascript\">
-                require(['systemTask'], function(systemtask) {
-                    systemtask.executeTask('".$objTask->getStrInternalTaskname()."', '".$objTask->getSubmitParams()."');
-                    systemtask.setName('".$objLang->getLang("systemtask_runningtask", "system")." ".$objTask->getStrTaskName()."');
-                });
+                SystemTask.executeTask('" . $objTask->getStrInternalTaskname() . "', '" . $objTask->getSubmitParams() . "');
+                SystemTask.setName('" . $objLang->getLang("systemtask_runningtask", "system") . " " . $objTask->getStrTaskName() . "');
                 </script>";
             }
         } else {
@@ -546,12 +535,10 @@ class SystemAdmin extends AdminEvensimpler implements AdminInterface
             } else {
                 $strLang = Carrier::getInstance()->getObjLang()->getLang("systemtask_runningtask", "system");
                 $strTaskJS = <<<JS
-                require(['systemTask'], function(systemtask) {
-                    systemtask.executeTask('{$objTask->getStrInternalTaskName()}', '');
-                    systemtask.setName('{$strLang} {$objTask->getStrTaskName()}');
-                });
+                SystemTask.executeTask('{$objTask->getStrInternalTaskName()}', '');
+                SystemTask.setName('{$strLang} {$objTask->getStrTaskName()}');
 JS;
-                $strTaskOutput .= "<script type='text/javascript'>".$strTaskJS."</script>";
+                $strTaskOutput .= "<script type='text/javascript'>" . $strTaskJS . "</script>";
             }
         }
 
@@ -566,12 +553,12 @@ JS;
     public static function getTaskDialogCode()
     {
         $objLang = Carrier::getInstance()->getObjLang();
-        $strDialogContent = "<div id=\"systemtaskLoadingDiv\" class=\"loadingContainer loadingContainerBackground\"></div><br /><b id=\"systemtaskNameDiv\"></b><br /><br /><div id=\"systemtaskStatusDiv\"></div><br /><input id=\"systemtaskCancelButton\" type=\"submit\" value=\"".$objLang->getLang("systemtask_cancel_execution", "system")."\" class=\"btn inputSubmit\" /><br />";
+        $strDialogContent = "<div id=\"systemtaskLoadingDiv\" class=\"loadingContainer loadingContainerBackground\"></div><br /><b id=\"systemtaskNameDiv\"></b><br /><br /><div id=\"systemtaskStatusDiv\"></div><br /><input id=\"systemtaskCancelButton\" type=\"submit\" value=\"" . $objLang->getLang("systemtask_cancel_execution", "system") . "\" class=\"btn inputSubmit\" /><br />";
         return "<script type=\"text/javascript\">
-            var KAJONA_SYSTEMTASK_TITLE = '".$objLang->getLang("systemtask_dialog_title", "system")."';
-            var KAJONA_SYSTEMTASK_TITLE_DONE = '".$objLang->getLang("systemtask_dialog_title_done", "system")."';
-            var KAJONA_SYSTEMTASK_CLOSE = '".$objLang->getLang("systemtask_close_dialog", "system")."';
-            var kajonaSystemtaskDialogContent = '".$strDialogContent."';
+            var KAJONA_SYSTEMTASK_TITLE = '" . $objLang->getLang("systemtask_dialog_title", "system") . "';
+            var KAJONA_SYSTEMTASK_TITLE_DONE = '" . $objLang->getLang("systemtask_dialog_title_done", "system") . "';
+            var KAJONA_SYSTEMTASK_CLOSE = '" . $objLang->getLang("systemtask_close_dialog", "system") . "';
+            var kajonaSystemtaskDialogContent = '" . $strDialogContent . "';
             </script>";
     }
 
@@ -585,7 +572,7 @@ JS;
     protected function actionLockedRecords()
     {
         $objArraySectionIterator = new ArraySectionIterator(Lockmanager::getLockedRecordsCount());
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(Lockmanager::getLockedRecords($objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         $strReturn = "";
@@ -606,7 +593,7 @@ JS;
                 }
             }
 
-            $strActions = $this->objToolkit->listButton(Link::getLinkAdmin($this->getArrModule("modul"), "lockedRecords", "&unlockid=".$objOneRecord->getSystemid(), $this->getLang("action_unlock_record"), $this->getLang("action_unlock_record"), "icon_lockerOpen"));
+            $strActions = $this->objToolkit->listButton(Link::getLinkAdmin($this->getArrModule("modul"), "lockedRecords", "&unlockid=" . $objOneRecord->getSystemid(), $this->getLang("action_unlock_record"), $this->getLang("action_unlock_record"), "icon_lockerOpen"));
             $objLockUser = Objectfactory::getInstance()->getObject($objOneRecord->getLockManager()->getLockId());
 
             $strReturn .= $this->objToolkit->genericAdminList(
@@ -647,7 +634,7 @@ JS;
         $strReturn .= $strFilterForm;
 
         $objArraySectionIterator = new ArraySectionIterator(DeletedRecordsFilter::getDeletedRecordsCount($objFilter));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(DeletedRecordsFilter::getDeletedRecords($objFilter, $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         if (!$objArraySectionIterator->valid()) {
@@ -671,13 +658,13 @@ JS;
             $strActions = "";
             if ($objOneRecord->rightDelete()) {
                 $strActions .= $this->objToolkit->listButton(
-                    Link::getLinkAdmin($this->getArrModule("modul"), "finalDeleteRecord", "&systemid=".$objOneRecord->getSystemid(), $this->getLang("action_final_delete_record"), $this->getLang("action_final_delete_record"), "icon_delete")
+                    Link::getLinkAdmin($this->getArrModule("modul"), "finalDeleteRecord", "&systemid=" . $objOneRecord->getSystemid(), $this->getLang("action_final_delete_record"), $this->getLang("action_final_delete_record"), "icon_delete")
                 );
             }
 
             if ($objOneRecord->isRestorable()) {
                 $strActions .= $this->objToolkit->listButton(
-                    Link::getLinkAdmin($this->getArrModule("modul"), "restoreRecord", "&systemid=".$objOneRecord->getSystemid(), $this->getLang("action_restore_record"), $this->getLang("action_restore_record"), "icon_undo")
+                    Link::getLinkAdmin($this->getArrModule("modul"), "restoreRecord", "&systemid=" . $objOneRecord->getSystemid(), $this->getLang("action_restore_record"), $this->getLang("action_restore_record"), "icon_undo")
                 );
             } else {
                 $strActions .= $this->objToolkit->listButton(AdminskinHelper::getAdminImage("icon_undoDisabled", $this->getLang("action_restore_record_blocked")));
@@ -688,7 +675,7 @@ JS;
                 $objOneRecord instanceof ModelInterface ? $objOneRecord->getStrDisplayName() : get_class($objOneRecord),
                 $strImage,
                 $strActions,
-                "Systemid / Previd: ".$objOneRecord->getStrSystemid()." / ".$objOneRecord->getStrPrevId()
+                "Systemid / Previd: " . $objOneRecord->getStrSystemid() . " / " . $objOneRecord->getStrPrevId()
             );
         }
 
@@ -753,7 +740,6 @@ JS;
         return "";
     }
 
-
     /**
      * Creates a table filled with the sessions currently registered
      *
@@ -775,7 +761,7 @@ JS;
 
         //showing a list using the pageview
         $objArraySectionIterator = new ArraySectionIterator(SystemSession::getNumberOfActiveSessions());
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(SystemSession::getAllActiveSessions($objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos()));
 
         $arrData = array();
@@ -820,7 +806,7 @@ JS;
 
             $arrRowData[4] = $strActivity;
             if ($objOneSession->getStrLoginstatus() == SystemSession::$LOGINSTATUS_LOGGEDIN) {
-                $arrRowData[5] = Link::getLinkAdmin("system", "systemSessions", "&logout=true&systemid=".$objOneSession->getSystemid(), "", $this->getLang("session_logout"), "icon_delete");
+                $arrRowData[5] = Link::getLinkAdmin("system", "systemSessions", "&logout=true&systemid=" . $objOneSession->getSystemid(), "", $this->getLang("session_logout"), "icon_delete");
             } else {
                 $arrRowData[5] = AdminskinHelper::getAdminImage("icon_deleteDisabled");
             }
@@ -831,7 +817,6 @@ JS;
 
         return $strReturn;
     }
-
 
     /**
      * Fetches the entries from the system-log an prints them as preformatted text
@@ -845,12 +830,12 @@ JS;
 
         //load logfiles available
         $objFilesystem = new Filesystem();
-        $arrFiles = $objFilesystem->getFilelist(_projectpath_."/log", array(".log"));
+        $arrFiles = $objFilesystem->getFilelist(_projectpath_ . "/log", array(".log"));
 
         $arrTabs = array();
 
         foreach ($arrFiles as $strName) {
-            $objFilesystem->openFilePointer(_projectpath_."/log/".$strName, "r");
+            $objFilesystem->openFilePointer(_projectpath_ . "/log/" . $strName, "r");
             $strLogContent = $objFilesystem->readLastLinesFromFile(20);
             $strLogContent = str_replace(array("INFO", "ERROR"), array("INFO   ", "ERROR  "), $strLogContent);
             $arrLogEntries = explode("\r", $strLogContent);
@@ -908,29 +893,29 @@ JS;
             $arrExcludeActionsFilter = [SystemChangelog::$STR_ACTION_PERMISSIONS];
         }
         $objArraySectionIterator = new ArraySectionIterator(SystemChangelog::getLogEntriesCount($strSystemid, $arrExcludeActionsFilter));
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(SystemChangelog::getLogEntries($strSystemid, $objArraySectionIterator->calculateStartPos(), $objArraySectionIterator->calculateEndPos(), $arrExcludeActionsFilter));
 
         $objManager = new PackagemanagerManager();
         $arrToolbar = array();
         if ($objManager->getPackage("phpexcel") != null) {
-            $strLink = Link::getLinkAdminXml($this->getArrModule("modul"), "genericChangelogExportExcel", "&systemid=".$strSystemid);
+            $strLink = Link::getLinkAdminXml($this->getArrModule("modul"), "genericChangelogExportExcel", "&systemid=" . $strSystemid);
             $strLinkXml = Link::getLinkAdminManual(
                 "href='{$strLink}'",
-                AdminskinHelper::getAdminImage("icon_excel")." ".$this->getLang("change_export_excel")
+                AdminskinHelper::getAdminImage("icon_excel") . " " . $this->getLang("change_export_excel")
             );
 
             $arrToolbar[] = $strLinkXml;
         }
 
-        $arrToolbar[] = Link::getLinkAdmin($this->getArrModule("modul"), "changelogDiff", "&systemid=".$strSystemid."&bitBlockFolderview=".$this->getParam("bitBlockFolderview"), AdminskinHelper::getAdminImage("icon_aspect")." ".$this->getLang("change_diff"), "", "", false);
+        $arrToolbar[] = Link::getLinkAdmin($this->getArrModule("modul"), "changelogDiff", "&systemid=" . $strSystemid . "&bitBlockFolderview=" . $this->getParam("bitBlockFolderview"), AdminskinHelper::getAdminImage("icon_aspect") . " " . $this->getLang("change_diff"), "", "", false);
 
         $strReturn .= $this->objToolkit->getContentToolbar($arrToolbar);
 
         list($arrHeader, $arrData) = $this->buildChangelogDataTable($objObject, $objArraySectionIterator, true);
         $strReturn .= $this->objToolkit->dataTable($arrHeader, $arrData, "kajona-data-table-ignore-floatthread");
 
-        $strReturn .= $this->objToolkit->getPageview($objArraySectionIterator, $strSourceModule, $strSourceAction, "&systemid=".$strSystemid."&bitBlockFolderview=".$this->getParam("bitBlockFolderview"));
+        $strReturn .= $this->objToolkit->getPageview($objArraySectionIterator, $strSourceModule, $strSourceAction, "&systemid=" . $strSystemid . "&bitBlockFolderview=" . $this->getParam("bitBlockFolderview"));
 
         return $strReturn;
     }
@@ -1013,21 +998,21 @@ JS;
 
         $strReturn = "";
         $strReturn .= $this->objToolkit->getContentToolbar(array(
-            Link::getLinkAdmin($this->getArrModule("modul"), "genericChangelog", "&systemid=".$objObject->getStrSystemid()."&bitBlockFolderview=".$this->getParam("bitBlockFolderview"), AdminskinHelper::getAdminImage("icon_history")." ".$this->getLang("commons_edit_history"), "", "", false),
+            Link::getLinkAdmin($this->getArrModule("modul"), "genericChangelog", "&systemid=" . $objObject->getStrSystemid() . "&bitBlockFolderview=" . $this->getParam("bitBlockFolderview"), AdminskinHelper::getAdminImage("icon_history") . " " . $this->getLang("commons_edit_history"), "", "", false),
         ));
 
         $arrTemplate = array(
-            "strSystemId"   => $strSystemId,
-            "strLeftDate"   => $strLeftDate,
-            "strRightDate"  => $strRightDate,
+            "strSystemId" => $strSystemId,
+            "strLeftDate" => $strLeftDate,
+            "strRightDate" => $strRightDate,
             "strDateFormat" => $this->getLang("dateStyleShort"),
-            "strLang"       => json_encode(array(
-                "months"            => $this->getLang("toolsetCalendarMonthShort"),
-                "days"              => $this->getLang("toolsetCalendarWeekdayShort"),
-                "tooltipUnit"       => $this->getLang("changelog_tooltipUnit"),
+            "strLang" => json_encode(array(
+                "months" => $this->getLang("toolsetCalendarMonthShort"),
+                "days" => $this->getLang("toolsetCalendarWeekdayShort"),
+                "tooltipUnit" => $this->getLang("changelog_tooltipUnit"),
                 "tooltipUnitPlural" => $this->getLang("changelog_tooltipUnitPlural"),
-                "tooltipHtml"       => $this->getLang("changelog_tooltipHtml"),
-                "tooltipColumn"     => $this->getLang("changelog_tooltipColumn"),
+                "tooltipHtml" => $this->getLang("changelog_tooltipHtml"),
+                "tooltipColumn" => $this->getLang("changelog_tooltipColumn"),
             )),
         );
 
@@ -1044,16 +1029,16 @@ JS;
 
                 $arrRow = array();
                 $arrRow['0 border-right'] = $strPropertyLabel;
-                $arrRow['1 border-right'] = "<div id='property_".$strPropertyName."_left' class='changelog_property changelog_property_left' data-name='".$strPropertyName."'></div>";
-                $arrRow[] = "<div id='property_".$strPropertyName."_right' class='changelog_property changelog_property_right' data-name='".$strPropertyName."'></div>";
+                $arrRow['1 border-right'] = "<div id='property_" . $strPropertyName . "_left' class='changelog_property changelog_property_left' data-name='" . $strPropertyName . "'></div>";
+                $arrRow[] = "<div id='property_" . $strPropertyName . "_right' class='changelog_property changelog_property_right' data-name='" . $strPropertyName . "'></div>";
                 $arrData[] = $arrRow;
             }
         }
 
         $arrHeader = array(
-            '0 border-right'                     => $this->getLang("change_property"),
+            '0 border-right' => $this->getLang("change_property"),
             '1 border-right" style="width:30%;"' => "<div id='date_left'></div>",
-            '2" style="width:30%;"'              => "<div id='date_right'></div>",
+            '2" style="width:30%;"' => "<div id='date_right'></div>",
         );
 
         $strReturn .= $this->objToolkit->dataTable($arrHeader, $arrData);
@@ -1091,7 +1076,7 @@ JS;
 
         $intCount = SystemChangelog::getLogEntriesCount($strSystemid);
         $objArraySectionIterator = new ArraySectionIterator($intCount);
-        $objArraySectionIterator->setPageNumber((int)($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
+        $objArraySectionIterator->setPageNumber((int) ($this->getParam("pv") != "" ? $this->getParam("pv") : 1));
         $objArraySectionIterator->setArraySection(SystemChangelog::getLogEntries($strSystemid, 0, $intCount));
 
         list($arrHeader, $arrData) = $this->buildChangelogDataTable($objObject, $objArraySectionIterator, false);
@@ -1099,7 +1084,6 @@ JS;
         $objExporter = new PhpexcelDataTableExporter();
         $objExporter->exportDataTableToExcel($arrHeader, $arrData);
     }
-
 
     /**
      * About Kajona, credits and co
@@ -1126,7 +1110,6 @@ JS;
         return $strReturn;
     }
 
-
     /**
      * Creates a form to send mails to specific users.
      *
@@ -1142,7 +1125,6 @@ JS;
         $objFormgenerator->addField(new FormentryTextarea("mail", "body"))->setStrLabel($this->getLang("mail_body"))->setBitMandatory(true);
         return $objFormgenerator;
     }
-
 
     /**
      * Generates a form in order to send an email.
@@ -1214,7 +1196,6 @@ JS;
         }
     }
 
-
     /**
      * Loads the data for one module
      *
@@ -1264,7 +1245,6 @@ JS;
         return "<error></error>";
     }
 
-
     /**
      * Updates the aboslute position of a single record, relative to its siblings
      *
@@ -1282,10 +1262,10 @@ JS;
             //store edit date
             $this->objLifeCycleFactory->factory(get_class($objObject))->update($objObject);
             $objObject->setAbsolutePosition($intNewPos);
-            $strReturn .= "<message>".$objObject->getStrDisplayName()." - ".$this->getLang("setAbsolutePosOk")."</message>";
+            $strReturn .= "<message>" . $objObject->getStrDisplayName() . " - " . $this->getLang("setAbsolutePosOk") . "</message>";
         } else {
             ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_UNAUTHORIZED);
-            $strReturn .= "<message><error>".xmlSafeString($this->getLang("commons_error_permissions"))."</error></message>";
+            $strReturn .= "<message><error>" . xmlSafeString($this->getLang("commons_error_permissions")) . "</error></message>";
         }
 
         return $strReturn;
@@ -1311,14 +1291,14 @@ JS;
             try {
                 $objCommon->setIntRecordStatus($intNewStatus);
                 $this->objLifeCycleFactory->factory(get_class($objCommon))->update($objCommon);
-                $strReturn .= "<message>".$objCommon->getStrDisplayName()." - ".$this->getLang("setStatusOk")."<newstatus>".$intNewStatus."</newstatus></message>";
+                $strReturn .= "<message>" . $objCommon->getStrDisplayName() . " - " . $this->getLang("setStatusOk") . "<newstatus>" . $intNewStatus . "</newstatus></message>";
             } catch (\Exception $objE) {
                 ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_INTERNAL_SERVER_ERROR);
-                $strReturn .= "<message><error>".xmlSafeString($objE->getMessage())."</error></message>";
+                $strReturn .= "<message><error>" . xmlSafeString($objE->getMessage()) . "</error></message>";
             }
         } else {
             ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_FORBIDDEN);
-            $strReturn .= "<message><error>".xmlSafeString($this->getLang("commons_error_permissions"))."</error></message>";
+            $strReturn .= "<message><error>" . xmlSafeString($this->getLang("commons_error_permissions")) . "</error></message>";
         }
 
         return $strReturn;
@@ -1358,11 +1338,10 @@ JS;
             }
         } else {
             ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_UNAUTHORIZED);
-            $strReturn = "<message><error>".$this->getLang("ds_gesperrt").".".$this->getLang("commons_error_permissions")."</error></message>";
+            $strReturn = "<message><error>" . $this->getLang("ds_gesperrt") . "." . $this->getLang("commons_error_permissions") . "</error></message>";
         }
         return $strReturn;
     }
-
 
     /**
      * Deletes are record identified by its systemid
@@ -1379,13 +1358,13 @@ JS;
             if ($objCommon != null && $objCommon->rightDelete() && $objCommon->getLockManager()->isAccessibleForCurrentUser()) {
                 $strName = $objCommon->getStrDisplayName();
                 if ($objCommon->deleteObject()) {
-                    $strReturn .= "<message>".$strName." - ".$this->getLang("commons_delete_ok")."</message>";
+                    $strReturn .= "<message>" . $strName . " - " . $this->getLang("commons_delete_ok") . "</message>";
                 } else {
-                    $strReturn .= "<error>".$strName." - ".$this->getLang("commons_delete_error")."</error>";
+                    $strReturn .= "<error>" . $strName . " - " . $this->getLang("commons_delete_error") . "</error>";
                 }
             } else {
                 ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_FORBIDDEN);
-                $strReturn .= "<message><error>".xmlSafeString($this->getLang("commons_error_permissions"))."</error></message>";
+                $strReturn .= "<message><error>" . xmlSafeString($this->getLang("commons_error_permissions")) . "</error></message>";
             }
 
             return $strReturn;
@@ -1414,10 +1393,10 @@ JS;
                 $this->objLifeCycleFactory->factory(get_class($objRecord))->update($objRecord, $strNewPrevId);
             }
 
-            $strReturn .= "<message>".$objRecord->getStrDisplayName()." - ".$this->getLang("setPrevIdOk")."</message>";
+            $strReturn .= "<message>" . $objRecord->getStrDisplayName() . " - " . $this->getLang("setPrevIdOk") . "</message>";
         } else {
             ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_FORBIDDEN);
-            $strReturn .= "<message><error>".xmlSafeString($this->getLang("commons_error_permissions"))."</error></message>";
+            $strReturn .= "<message><error>" . xmlSafeString($this->getLang("commons_error_permissions")) . "</error></message>";
         }
 
         return $strReturn;
@@ -1446,7 +1425,7 @@ JS;
             foreach ($arrFiles as $objTask) {
                 //instantiate the current task
                 if ($objTask->getStrInternalTaskname() == $this->getParam("task")) {
-                    Logger::getInstance(Logger::ADMINTASKS)->warning("executing task ".$objTask->getStrInternalTaskname());
+                    Logger::getInstance(Logger::ADMINTASKS)->warning("executing task " . $objTask->getStrInternalTaskname());
 
                     //let the work begin...
                     $strTempOutput = trim($objTask->executeTask());
@@ -1457,17 +1436,17 @@ JS;
                     }
 
                     if (is_numeric($strTempOutput) && ($strTempOutput >= 0 && $strTempOutput <= 100)) {
-                        $strTaskOutput .= "<br />".$this->getLang("systemtask_progress")."<br />".$this->objToolkit->percentBeam($strTempOutput);
+                        $strTaskOutput .= "<br />" . $this->getLang("systemtask_progress") . "<br />" . $this->objToolkit->percentBeam($strTempOutput);
                     } else {
                         $strTaskOutput .= $strTempOutput;
                     }
 
                     //create response-content
-                    $strReturn .= "<statusinfo>".$strTaskOutput."</statusinfo>\n";
+                    $strReturn .= "<statusinfo>" . $strTaskOutput . "</statusinfo>\n";
 
                     //reload requested by worker?
                     if ($objTask->getStrReloadUrl() != "") {
-                        $strReturn .= "<reloadurl>".("&task=".$this->getParam("task").$objTask->getStrReloadParam())."</reloadurl>";
+                        $strReturn .= "<reloadurl>" . ("&task=" . $this->getParam("task") . $objTask->getStrReloadParam()) . "</reloadurl>";
                     }
 
                     break;
@@ -1477,7 +1456,6 @@ JS;
 
         return $strReturn;
     }
-
 
     /**
      * Returns all properties for the given module
@@ -1524,8 +1502,8 @@ JS;
             }
 
             return json_encode(array(
-                "systemid"   => $objObject->getStrSystemid(),
-                "date"       => date("d.m.Y", $strDate->getTimeInOldStyle()),
+                "systemid" => $objObject->getStrSystemid(),
+                "date" => date("d.m.Y", $strDate->getTimeInOldStyle()),
                 "properties" => $arrData,
             ));
         } else {
@@ -1626,6 +1604,20 @@ JS;
         $radioGroup->setReadOnly(true);
         $result[] = $radioGroup;
 
+        $dateSingle = new Datesingle("datesingle", "Datesingle", new Date());
+        $result[] = $dateSingle;
+
+        $dateSingle = new Datesingle("datesingle_readonly", "Datesingle (readonly)", new Date());
+        $dateSingle->setReadOnly(true);
+        $result[] = $dateSingle;
+
+        $dateTime = new Datetime("datetime", "Datetime", new Date());
+        $result[] = $dateTime;
+
+        $dateTime = new Datetime("datetime_readonly", "Datetime (readonly)", new Date());
+        $dateTime->setReadOnly(true);
+        $result[] = $dateTime;
+
         $inputDropdown = new Dropdown("input_dropdown", "Dropdown", range(0, 10), 5);
         $result[] = $inputDropdown;
 
@@ -1655,16 +1647,16 @@ JS;
         $result[] = $objectSelector;
 
         $html = "";
-        $html.= "<pre>" . json_encode($this->getAllParams(), JSON_PRETTY_PRINT) . "</pre>";
-        $html.= "<hr>";
+        $html .= "<pre>" . json_encode($this->getAllParams(), JSON_PRETTY_PRINT) . "</pre>";
+        $html .= "<hr>";
 
-        $html.= $this->objToolkit->formHeader("");
+        $html .= $this->objToolkit->formHeader("");
         foreach ($result as $component) {
-            $html.= $component->renderComponent();
-            $html.= "<hr>";
+            $html .= $component->renderComponent();
+            $html .= "<hr>";
         }
-        $html.= $this->objToolkit->formInputSubmit();
-        $html.= $this->objToolkit->formClose();
+        $html .= $this->objToolkit->formInputSubmit();
+        $html .= $this->objToolkit->formClose();
 
         return $html;
     }

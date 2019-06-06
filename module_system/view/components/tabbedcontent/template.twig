@@ -19,10 +19,9 @@
 
     {% if remoteContent %}
         <script type="text/javascript">
-            require(['jquery', 'forms'], function ($, forms) {
-                $('#{{ mainTabId }} > li > a[data-href!=""]').on('click', function (e) {
+              $('#{{ mainTabId }} > li > a[data-href!=""]').on('click', function (e) {
                     if (!$(e.target).data('loaded')) {
-                        forms.loadTab($(e.target).data('target').substr(1), $(e.target).data('href'));
+                        Forms.loadTab($(e.target).data('target').substr(1), $(e.target).data('href'));
                         $(e.target).data('loaded', true);
                     }
                 });
@@ -31,12 +30,11 @@
                     var el = $('#{{ mainTabId }} > li.active > a[data-href!=""]');
                     if (el.length > 0) {
                         if (!el.data('loaded')) {
-                            forms.loadTab(el.data('target').substr(1), el.data('href'));
+                            Forms.loadTab(el.data('target').substr(1), el.data('href'));
                             el.data('loaded', true);
                         }
                     }
                 });
-            });
         </script>
     {% endif %}
 

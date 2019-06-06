@@ -123,16 +123,23 @@ abstract class FlowHandlerAbstract implements FlowHandlerInterface
     }
 
     /**
-     * @param Model $objObject
-     * @param FlowTransition $objTransition
-     * @return FlowConditionResult
+     * @inheritdoc
      */
-    public function validateStatusTransition(Model $objObject, FlowTransition $objTransition) : FlowConditionResult
+    public function validateStatusTransition(Model $objObject, FlowTransition $objTransition, bool $shortCircuit = false) : FlowConditionResult
     {
         $objResult = new FlowConditionResult();
 
+        $objResultCondition = $this->validateTransitionsConditions($objObject, $objTransition, $shortCircuit);
+
+        if ($shortCircuit && !$objResultCondition->isValid()) {
+            return $objResultCondition;
+        }
+
         $objResultForms = $this->validateObjectForm($objObject, $objTransition);
-        $objResultCondition = $this->validateTransitionsConditions($objObject, $objTransition);
+
+        if ($shortCircuit && !$objResultForms->isValid()) {
+            return $objResultForms;
+        }
 
         $objResult->merge($objResultForms);
         $objResult->merge($objResultCondition);
@@ -184,9 +191,10 @@ abstract class FlowHandlerAbstract implements FlowHandlerInterface
      *
      * @param Model $objObject
      * @param FlowTransition $objTransition
+     * @param bool $shortCircuit
      * @return FlowConditionResult
      */
-    private function validateTransitionsConditions(Model $objObject, FlowTransition $objTransition)
+    private function validateTransitionsConditions(Model $objObject, FlowTransition $objTransition, bool $shortCircuit = false)
     {
         $objResult = new FlowConditionResult();
 
@@ -196,6 +204,10 @@ abstract class FlowHandlerAbstract implements FlowHandlerInterface
             foreach ($arrConditions as $objCondition) {
                 if ($objCondition instanceof FlowConditionInterface) {
                     $objResult->merge($objCondition->validateCondition($objObject, $objTransition));
+
+                    if ($shortCircuit && !$objResult->isValid()) {
+                        return $objResult;
+                    }
                 }
             }
         }

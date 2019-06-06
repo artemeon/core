@@ -439,9 +439,10 @@ function phpSizeToBytes($strBytes)
  * @param int $intBytes
  * @param bool $bitPhpIni (Value ends with M/K/B)
  *
+ * @param bool $renderUnit
  * @return string
  */
-function bytesToString($intBytes, $bitPhpIni = false)
+function bytesToString($intBytes, $bitPhpIni = false, $renderUnit = true)
 {
     $strReturn = "";
     if ($intBytes >= 0) {
@@ -459,7 +460,7 @@ function bytesToString($intBytes, $bitPhpIni = false)
             $intCounter++;
         }
 
-        $strReturn = number_format($intTemp, 2)." ".$arrFormats[$intCounter];
+        $strReturn = number_format($intTemp, 2).($renderUnit ? " ".$arrFormats[$intCounter] : "");
         return $strReturn;
     }
     return $strReturn;
@@ -747,7 +748,7 @@ function removeDirectoryTraversals($strFilename)
  */
 function createFilename($strName, $bitFolder = false)
 {
-    $strName = StringUtil::toLowerCase($strName);
+    //$strName = StringUtil::toLowerCase($strName);
 
     if (!$bitFolder) {
         $strEnding = StringUtil::substring($strName, (StringUtil::lastIndexOf($strName, ".") + 1));
@@ -764,8 +765,8 @@ function createFilename($strName, $bitFolder = false)
     }
 
     //Filter non allowed chars
-    $arrSearch = array(" ", ".", ":", "ä", "ö", "ü", "/", "ß", "!");
-    $arrReplace = array("_", "_", "_", "ae", "oe", "ue", "_", "ss", "_");
+    $arrSearch = array(".", ":", "ä", "ö", "ü", "/", "ß", "!");
+    $arrReplace = array("_", "_", "ae", "oe", "ue", "_", "ss", "_");
 
     $strReturn = StringUtil::replace($arrSearch, $arrReplace, $strReturn);
 
@@ -775,7 +776,7 @@ function createFilename($strName, $bitFolder = false)
     }
 
     //remove all other special characters
-    $strTemp = preg_replace("/[^A-Za-z0-9_-]/", "", $strReturn);
+    $strTemp = preg_replace("/[^A-Za-z0-9_\+\-\s]/", "", $strReturn);
 
     //do a replacing in the ending, too
     if ($strEnding != "") {

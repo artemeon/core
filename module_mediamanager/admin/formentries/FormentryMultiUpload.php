@@ -39,6 +39,15 @@ class FormentryMultiUpload extends FormentryBase implements FormentryPrintableIn
     private $showVersioning = true;
     private $multiUpload = true;
 
+    /**
+     * @var bool
+     */
+    private $showArchive = false;
+
+    /**
+     * @var string
+     */
+    private $targetSystemId;
 
     /**
      * @inheritDoc
@@ -107,7 +116,7 @@ class FormentryMultiUpload extends FormentryBase implements FormentryPrintableIn
         }
 
         //and render the multiupload fields
-        $strReturn .= $objToolkit->formInputUploadInline($this->getStrEntryName(), $this->getStrLabel(), $objRepo, $this->getStrValue(), $this->getBitReadonly(), $this->getShowVersioning(), $this->isMultiUpload());
+        $strReturn .= $objToolkit->formInputUploadInline($this->getStrEntryName(), $this->getStrLabel(), $objRepo, $this->getStrValue(), $this->getBitReadonly(), $this->getShowVersioning(), $this->isMultiUpload(), $this->isShowArchive(), $this->getTargetSystemId());
 
         return $strReturn;
     }
@@ -158,6 +167,27 @@ class FormentryMultiUpload extends FormentryBase implements FormentryPrintableIn
         }
 
         return implode("\r\n<br />", $arrLinks);
+    }
+
+    /**
+     * Returns whether the configured repo has files
+     *
+     * @return bool
+     */
+    public function hasFiles()
+    {
+        /** @var MediamanagerRepo $repository */
+        $repository = Objectfactory::getInstance()->getObject($this->strRepoId);
+        $file = MediamanagerFile::getFileForPath($this->strRepoId, $repository->getStrPath()."/".$this->getStrValue());
+
+        if ($file instanceof MediamanagerFile) {
+            $filter = new MediamanagerFileFilter();
+            $filter->setIntFileType(MediamanagerFile::$INT_TYPE_FILE);
+
+            return MediamanagerFile::getObjectCountFiltered($filter, $file->getSystemid()) > 0;
+        }
+
+        return false;
     }
 
     /**
@@ -237,6 +267,35 @@ class FormentryMultiUpload extends FormentryBase implements FormentryPrintableIn
         return $this;
     }
 
-    
+    /**
+     * @return bool
+     */
+    public function isShowArchive(): bool
+    {
+        return $this->showArchive;
+    }
 
+    /**
+     * @param bool $showArchive
+     */
+    public function setShowArchive(bool $showArchive)
+    {
+        $this->showArchive = $showArchive;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetSystemId()
+    {
+        return $this->targetSystemId;
+    }
+
+    /**
+     * @param string $targetSystemId
+     */
+    public function setTargetSystemId(string $targetSystemId)
+    {
+        $this->targetSystemId = $targetSystemId;
+    }
 }

@@ -14,6 +14,8 @@ namespace Kajona\System\System;
  * @package Kajona\System\System
  * @author stefan.meyer1@yahoo.de
  * @since 6.0
+ *
+ * @deprecated move to the OrmViewPermissionCondition
  */
 class OrmPermissionCondition extends OrmCondition
 {
@@ -56,18 +58,24 @@ class OrmPermissionCondition extends OrmCondition
     /**
      * Generates the compound condition for the condition
      *
-     * @return OrmCompositeCondition
+     * @return OrmCondition
      */
-    private function generateCompundCondition()
+    private function generateCompoundCondition()
     {
         $strLikeOperator = OrmComparatorEnum::Like;
 
-        $objCompound = new OrmCompositeCondition(array(), OrmCondition::STR_CONDITION_OR);
+        $arrConditions = [];
+        $arrParams = [];
         foreach ($this->arrUserGroupIds as $strUserGroupId) {
-            $objCompound->addCondition(new OrmCondition("{$this->strColumn} {$strLikeOperator}  ?", array("%,".$strUserGroupId.",%")));
+            $arrConditions[] = "{$this->strColumn} {$strLikeOperator}  ? ";
+            $arrParams[] = "%,".$strUserGroupId.",%";
         }
 
-        return $objCompound;
+        if (empty($arrParams)) {
+            return new OrmCompositeCondition();
+        }
+
+        return new OrmCondition(" ( ". implode(" OR ", $arrConditions)." ) ", $arrParams);
     }
 
     /**
@@ -76,7 +84,7 @@ class OrmPermissionCondition extends OrmCondition
     public function getStrWhere()
     {
         if ($this->objCompositeCondition === null) {
-            $this->objCompositeCondition = $this->generateCompundCondition();
+            $this->objCompositeCondition = $this->generateCompoundCondition();
         }
 
         return $this->objCompositeCondition->getStrWhere();
@@ -88,7 +96,7 @@ class OrmPermissionCondition extends OrmCondition
     public function getArrParams()
     {
         if ($this->objCompositeCondition === null) {
-            $this->objCompositeCondition = $this->generateCompundCondition();
+            $this->objCompositeCondition = $this->generateCompoundCondition();
         }
 
         return $this->objCompositeCondition->getArrParams();

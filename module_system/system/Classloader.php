@@ -133,10 +133,9 @@ class Classloader
         }
 
 
-        $arrExcludedModules = array();
-        $arrIncludedModules = array();
-        if (is_file(_realpath_."project/packageconfig.php")) {
-            include(_realpath_."project/packageconfig.php");
+        $arrIncludedModules = null;
+        if (is_file(_realpath_."project/packageconfig.json")) {
+            $arrIncludedModules = json_decode(file_get_contents(_realpath_."project/packageconfig.json"), true);
         }
 
         //Module-Constants
@@ -145,7 +144,6 @@ class Classloader
         $arrModules = array();
         $arrPharModules = array();
         foreach ($this->arrCoreDirs as $strRootFolder) {
-
             if (strpos($strRootFolder, "core") === false) {
                 continue;
             }
@@ -156,26 +154,22 @@ class Classloader
 
                 if ($boolIsPhar) {
                     $strModuleName = PharModule::getPharBasename($strOneModule);
-                }
-                elseif (preg_match("/^(module|element|_)+.*/i", $strOneModule)) {
+                } elseif (preg_match("/^(module|_)+.*/i", $strOneModule)) {
                     $strModuleName = $strOneModule;
                 }
 
                 if ($strModuleName != null) {
-                    //skip excluded modules
-                    if (isset($arrExcludedModules[$strRootFolder]) && in_array($strModuleName, $arrExcludedModules[$strRootFolder])) {
+                    //skip module if not marked as to be included
+                    if ($arrIncludedModules !== null && !isset($arrIncludedModules[$strRootFolder])) {
                         continue;
                     }
-
-                    //skip module if not marked as to be included
-                    if (count($arrIncludedModules) > 0 && (isset($arrIncludedModules[$strRootFolder]) && !in_array($strModuleName, $arrIncludedModules[$strRootFolder]))) {
+                    if ($arrIncludedModules !== null && isset($arrIncludedModules[$strRootFolder]) && !in_array($strModuleName, $arrIncludedModules[$strRootFolder])) {
                         continue;
                     }
 
                     if ($boolIsPhar) {
                         $arrPharModules[$strRootFolder."/".$strOneModule] = $strModuleName;
-                    }
-                    else {
+                    } else {
                         $arrModules[$strRootFolder."/".$strOneModule] = $strModuleName;
                     }
                 }
@@ -185,8 +179,7 @@ class Classloader
         if (self::PREFER_PHAR) {
             $arrDiffedPhars = $arrPharModules;
             $arrModules = array_diff($arrModules, $arrPharModules);
-        }
-        else {
+        } else {
             $arrDiffedPhars = array_diff($arrPharModules, $arrModules);
         }
 
@@ -203,7 +196,6 @@ class Classloader
     {
         $arrCores = array();
         foreach (scandir(_realpath_) as $strRootFolder) {
-
             if (strpos($strRootFolder, "core") === false) {
                 continue;
             }
@@ -255,8 +247,7 @@ class Classloader
             // PHAR archive files must never override existing file system files
             if (self::PREFER_PHAR) {
                 $arrMergedFiles = array_merge($arrMergedFiles, $arrResolved);
-            }
-            else {
+            } else {
                 $arrMergedFiles += array_diff_key($arrResolved, $arrMergedFiles);
             }
         }
@@ -288,8 +279,8 @@ class Classloader
 
         // add module redefinitions from /project for both, phars and non phars
         foreach ($this->getArrModules() as $strModulePath => $strSingleModule) {
-            $strPath = "project/" . $strSingleModule;
-            if (is_dir(_realpath_ . $strPath)) {
+            $strPath = "project/".$strSingleModule;
+            if (is_dir(_realpath_.$strPath)) {
                 $arrModules[$strPath] = $strSingleModule;
             }
         }
@@ -314,14 +305,14 @@ class Classloader
         $arrFiles = array();
         $arrTempFiles = scandir($strPath);
         foreach ($arrTempFiles as $strFile) {
-            if ($strFile != "." && $strFile != ".." && !in_array($strFile . "/", self::$arrCodeFoldersBlacklist)) {
+            if ($strFile != "." && $strFile != ".." && !in_array($strFile."/", self::$arrCodeFoldersBlacklist)) {
                 if (strpos($strFile, ".php") !== false) {
-                    $strClassName = $this->getClassnameFromFilename($strPath . "/" . $strFile);
+                    $strClassName = $this->getClassnameFromFilename($strPath."/".$strFile);
                     if (!empty($strClassName)) {
-                        $arrFiles[$strClassName] = $strPath . "/" . $strFile;
+                        $arrFiles[$strClassName] = $strPath."/".$strFile;
                     }
-                } elseif (is_dir($strPath . "/" . $strFile)) {
-                    $arrFiles = array_merge($arrFiles, $this->getRecursiveFiles($strPath . "/" . $strFile));
+                } elseif (is_dir($strPath."/".$strFile)) {
+                    $arrFiles = array_merge($arrFiles, $this->getRecursiveFiles($strPath."/".$strFile));
                 }
             }
         }
@@ -367,7 +358,7 @@ class Classloader
 
         //perform a reverse lookup using the cache, maybe the file was indexed before
         $arrMap = BootstrapCache::getInstance()->getCacheContent(BootstrapCache::CACHE_CLASSES);
-        if($arrMap !== false) {
+        if ($arrMap !== false) {
             $strHit = array_search($strFilename, $arrMap);
             if ($strHit !== false && $strHit !== null) {
                 return $strHit;
@@ -380,20 +371,18 @@ class Classloader
         // if the filename contains an underscore we have an old class else a camelcase one
         if (strpos($strFile, "_") !== false) {
             $strClassname = $strFile;
-        }
-        else {
+        } else {
             $strSource = file_get_contents($strFilename);
             preg_match('/namespace ([a-zA-Z0-9_\x7f-\xff\\\\]+);/', $strSource, $arrMatches);
 
             $strNamespace = isset($arrMatches[1]) ? $arrMatches[1] : null;
             if (!empty($strNamespace)) {
                 $strClassname = $strNamespace."\\".$strFile;
-            }
-            else {
+            } else {
                 //ugly fallback for ioncube encoded files, could be upgrade to an improved regex
                 //TODO: move this name-based detection to the general approach, replacing the content parsing
-                if(strpos($strSource, "sg_load") !== false) {
-                    if($strFile === "functions") {
+                if (strpos($strSource, "sg_load") !== false) {
+                    if ($strFile === "functions") {
                         return null;
                     }
 
@@ -401,18 +390,17 @@ class Classloader
 
 
                     $strClassname = "Kajona\\";
-                    if(strpos($strParsedFilename, "core_") !== false) {
+                    if (strpos($strParsedFilename, "core_") !== false) {
                         $strClassname = "AGP\\";
                     }
 
                     $arrPath = array();
                     $arrSections = array_reverse(explode("/", $strParsedFilename));
-                    foreach($arrSections as $strOnePart) {
-                        if($strOnePart !== "core"
+                    foreach ($arrSections as $strOnePart) {
+                        if ($strOnePart !== "core"
                             && $strOnePart !== "project"
-                            && strpos($strOnePart, "core_") === false)
-                        {
-                            if(strpos($strOnePart, "module_") !== false) {
+                            && strpos($strOnePart, "core_") === false) {
+                            if (strpos($strOnePart, "module_") !== false) {
                                 $strOnePart = substr($strOnePart, 7);
                             }
 
@@ -424,19 +412,17 @@ class Classloader
                                 $arrNew[] = ucfirst($str);
                             }
                             $arrPath[] = implode("_", $arrNew);
-                        }
-                        else {
+                        } else {
                             break;
                         }
                     }
 
                     //file is in project path?
-                    if(strpos($strParsedFilename, "/project/") !== false) {
+                    if (strpos($strParsedFilename, "/project/") !== false) {
                         $strTargetPath = _realpath_."core/module_".strtolower(array_reverse($arrPath)[0]);
-                        if(is_dir($strTargetPath) || is_file($strTargetPath.".phar")) {
+                        if (is_dir($strTargetPath) || is_file($strTargetPath.".phar")) {
                             $strClassname = "Kajona\\";
-                        }
-                        else {
+                        } else {
                             $strClassname = "AGP\\";
                         }
                     }
@@ -445,7 +431,7 @@ class Classloader
                 }
             }
         }
-        if($arrMap !== false && $bitAddToClassmap) {
+        if ($arrMap !== false && $bitAddToClassmap) {
             BootstrapCache::getInstance()->addCacheRow(BootstrapCache::CACHE_CLASSES, $strClassname, $strFilename);
         }
         return $strClassname;
@@ -470,7 +456,7 @@ class Classloader
 
             //see if the class was overwritten/index at a different location - then replace the passed filename
             $strPathFromCache = BootstrapCache::getInstance()->getCacheRow(BootstrapCache::CACHE_CLASSES, $strResolvedClassname);
-            if($strPathFromCache !== false && $strPathFromCache != $strFilename) {
+            if ($strPathFromCache !== false && $strPathFromCache != $strFilename) {
                 $strFilename = $strPathFromCache;
             }
 
@@ -486,16 +472,13 @@ class Classloader
                     $objFactory = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::STR_OBJECT_BUILDER);
                     if (!empty($arrConstructorParams)) {
                         return $objFactory->factory($objReflection->getName(), $arrConstructorParams);
-                    }
-                    else {
+                    } else {
                         return $objFactory->factory($objReflection->getName());
                     }
-                }
-                else {
+                } else {
                     if (!empty($arrConstructorParams)) {
                         return $objReflection->newInstanceArgs($arrConstructorParams);
-                    }
-                    else {
+                    } else {
                         return $objReflection->newInstance();
                     }
                 }
@@ -510,7 +493,6 @@ class Classloader
      */
     public function bootstrapIncludeModuleIds()
     {
-
 
         $ids = BootstrapCache::getInstance()->getCacheContent(BootstrapCache::CACHE_MODULEIDS);
 
@@ -534,7 +516,6 @@ class Classloader
 
             BootstrapCache::getInstance()->updateCache(BootstrapCache::CACHE_MODULEIDS, $ids);
         }
-
     }
 
 
