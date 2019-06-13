@@ -25,7 +25,7 @@ final class ComposerBuilder {
 
     /**
      * @param string $rootPath
-     * @return array[]
+     * @return iterable|array[]
      */
     private function getModuleComposerConfigurations(string $rootPath): iterable
     {
@@ -71,7 +71,8 @@ final class ComposerBuilder {
         }
     }
 
-    private function mergeConfigurations(string $rootPath): void {
+    private function mergeConfigurations(string $rootPath): void
+    {
         if (\is_file($rootPath . self::DS . 'project' . self::DS . 'composer.lock')) {
             return;
         }
@@ -145,7 +146,8 @@ final class ComposerBuilder {
         }
     }
 
-    public function run(string $rootPath): void {
+    public function run(string $rootPath): void
+    {
         $this->mergeConfigurations($rootPath);
         $this->installPackages($rootPath . self::DS . 'project');
     }
