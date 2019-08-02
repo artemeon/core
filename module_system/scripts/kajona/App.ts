@@ -101,4 +101,6 @@ class App {
 ;(<any>window).$ = (<any>window).jQuery = require('jquery')
 ;(<any>window).moment = moment
 ;(<any>window).mermaid = mermaid
+;(<any>window).Vue = Vue
+
 export default App
