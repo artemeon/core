@@ -1,5 +1,4 @@
 
-
 AuthName "AGP Auth"
 AuthType SSPI
 NTLMAuth On
@@ -12,4 +11,4 @@ NTLMAuthoritative On
   Require user "NT AUTHORITY\ANONYMOUS LOGON"
 </RequireAny>
 
-RequestHeader set X_AGP_AUTH_USER expr=%{REMOTE_USER}
+#in root htaccess: RewriteRule (authenticate(.*))$ - [L]
