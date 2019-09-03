@@ -1,0 +1,15 @@
+
+
+AuthName "AGP Auth"
+AuthType SSPI
+NTLMAuth On
+NTLMAuthoritative On
+
+<RequireAny>
+  Require valid-user
+  Require user "ANONYMOUS LOGON"
+  Require user "NT-AUTORITÄT\ANONYMOUS-ANMELDUNG"
+  Require user "NT AUTHORITY\ANONYMOUS LOGON"
+</RequireAny>
+
+RequestHeader set X_AGP_AUTH_USER expr=%{REMOTE_USER}

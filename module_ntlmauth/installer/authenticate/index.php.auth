@@ -1,0 +1,12 @@
+<?php
+
+echo <<<HTML
+<html>
+<body>
+    <form action="../index.php?module=ntlmauth&action=callback" method="post" name="loginForm">
+        <input type="submit" value="Login" />
+    </form>
+    <script type="text/javascript">document.forms['loginForm'].submit();</script>
+</body>
+</html>
+HTML;
