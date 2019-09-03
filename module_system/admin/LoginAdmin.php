@@ -13,6 +13,7 @@ use Kajona\Oauth2\System\ProviderManager;
 use Kajona\Oauth2\System\ServiceProvider;
 use Kajona\System\System\AuthenticationException;
 use Kajona\System\System\Carrier;
+use Kajona\System\System\Config;
 use Kajona\System\System\Cookie;
 use Kajona\System\System\HttpStatuscodes;
 use Kajona\System\System\Link;
@@ -200,6 +201,19 @@ class LoginAdmin extends AdminController implements AdminInterface
                     $strForm .= $this->objToolkit->formClose();
                 }
             }
+        }
+
+        if (SystemModule::getModuleByName("ntlmauth") !== null) {
+            $strForm .= $this->objToolkit->divider();
+                if (Config::getInstance("module_ntlmauth")->getConfig('forceRedirect')) {
+                    ResponseObject::getInstance()->setStrRedirectUrl(Config::getInstance("module_ntlmauth")->getConfig('authUrl'));
+                }
+
+                $strForm .= $this->objToolkit->formHeader(Config::getInstance("module_ntlmauth")->getConfig('authUrl'));
+                $strForm .= $this->objToolkit->formInputSubmit($this->getLang("login_with", "ntlmauth"));
+                $strForm .= $this->objToolkit->formClose();
+
+
         }
 
         $arrTemplate = array();
