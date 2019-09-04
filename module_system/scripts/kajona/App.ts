@@ -14,6 +14,7 @@ import VueRouter from './VueMainComponent/VueRouter'
 import i18n from './VueMainComponent/VueLang'
 import GlobalAxiosConfig from './GlobalAxiosConfig'
 import VueI18n from 'vue-i18n'
+import KeymapsController from './KeymapsController'
 
 declare global {
     interface Window {
@@ -81,7 +82,8 @@ class App {
         // configure toastr global
         toastr.options.positionClass = 'toast-bottom-right'
         // Axios Wrapper
-        const axiosConfig = new GlobalAxiosConfig()
+        KeymapsController.init()
+        GlobalAxiosConfig.init()
     }
     public static initVue (): void {
         Vue.config.productionTip = false

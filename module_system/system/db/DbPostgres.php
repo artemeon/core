@@ -88,10 +88,10 @@ class DbPostgres extends DbBase
             return false;
         }
 
-        $objResult = @pg_execute($this->linkDB, $strName, $arrParams);
+        $objResult = pg_execute($this->linkDB, $strName, $arrParams);
 
         if ($objResult !== false) {
-            $this->intAffectedRows = @pg_affected_rows($objResult);
+            $this->intAffectedRows = pg_affected_rows($objResult);
 
             return true;
         } else {
@@ -120,13 +120,13 @@ class DbPostgres extends DbBase
             return false;
         }
 
-        $resultSet = @pg_execute($this->linkDB, $strName, $arrParams);
+        $resultSet = pg_execute($this->linkDB, $strName, $arrParams);
 
         if ($resultSet === false) {
             return false;
         }
 
-        while ($arrRow = @pg_fetch_array($resultSet, null, PGSQL_ASSOC)) {
+        while ($arrRow = pg_fetch_array($resultSet, null, PGSQL_ASSOC)) {
             //conversions to remain compatible:
             //   count --> COUNT(*)
             if (isset($arrRow["count"])) {
@@ -582,7 +582,7 @@ class DbPostgres extends DbBase
             return $strSum;
         }
 
-        if (@pg_prepare($this->linkDB, $strSum, $strQuery)) {
+        if (pg_prepare($this->linkDB, $strSum, $strQuery)) {
             $this->arrStatementsCache[] = $strSum;
         } else {
             return false;

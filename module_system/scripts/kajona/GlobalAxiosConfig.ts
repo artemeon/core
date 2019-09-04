@@ -3,15 +3,16 @@ import qs from 'qs'
 import { Service } from 'axios-middleware'
 import WorkingIndicator from './WorkingIndicator'
 import StatusDisplay from './StatusDisplay'
-
-const jwtDecode = require('jwt-decode')
+import jwtDecode from 'jwt-decode'
+import Token from './Interfaces/Token'
 
 /**
  * a wrapper class for axios used to configure axios globally and adds middleware for loading animation
  */
 class GlobalAxiosConfig {
-    private service : Service
-    constructor () {
+    public static service : Service
+
+    public static init () : void {
         // global parameter serializer for axios : converts json data to url params
         axios.defaults.paramsSerializer = (params : any) => {
             return qs.stringify(params, { arrayFormat: 'brackets' })
@@ -23,7 +24,7 @@ class GlobalAxiosConfig {
         // Before each request, verify token
         axios.interceptors.request.use(config => {
             const token = KAJONA_ACCESS_TOKEN
-            const jwt = jwtDecode(token)
+            const jwt = jwtDecode<Token>(token)
             if ((token && Date.now() - (jwt.exp + 120000) > 0)) {
                 config.headers.Authorization = `Bearer ${token}`
             } else {
@@ -48,7 +49,7 @@ class GlobalAxiosConfig {
     /**
      * use a middleware to be able to start/stop loader animation onRequest
      */
-    private createMiddleware () : void {
+    public static createMiddleware () : void {
         this.service = new Service(axios)
         this.service.register({
             onRequest (config : any) {

@@ -52,6 +52,9 @@
     <!-- npm local cache registry -->
     <property name="npmLocalRegistry" value="http://packages.artemeon.int:4873/" />
 
+    <!-- path to the SourceGuardian encoder -->
+    <property name="path.sourceguardian"   value="sourceguardian" />
+
 
     <!-- path to composer -->
     <property name="path.composer"  value="composer${script-suffix}" />
@@ -96,11 +99,6 @@
 					    					buildProject, installProjectMysql,
 					    					runFastTests, postBuildWorkspaceClean" />
 
-    <target name="buildOracle" depends="
-		    								init,
-					    					buildProject, installProjectOracle,
-					    					runFastTests, postBuildWorkspaceClean" />
-
     <target name="buildPostgres" depends="
 		    								init,
 					    					buildProject, installProjectPostgres,
@@ -109,6 +107,29 @@
     <target name="buildMssql" depends="
 		    								init,
 					    					buildProject, installProjectMssql,
+					    					runFastTests, postBuildWorkspaceClean" />
+
+    <target name="buildSqliteEncryptedSourceGuardianFast" depends="
+                                            init,
+					    					buildProject, installProjectSqlite,
+					    					runFastTests,
+					    					buildFullEncryptedSourceGuardianZip, postBuildWorkspaceClean" />
+
+    <target name="buildSqliteEncrypted72SourceGuardianFast" depends="
+                                            init,
+					    					buildProject, installProjectSqlite,
+					    					runFastTests,
+					    					buildFullEncrypted72SourceGuardianZip, postBuildWorkspaceClean" />
+
+
+    <target name="buildOracle11" depends="
+		    								init,
+					    					buildProject, installProjectOracle11,
+					    					runFastTests, postBuildWorkspaceClean" />
+
+    <target name="buildOracle12" depends="
+		    								init,
+					    					buildProject, installProjectOracle12,
 					    					runFastTests, postBuildWorkspaceClean" />
 
 
@@ -243,6 +264,50 @@
     </target>
 
 
+
+    <!-- creates the full-zip including all modules and elements, including sourcecode encryption -->
+    <target name="buildFullEncryptedSourceGuardianZip" depends="init" >
+        <antcall target="copy2project">
+            <param name="targetDir" value="${basedir}${tempPath}" />
+        </antcall>
+
+        <exec executable="php" dir="${basedir}"  failonerror="on" >
+            <arg line="-f cleanCore.php ${tempPath}"/>
+        </exec>
+
+        <antcall target="buildPackageHelper" />
+        <antcall target="encryptCodeSourceGuardian">
+            <param name="phpversion" value="7"/>
+        </antcall>
+        <antcall target="modulePharHelper" />
+
+        <zip destfile="${basedir}${packagesPath}/build_sourceguardian_${DSTAMP}-${TSTAMP}.zip">
+            <fileset dir="${basedir}${tempPath}/../" />
+        </zip>
+    </target>
+
+    <target name="buildFullEncrypted72SourceGuardianZip" depends="init" >
+        <antcall target="copy2project">
+            <param name="targetDir" value="${basedir}${tempPath}" />
+        </antcall>
+
+        <exec executable="php" dir="${basedir}"  failonerror="on" >
+            <arg line="-f cleanCore.php ${tempPath}"/>
+        </exec>
+
+        <antcall target="buildPackageHelper" />
+        <antcall target="encryptCodeSourceGuardian">
+            <param name="phpversion" value="7.2"/>
+        </antcall>
+        <antcall target="modulePharHelper" />
+
+        <zip destfile="${basedir}${packagesPath}/build_sourceguardian_${DSTAMP}-${TSTAMP}.zip">
+            <fileset dir="${basedir}${tempPath}/../" />
+        </zip>
+    </target>
+
+
+
     <target name="modulePharHelper" description="generates phar files out of the current module structure">
         <exec executable="php" dir="${basedir}${tempPath}/core"  failonerror="on" >
             <arg line="-f generate_phar.php removesource=true"/>
@@ -282,10 +347,17 @@
     </target>
 
     <!-- oracle config file -->
-    <target name="installProjectOracle">
+    <target name="installProjectOracle12">
         <echo>Creating full Kajona installation</echo>
         <exec executable="php" dir="${basedir}"  failonerror="on" >
-            <arg line="-f buildProject.php ${projectPath} false config_oracle.php"/>
+            <arg line="-f buildProject.php ${projectPath} false config_oracle12.php"/>
+        </exec>
+    </target>
+
+    <target name="installProjectOracle11">
+        <echo>Creating full Kajona installation</echo>
+        <exec executable="php" dir="${basedir}"  failonerror="on" >
+            <arg line="-f buildProject.php ${projectPath} false config_oracle11.php"/>
         </exec>
     </target>
 
@@ -370,6 +442,15 @@
         <exec executable="${path.phpunit}" failonerror="true">
             <arg line="--configuration '${basedir}/phpunit_fast.xml' " />
         </exec>
+    </target>
+
+
+    <target name="encryptCodeSourceGuardian" description="Encrypts all PHP files using the SourceGuardian encoder">
+        <echo>Encrypting php files for php ${phpversion}</echo>
+        <exec executable="${path.sourceguardian}" failonerror="on">
+            <arg line='--verbose 1 --stop-on-error --phpversion ${phpversion} --exclude "*/vendor/*" --exclude "generate_phar.php" --exclude "*/config/*" -r -b- -p "&#60;?php /*   AGP (c) by ARTEMEON Management Partner GmbH, http://www.artemeon.de. Usage restricted by license agreement. */ ?&#62;" -f "*.php" "${basedir}${tempPath}/*" ' />
+        </exec>
+
     </target>
 
 </project>

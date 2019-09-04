@@ -28,11 +28,7 @@ class Searchbar extends Mixins(LangMixin(['search', 'dashboard', 'system'])) {
      private mounted () : void {
          var parent = document.getElementById('searchbarContainer')
          parent.appendChild(this.$el)
-         // add event listener : ctrl + f opens searchbar , Esc closes searchbar
-         document.body.addEventListener('keydown', this.shortcutHandler)
-     }
-     private destroyed () : void {
-         document.body.removeEventListener('keydown', this.shortcutHandler)
+         document.body.addEventListener('openSearchbar', this.shortcutHandler)
      }
      private onSubmit (e : Event) : void {
          e.preventDefault()
@@ -62,13 +58,9 @@ class Searchbar extends Mixins(LangMixin(['search', 'dashboard', 'system'])) {
              this.userInput = ''
          }
      }
-      private shortcutHandler (e :KeyboardEvent) : void {
-          if (e.ctrlKey && e.key === 'f' && !this.dialogIsOpen) {
-              e.preventDefault()
+      private shortcutHandler () : void {
+          if (!this.dialogIsOpen) {
               this.open()
-          }
-          if (e.key === 'Escape' && this.dialogIsOpen) {
-              this.close()
           }
       }
       private get dialogClassName () : string {

@@ -4,6 +4,7 @@
   },
   "extends": ["plugin:vue/essential", "@vue/standard", "@vue/typescript"],
   "rules": {
+    "max-len": ["error", { "code": 240 }],
     "import/newline-after-import": ["error", { "count": 1 }],
     "semi": ["error", "never"],
     "indent": [
