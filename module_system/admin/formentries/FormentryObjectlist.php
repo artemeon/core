@@ -150,7 +150,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
 
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
 
         $strEntryName = $this->getStrEntryName();
         $strEntryNameEmpty = $strEntryName."_empty";

@@ -1604,7 +1604,7 @@ class UserAdmin extends AdminEvensimpler implements AdminInterface
      */
     protected function checkAdditionalNewData(AdminFormgenerator $objForm)
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams["user_pass"])) {
             $bitPass = $this->checkPasswords($this->getParam("user_pass"), $this->getParam("user_pass2"));
             if (!$bitPass) {
@@ -1630,7 +1630,7 @@ class UserAdmin extends AdminEvensimpler implements AdminInterface
      */
     protected function checkAdditionalEditData(AdminFormgenerator $objForm, UserUser $objUser)
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams["user_pass"])) {
             $bitPass = $this->checkPasswords($this->getParam("user_pass"), $this->getParam("user_pass2"));
             if (!$bitPass) {

@@ -66,7 +66,7 @@ class FormentryDateInterval extends FormentryBase implements FormentryPrintableI
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         $strName = $this->getStrEntryName();
 
         if (isset($arrParams[$strName . "_unit"]) && isset($arrParams[$strName])) {//form sent

@@ -63,7 +63,6 @@ abstract class FormentryBase implements JsonSerializable
      */
     private $bitSkipValidation = false;
 
-
     private $strLabel = "";
     private $strValidationErrorMsg = "";
     private $strEntryName = null;
@@ -73,6 +72,7 @@ abstract class FormentryBase implements JsonSerializable
     private $bitReadonly = false;
     private $bitHideLongHints = false;
     private $dataAttributes = [];
+    private $formParams;
 
     /**
      * Creates a new instance of the current field.
@@ -138,7 +138,7 @@ abstract class FormentryBase implements JsonSerializable
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams[$this->strEntryName])) {
             $this->setStrValue($arrParams[$this->strEntryName]);
         } else {
@@ -585,5 +585,21 @@ abstract class FormentryBase implements JsonSerializable
     {
         $this->dataAttributes = $dataAttributes;
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFormParams(): array
+    {
+        return $this->formParams ?? Carrier::getAllParams();
+    }
+
+    /**
+     * @param array|null $formParams
+     */
+    public function setFormParams(?array $formParams): void
+    {
+        $this->formParams = $formParams;
     }
 }

@@ -83,7 +83,7 @@ class FormentryUser extends FormentryBase implements FormentryPrintableInterface
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams[$this->getStrEntryName()."_id"])) {
             $this->setStrValue($arrParams[$this->getStrEntryName()."_id"]);
         } else {

@@ -139,7 +139,7 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams[$this->getStrEntryName()])) {
             $this->setStrValue($arrParams[$this->getStrEntryName()]);
         } elseif (isset($arrParams[$this->getPresCheckKey()])) {

@@ -172,7 +172,7 @@ class FormentryMonthYearDropdown extends FormentryDate
     public function validateValue()
     {
         if ($this->getBitMandatory()) {
-            $arrParams = Carrier::getAllParams();
+            $arrParams = $this->getFormParams();
 
             if (array_key_exists($this->getStrEntryName() . self::DAY_SUFFIX, $arrParams)
 

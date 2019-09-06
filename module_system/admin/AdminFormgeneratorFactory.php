@@ -40,7 +40,7 @@ class AdminFormgeneratorFactory
      * @return AdminFormgenerator
      * @throws Exception
      */
-    public static function createByModel(ModelInterface $objInstance)
+    public static function createByModel(ModelInterface $objInstance, $formParams = null)
     {
         // check whether the form was already generated
         $objForm = self::getFormForModel($objInstance);
@@ -48,7 +48,7 @@ class AdminFormgeneratorFactory
             return $objForm;
         }
 
-        $objForm = self::newFormGenerator($objInstance);
+        $objForm = self::newFormGenerator($objInstance, $formParams);
 
         return self::$arrForms[self::getKeyByModel($objInstance)] = $objForm;
     }
@@ -62,7 +62,7 @@ class AdminFormgeneratorFactory
      * @throws Exception
      * @internal
      */
-    public static function newFormGenerator(ModelInterface $objInstance)
+    public static function newFormGenerator(ModelInterface $objInstance, $formParams = null)
     {
         // check whether a specific form generator class was specified per annotation
         $objReflection = new Reflection($objInstance);
@@ -79,8 +79,10 @@ class AdminFormgeneratorFactory
             $objForm = new AdminFormgenerator($objInstance->getArrModule("module"), $objInstance);
         }
 
+
         // check whether we have an correct instance
         if ($objForm instanceof AdminFormgenerator) {
+            $objForm->setFormParams($formParams);
             $objForm->generateFieldsFromObject();
             return $objForm;
         } else {

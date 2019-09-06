@@ -11,6 +11,7 @@ namespace Kajona\System\Admin\Formentries;
 use Kajona\System\Admin\AdminFormgeneratorContainerInterface;
 use Kajona\System\Admin\FormentryPrintableInterface;
 use Kajona\System\System\Carrier;
+use Kajona\System\System\Exception;
 use Kajona\System\System\I18nTrait;
 use Kajona\System\System\Validators\DummyValidator;
 
@@ -80,7 +81,7 @@ abstract class AbstractFormentryI18n extends FormentryBase implements FormentryP
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams[$this->getStrEntryName()])) {
             $this->setStrValue($this->toI18nValueString($arrParams, $this->getStrEntryName()));
         } else {
@@ -93,7 +94,7 @@ abstract class AbstractFormentryI18n extends FormentryBase implements FormentryP
      * May contain html, but should be stripped down to text-only.
      *
      * @return string
-     * @throws \Kajona\System\System\Exception
+     * @throws Exception
      */
     public function getValueAsText()
     {

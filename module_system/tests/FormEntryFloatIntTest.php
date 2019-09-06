@@ -151,7 +151,7 @@ class FormEntryFloatIntTest extends Testbase
         $objProperty = $objReflection->getProperty("arrParams");
         $objProperty->setAccessible(true);
 
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         unset($arrParams[$strKey]);
 
         $objProperty->setValue($arrParams);

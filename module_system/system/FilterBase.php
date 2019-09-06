@@ -233,7 +233,7 @@ abstract class FilterBase
         $arrProperties = $objReflection->getPropertiesWithAnnotation(AdminFormgenerator::STR_TYPE_ANNOTATION);
 
         //get params
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
 
         //set param vlaues to filter object
         foreach ($arrProperties as $strPropertyName => $strColumnName) {

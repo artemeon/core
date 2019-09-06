@@ -98,7 +98,7 @@ class FormentryObjecttags extends FormentryTageditor
      */
     protected function updateValue()
     {
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         if (isset($arrParams[$this->getStrEntryName() . "_id"])) {
             $this->setStrValue($arrParams[$this->getStrEntryName() . "_id"]);
         } elseif (isset($arrParams[$this->getPresCheckKey()])) {

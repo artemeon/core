@@ -138,7 +138,7 @@ class FormentryRoles extends FormentryBase
         $arrRoles = $this->objPermissionHandler->getRoles();
         $arrValues = [];
 
-        $arrParams = Carrier::getAllParams();
+        $arrParams = $this->getFormParams();
         $bitFound = false;
         foreach ($arrRoles as $strRole) {
             $strKey = strtolower("{$this->getStrEntryName()}_{$strRole}");
