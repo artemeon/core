@@ -5,7 +5,7 @@
  *       Published under the GNU LGPL v2.1
  ********************************************************************************************************/
 
-namespace AGP\Search\Api;
+namespace Kajona\Search\Api;
 
 
 use Kajona\Api\System\ApiControllerInterface;
