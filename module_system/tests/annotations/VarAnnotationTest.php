@@ -14,7 +14,7 @@ class VarAnnotationTest extends Testbase
 
     private static $allowValues = ["string", "objectList", "float", "int", "bool", "boolean", "Date", "array", "string[]", "int[]"];
 
-    protected function setUp()
+    public static function setUpBeforeClass()
     {
         //rename the packageconfig if present
         if (is_file(_realpath_."project/packageconfig.json")) {
@@ -37,16 +37,16 @@ class VarAnnotationTest extends Testbase
 
             Classloader::getInstance()->flushCache();
         }
-        parent::setUp();
+        parent::setUpBeforeClass();
     }
 
-    protected function tearDown()
+    public static function tearDownAfterClass()
     {
         if (is_file(_realpath_."project/packageconfig.json.back")) {
             rename(_realpath_."project/packageconfig.json.back", _realpath_."project/packageconfig.json");
             Classloader::getInstance()->flushCache();
         }
-        parent::tearDown();
+        parent::tearDownAfterClass();
     }
 
 

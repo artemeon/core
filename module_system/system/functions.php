@@ -734,7 +734,7 @@ function removeDirectoryTraversals($strFilename)
     $strFilename = urldecode($strFilename);
     $strFilename = StringUtil::replace("..", "", $strFilename);
     return $strFilename;
-//    return uniStrReplace("//", "/", $strFilename); //FIXME: should stay in place but breaks "phar:///". 
+//    return uniStrReplace("//", "/", $strFilename); //FIXME: should stay in place but breaks "phar:///".
 }
 
 /**
@@ -840,7 +840,7 @@ function checkText($strText, $intMin = 1, $intMax = 0)
  *
  * @return string The new SystemID
  */
-function generateSystemid()
+function generateSystemid(): string
 {
     //generate md5 key
     $strKey = md5(_realpath_);
@@ -853,7 +853,7 @@ function generateSystemid()
 
     $intId = uniqid($strTemp);
 
-    return $intId;
+    return (string)$intId;
 }
 
 
