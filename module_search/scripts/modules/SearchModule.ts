@@ -91,11 +91,9 @@ const SearchModule = {
             commit('SET_SHOW_RESULTS_NUMBER', false)
             commit('START_LOADING')
             const [err, res] = await to(axios({
-                url: '/xml.php',
+                url: 'api.php/v1/search',
                 method: 'POST',
-                params: {
-                    module: 'search',
-                    action: 'getFilteredSearch',
+                data: {
                     search_query: state.searchQuery !== '' ? state.searchQuery : undefined,
                     filtermodules: state.selectedIds.length !== 0 ? state.selectedIds : undefined,
                     search_changestartdate: state.startDate !== '' ? state.startDate : undefined,
@@ -143,12 +141,8 @@ const SearchModule = {
         async getFilterModules ({ commit }) : Promise<void> {
             commit('START_LOADING')
             const [err, res] = await to(axios({
-                url: '/xml.php?',
-                method: 'GET',
-                params: {
-                    module: 'search',
-                    action: 'getModulesForFilter'
-                }
+                url: 'api.php/v1/search/modules',
+                method: 'GET'
             }))
 
             if (res) {
