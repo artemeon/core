@@ -1,20 +1,4 @@
-<script type="text/javascript">
-    // Auto-Grow-TextArea script.
-    // Script copyright (C) 2011 www.cryer.co.uk.
-    // Script is free to use provided this copyright header is included.
-    function AutoGrowTextArea(textField)
-    {
-        if (textField.clientHeight < textField.scrollHeight)
-        {
-            textField.style.height = textField.scrollHeight + "px";
-            if (textField.clientHeight < textField.scrollHeight)
-            {
-                textField.style.height =
-                    (textField.scrollHeight * 2 - textField.clientHeight) + "px";
-            }
-        }
-    }
-</script>
+<script type='text/javascript'>window.Forms.AutoGrowTextArea(textField);</script>
 <div class="form-group core-component-formentry-inputtextarea">
     <label for="{{ name|e('html_attr') }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6 {{ class|e('html_attr') }}">
@@ -26,6 +10,4 @@
     </div>
     {% endif %}
 </div>
-<script type="text/javascript">
-    AutoGrowTextArea(document.getElementById("{{ name|e('html_attr') }}"));
-</script>
+<script type="text/javascript">window.Forms.AutoGrowTextArea(document.getElementById("{{ name|e('html_attr') }}"));</script>
