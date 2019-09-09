@@ -10,6 +10,7 @@ namespace Kajona\Search\Api;
 
 use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Search\System\SearchCommons;
+use Kajona\Search\System\SearchResult;
 use Kajona\Search\System\SearchSearch;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\AdminskinHelper;
@@ -48,7 +49,7 @@ class SearchApiController implements ApiControllerInterface
         $search_query = $requestBody['search_query'];
         $filtermodules = $requestBody['filtermodules'];
         $search_changestartdate = $requestBody['search_changestartdate'];
-        $search_changeenddate = $requestBody['search_changeenddate'] ;
+        $search_changeenddate = $requestBody['search_changeenddate'];
         $search_formfilteruser_id = $requestBody['search_formfilteruser_id'];
         $objSearch = new SearchSearch();
 
@@ -58,19 +59,18 @@ class SearchApiController implements ApiControllerInterface
         if ($filtermodules != "") {
             $objSearch->setStrInternalFilterModules(urldecode($filtermodules));
         }
-        //todo dont user Date::generateDatefromParams
-//        if ($search_changestartdate != "") {
-//            $objDate = new \Kajona\System\System\Date();
-//            $objDate->generateDateFromParams("search_changestartdate", Carrier::getAllParams());
-//            $objSearch->setObjChangeStartdate($objDate);
-//        }
-//
-//        if ($this->getParam("search_changeenddate") != "") {
-//            $objDate = new \Kajona\System\System\Date();
-//            $objDate->generateDateFromParams("search_changeenddate", Carrier::getAllParams());
-//            $objSearch->setObjChangeEnddate($objDate);
-//        }
-//
+        if ($search_changestartdate != "") {
+            $objDate = new Date();
+            $objDate->generateDateFromParams('search_changestartdate', ['search_changestartdate' => $search_changestartdate]);
+            $objSearch->setObjChangeStartdate($objDate);
+        }
+
+        if ($search_changeenddate != "") {
+            $objDate = new Date();
+            $objDate->generateDateFromParams("search_changeenddate", ["search_changeenddate" => $search_changeenddate]);
+            $objSearch->setObjChangeEnddate($objDate);
+        }
+
         if ($search_formfilteruser_id != "") {
             $objSearch->setStrFormFilterUser($search_formfilteruser_id);
         }
@@ -81,10 +81,32 @@ class SearchApiController implements ApiControllerInterface
         return new JsonResponse($this->createSearchJson($arrResult));
     }
 
+    /**
+     * Returns the possible modules and their ids as json for filter
+     *
+     * @return HttpResponse
+     * @throws Exception
+     * @api
+     * @method GET
+     * @path /v1/search/modules
+     * @authorization usertoken
+     */
+    public function getModulesForFilter(): HttpResponse
+    {
+        $objSearch = new SearchSearch();
+        $arrModules = $objSearch->getPossibleModulesForFilter();
+        $arrReturn = [];
+        foreach ($arrModules as $key => $value) {
+            $arrReturn[] = array("module" => $value, "id" => $key);
+        }
+        return new JsonResponse($arrReturn);
+    }
+
     private function createSearchJson($arrResults)
     {
 
         $arrItems = array();
+        /** @var  SearchResult $objOneResult */
         foreach ($arrResults as $objOneResult) {
             $arrItem = array();
             //create a correct link
