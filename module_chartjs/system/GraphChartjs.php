@@ -10,6 +10,7 @@ namespace Kajona\Chartjs\System;
 
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Carrier;
+use Kajona\System\System\Config;
 use Kajona\System\System\Exception;
 use Kajona\System\System\GraphCommons;
 use Kajona\System\System\GraphDatapoint;
@@ -29,65 +30,8 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
 
     /**
      * Contains all data of the chart
-     *
-     * @var array
      */
-    private $arrChartData = [
-        "type" => "bar",
-        "options" => [
-            'plugins' => [
-                'datalabels' => [
-                    'display' => false,
-                ],
-            ],
-            "title" => [
-                "display" => false,
-            ],
-            'scales' => [
-                'xAxes' => [
-                    [
-                        'ticks' => [
-                            'beginAtZero' => true,
-                        ],
-                    ],
-                ],
-                'yAxes' => [
-                    [
-                        'id' => 'defaultYID',
-                        'ticks' => [
-                            'beginAtZero' => true,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        'defaults' => [
-            'global' => [
-                'defaultFontSize' => 10,
-                'defaultFontFamily' => '"Open Sans","Helvetica Neue","Helvetica","Arial","sans-serif"',
-                'elements' => [
-                    'line' => [
-                        'fill' => false,
-                        'lineTension' => 0.9,
-                    ]
-                ],
-                'tooltips' => [
-                    'cornerRadius' => 0,
-                    'backgroundColor' => 'rgba(255,255,255,0.9)',
-                    'borderWidth' => 0.5,
-                    'borderColor' => 'rgba(0,0,0,0.8)',
-                    'bodyFontColor' => '#000',
-                    'titleFontColor' => '#000',
-                ],
-                'legend' => [
-                    'labels' => [
-                        'boxWidth' => 12,
-                    ],
-                ],
-                'maintainAspectRatio' => false,
-            ],
-        ],
-    ];
+    private $arrChartData = [];
 
     /**
      * Contains options of the chart
@@ -106,11 +50,7 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
      *
      * @var array
      */
-    private $arrColors = [
-        "#8bbc21", "#2f7ed8", "#f28f43", "#1aadce", "#77a1e5", "#0d233a", "#c42525", "#a6c96a", "#910000",
-        '#0048Ba', '#B0BF1A', '#C46210', '#FFBF00', '#9966CC', '#841B2D', '#FAEBD7', '#8DB600', '#D0FF14',
-        '#FF9966', '#007FFF', '#FF91AF', '#E94196', '#CAE00D', '#54626F',
-    ];
+    private $arrColors = [];
 
     /**
      * Defines the width for the canvas but ONLY if respnsive is set to FALSE
@@ -173,6 +113,9 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
     private function addChartSet(array $arrValues, string $strLegend = "", $type = null, $bitWriteValues = false, $yAxisID = null, $lineTension = 0.2)
     {
         $arrDataPointObjects = GraphCommons::convertArrValuesToDataPointArray($arrValues);
+
+        $this->arrChartData = Config::getInstance("module_chartjs", "config.php")->getConfig("arrChartData");
+        $this->arrColors = Config::getInstance("module_chartjs", "config.php")->getConfig("arrColors");
 
         $intDatasetNumber = isset($this->arrChartData['data']['datasets']) ? count($this->arrChartData['data']['datasets']) : 0;
         $intColorsCount = count($this->arrColors);
