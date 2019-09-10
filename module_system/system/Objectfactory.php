@@ -60,7 +60,7 @@ final class Objectfactory
         return self::$instance;
     }
 
-    private function __construct(Database $database, BootstrapCache $bootstrapCache)
+    public function __construct(Database $database, BootstrapCache $bootstrapCache)
     {
         $this->database = $database;
         $this->bootstrapCache = $bootstrapCache;
