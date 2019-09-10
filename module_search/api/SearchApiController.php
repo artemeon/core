@@ -58,7 +58,7 @@ class SearchApiController implements ApiControllerInterface
             $objSearch->setStrQuery($search_query);
         }
         if ($filtermodules != "") {
-            $objSearch->setStrInternalFilterModules(urldecode($filtermodules));
+            $objSearch->setFilterModules($filtermodules);
         }
         if ($search_changestartdate != "") {
             $objDate = new Date();
