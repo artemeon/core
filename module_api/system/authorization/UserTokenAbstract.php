@@ -56,7 +56,6 @@ abstract class UserTokenAbstract implements AuthorizationInterface
         $this->jwtManager = $jwtManager;
         $this->session = $session;
         $this->lang = $lang;
-        $this->lang->setStrTextLanguage($this->session->getAdminLanguage(true));
     }
 
     /**
@@ -80,7 +79,7 @@ abstract class UserTokenAbstract implements AuthorizationInterface
         }
 
         $this->session->loginUserForRequest($user);
-
+        $this->lang->setStrTextLanguage($this->session->getAdminLanguage(true));
         return true;
     }
 
