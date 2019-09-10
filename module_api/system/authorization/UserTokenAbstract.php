@@ -9,6 +9,8 @@ namespace Kajona\Api\System\Authorization;
 use Kajona\Api\System\AuthorizationInterface;
 use Kajona\Api\System\JWTManager;
 use Kajona\System\System\Database;
+use Kajona\System\System\Exception;
+use Kajona\System\System\Lang;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\Session;
 use Kajona\System\System\UserUser;
@@ -36,17 +38,24 @@ abstract class UserTokenAbstract implements AuthorizationInterface
      * @var Session
      */
     private $session;
+    /**
+     * @var Lang
+     */
+    private $lang;
 
     /**
      * @param Database $connection
      * @param JWTManager $jwtManager
      * @param Session $session
+     * @param Lang $lang
+     * @throws Exception
      */
-    public function __construct(Database $connection, JWTManager $jwtManager, Session $session)
+    public function __construct(Database $connection, JWTManager $jwtManager, Session $session, Lang $lang)
     {
         $this->connection = $connection;
         $this->jwtManager = $jwtManager;
         $this->session = $session;
+        $this->lang = $lang;
     }
 
     /**
@@ -70,7 +79,7 @@ abstract class UserTokenAbstract implements AuthorizationInterface
         }
 
         $this->session->loginUserForRequest($user);
-
+        $this->lang->setStrTextLanguage($this->session->getAdminLanguage(true));
         return true;
     }
 
