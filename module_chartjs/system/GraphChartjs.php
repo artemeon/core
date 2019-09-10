@@ -73,6 +73,12 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
      */
     private $bitDownloadLink = false;
 
+    public function __construct()
+    {
+        $this->arrChartData = Config::getInstance("module_chartjs", "config.php")->getConfig("arrChartData");
+        $this->arrColors = Config::getInstance("module_chartjs", "config.php")->getConfig("arrColors");
+    }
+
     /**
      * @return array
      */
@@ -113,9 +119,6 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
     private function addChartSet(array $arrValues, string $strLegend = "", $type = null, $bitWriteValues = false, $yAxisID = null, $lineTension = 0.2)
     {
         $arrDataPointObjects = GraphCommons::convertArrValuesToDataPointArray($arrValues);
-
-        $this->arrChartData = Config::getInstance("module_chartjs", "config.php")->getConfig("arrChartData");
-        $this->arrColors = Config::getInstance("module_chartjs", "config.php")->getConfig("arrColors");
 
         $intDatasetNumber = isset($this->arrChartData['data']['datasets']) ? count($this->arrChartData['data']['datasets']) : 0;
         $intColorsCount = count($this->arrColors);
