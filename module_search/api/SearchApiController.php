@@ -18,6 +18,7 @@ use Kajona\System\System\Carrier;
 use Kajona\System\System\Date;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Link;
+use Kajona\System\System\Session;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
 use Kajona\Api\System\Http\JsonResponse;
@@ -78,7 +79,7 @@ class SearchApiController implements ApiControllerInterface
         $objSearchCommons = new SearchCommons();
         $arrResult = $objSearchCommons->doIndexedSearch($objSearch, 0, self::INT_MAX_NR_OF_RESULTS_FULLSEARCH);
 
-        return new JsonResponse($this->createSearchJson($arrResult));
+        return new JsonResponse($this->createSearchJson($arrResult, $context));
     }
 
     /**
@@ -102,7 +103,14 @@ class SearchApiController implements ApiControllerInterface
         return new JsonResponse($arrReturn);
     }
 
-    private function createSearchJson($arrResults)
+    /**
+     * Parses SearchResult objects into json
+     * @param array $arrResults
+     * @param HttpContext $context
+     * @return array
+     * @throws Exception
+     */
+    private function createSearchJson(array $arrResults, HttpContext $context)
     {
 
         $arrItems = array();
@@ -136,8 +144,7 @@ class SearchApiController implements ApiControllerInterface
 
                 $arrItem["additionalInfos"] = $objOneResult->getObjObject()->getStrAdditionalInfo();
             }
-            //todo dont use getSystemid()
-//            $arrItem["lastModifiedBy"] = $objOneResult->getObjObject()->getLastEditUser($this->getSystemid());
+            $arrItem["lastModifiedBy"] = $objOneResult->getObjObject()->getLastEditUser($context->getHeader(Session::getInstance()->getUserID()));
             $arrItem["lastModifiedTime"] = dateToString(new Date($objOneResult->getObjObject()->getIntLmTime()));
             $arrItem["link"] = html_entity_decode($strLink);
 
