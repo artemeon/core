@@ -17,6 +17,10 @@ private mounted () : void {
     document.getElementById('searchbarInput').addEventListener('keydown', this.keyHandler)
     document.getElementById('searchbarInput').addEventListener('focusout', this.onFocusOut)
 }
+private beforeDestroy () : void {
+    document.getElementById('searchbarInput').removeEventListener('keydown', this.keyHandler)
+    document.getElementById('searchbarInput').removeEventListener('focusout', this.onFocusOut)
+}
 private keyHandler (e : KeyboardEvent) : void {
     if (e.code === this.UP) {
         e.preventDefault()
