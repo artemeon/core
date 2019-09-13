@@ -6,7 +6,7 @@
     "sourceMap": true,
     "strict": false,
     "noImplicitReturns": false,
-    "module": "es2015",
+    "module": "esnext",
     "moduleResolution": "node",
     "target": "es5",
     "lib": ["dom", "es2015", "es2016", "es2017"],

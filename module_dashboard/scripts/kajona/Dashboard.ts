@@ -97,13 +97,7 @@ class Dashboard {
                                 Ajax.genericAjaxCall(
                                     'dashboard',
                                     'setDashboardPosition',
-                                    ui.item.data('systemid') +
-                                    '&listPos=' +
-                                    intPos +
-                                    '&listId=' +
-                                    ui.item
-                                        .closest('div.adminwidgetColumn')
-                                        .attr('id'),
+                                    ui.item.data('systemid') + '&listPos=' + intPos + '&listId=' + ui.item.closest('div.adminwidgetColumn').attr('id'),
                                     Ajax.regularCallback
                                 )
                                 return false

@@ -19,24 +19,19 @@ use Kajona\Dashboard\System\EventRepository;
 use Kajona\Dashboard\System\Filter\DashboardICalendarFilter;
 use Kajona\Dashboard\System\ICalendar;
 use Kajona\Dashboard\System\Lifecycle\ConfigLifecycle;
-use Kajona\Dashboard\System\ServiceProvider;
 use Kajona\Dashboard\System\TodoJstreeNodeLoader;
 use Kajona\Dashboard\System\TodoRepository;
 use Kajona\Dashboard\View\Components\Dashboard\Dashboard;
-use Kajona\Dashboard\View\Components\Widgetlist\WidgetList;
 use Kajona\Dashboard\View\Components\Widget\Widget;
+use Kajona\Dashboard\View\Components\Widgetlist\WidgetList;
 use Kajona\System\Admin\AdminEvensimpler;
 use Kajona\System\Admin\AdminFormgenerator;
 use Kajona\System\Admin\AdminInterface;
 use Kajona\System\Admin\Formentries\FormentryText;
 use Kajona\System\System\AdminskinHelper;
-use Kajona\System\System\AuthenticationException;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Date;
 use Kajona\System\System\Exception;
-use Kajona\System\System\Exceptions\EntityNotFoundException;
-use Kajona\System\System\Exceptions\WrongSystemIdException;
-use Kajona\System\System\HttpResponsetypes;
 use Kajona\System\System\HttpStatuscodes;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleUpdateException;
 use Kajona\System\System\Link;
@@ -53,6 +48,7 @@ use Kajona\System\View\Components\Dynamicmenu\DynamicMenu;
 use Kajona\System\View\Components\Menu\Item\Separator;
 use Kajona\System\View\Components\Menu\Item\Text;
 use Kajona\System\View\Components\Menu\Menu;
+use Kajona\V4skin\Admin\Skins\Kajona_V4\AdminskinImageresolver;
 
 /**
  * The dashboard admin class
@@ -265,15 +261,15 @@ class DashboardAdmin extends AdminEvensimpler implements AdminInterface
             $strWidgetClass = $objDashboardWidget->getStrClass();
             if ($strWidgetClass::isEditable()) {
                 $arrActions[] =
-                Link::getLinkAdminManual(
-                    "href=\"#\" onclick=\"Dashboard.editWidget('{$objDashboardWidget->getSystemid()}'); return false;\"",
-                    (AdminskinHelper::getAdminImage("icon_edit")) . " " . $this->getLang("editWidget"),
-                    "",
-                    "",
-                    "",
-                    "",
-                    false
-                );
+                    Link::getLinkAdminManual(
+                        "href=\"#\" onclick=\"Dashboard.editWidget('{$objDashboardWidget->getSystemid()}'); return false;\"",
+                        (AdminskinHelper::getAdminImage("icon_edit")) . " " . $this->getLang("editWidget"),
+                        "",
+                        "",
+                        "",
+                        "",
+                        false
+                    );
             }
         }
         if ($objDashboardWidget->rightDelete()) {
@@ -284,10 +280,10 @@ class DashboardAdmin extends AdminEvensimpler implements AdminInterface
             $strConfirmationLinkHref = "javascript:Dashboard.removeWidget(\'" . $objDashboardWidget->getSystemid() . "\');";
 
             $arrActions[] =
-            Link::getLinkAdminManual(
-                "href=\"#\" onclick=\"DialogHelper.showConfirmationDialog('{$strHeader}', '{$strQuestion}', '{$strConfirmationButtonLabel}', '{$strConfirmationLinkHref}'); return false;\"",
-                (AdminskinHelper::getAdminImage("icon_delete")) . " " . Carrier::getInstance()->getObjLang()->getLang("commons_delete", "system"), "", "", "", "", false
-            );
+                Link::getLinkAdminManual(
+                    "href=\"#\" onclick=\"DialogHelper.showConfirmationDialog('{$strHeader}', '{$strQuestion}', '{$strConfirmationButtonLabel}', '{$strConfirmationLinkHref}'); return false;\"",
+                    (AdminskinHelper::getAdminImage("icon_delete")) . " " . Carrier::getInstance()->getObjLang()->getLang("commons_delete", "system"), "", "", "", "", false
+                );
         }
 
         $widget = new Widget();
@@ -312,7 +308,7 @@ class DashboardAdmin extends AdminEvensimpler implements AdminInterface
     {
         $return = "";
 
-        $return .= "<div id='dashboard-calendar' class='calendar'></div>";
+        $return .= "<div id='dashboard-calendar' class='core-component-calendar'></div>";
         $return .= "<script type=\"text/javascript\">";
         $return .= <<<JS
 
@@ -320,7 +316,7 @@ class DashboardAdmin extends AdminEvensimpler implements AdminInterface
 JS;
         $return .= "</script>";
 
-        $icalLink = Link::getLinkAdminManual(["href" => "#", "onclick" => "DashboardCalendar.getICalendarURL();return false"], $this->getLang("dashboard_ical_url", "dashboard"));
+        $icalLink = Link::getLinkAdminManual(["href" => "#", "onclick" => "DashboardCalendar.getICalendarURL();return false"], AdminskinHelper::getAdminImage("icon_downloads").' '. $this->getLang("dashboard_ical_url", "dashboard"));
         $return .= $this->objToolkit->addToContentToolbar($icalLink);
 
         return $return;
@@ -426,9 +422,9 @@ JS;
     /**
      * Creates the form to edit a widget (NOT the dashboard entry!)
      *
-     * @throws Exception
      * @return string "" in case of success
      * @permissions edit
+     * @throws Exception
      */
     protected function actionEditWidget()
     {
@@ -651,12 +647,12 @@ JS;
             /** @var EventEntry $objEvent */
             $strIcon = AdminskinHelper::getAdminImage($objEvent->getStrIcon());
             $arrRow = array(
-                "title" => strip_tags($objEvent->getStrDisplayName()),
+                "title" => '$ICON ' . strip_tags($objEvent->getStrDisplayName()),
                 "tooltip" => $objEvent->getStrDisplayName(),
                 "icon" => $strIcon,
                 "allDay" => true,
                 "url" => htmlspecialchars_decode($objEvent->getStrHref()),
-                "className" => array($objEvent->getStrCategory(), "calendar-event"),
+                "className" => array("calendar-event"),
             );
 
             if ($objEvent->getObjStartDate() instanceof Date && $objEvent->getObjEndDate() instanceof Date) {

@@ -1,15 +1,14 @@
 import $ from 'jquery'
 import Ajax from './Ajax'
-import moment from 'moment'
-import calendarHeatMap from 'calendar-heatmap'
 import 'calendar-heatmap/dist/calendar-heatmap.css'
-const d3 = require('d3')
+
 declare global {
     // the d3 type definition does not contains the time API
     interface d3 {
         time: any
     }
 }
+
 interface Lang {
     months?: Array<string>
     days?: Array<string>
@@ -25,22 +24,24 @@ interface DatePoint {
 }
 
 class Changelog {
+
+    private static moment = null
     private static systemId: string = null
-    private static now: Date = null
-    private static yearAgo: Date = null
+    private static now: Date
+    private static yearAgo: Date
     private static selectedColumn: string = null
     private static lang: Lang = {}
 
     /**
      * Method to compare and highlite changes of two version properties table
      */
-    public static compareTable () {
-        var strType = Changelog.selectedColumn
-        var propsLeft = Changelog.getTableProperties(strType)
-        var propsRight = Changelog.getTableProperties(
+    public static compareTable() {
+        let strType = Changelog.selectedColumn
+        let propsLeft = Changelog.getTableProperties(strType)
+        let propsRight = Changelog.getTableProperties(
             Changelog.getInverseColumn(strType)
         )
-        for (var key in propsLeft) {
+        for (let key in propsLeft) {
             if (propsLeft[key] !== '' || propsRight[key] !== '') {
                 if (propsLeft[key] !== propsRight[key]) {
                     $('#property_' + key + '_' + strType)
@@ -67,7 +68,7 @@ class Changelog {
      *
      * @param {string} strType
      */
-    public static selectColumn (strType: string) {
+    public static selectColumn(strType: string) {
         $('#date_' + strType).css('background-color', '#ccc')
         $('#date_' + Changelog.getInverseColumn(strType)).css(
             'background-color',
@@ -82,7 +83,7 @@ class Changelog {
      * @param strType
      * @returns {string}
      */
-    public static getInverseColumn (strType: string) {
+    public static getInverseColumn(strType: string) {
         return strType === 'left' ? 'right' : 'left'
     }
 
@@ -92,8 +93,8 @@ class Changelog {
      * @param {string} type
      * @returns {object}
      */
-    public static getTableProperties (type: string): any {
-        var props: any = {}
+    public static getTableProperties(type: string): any {
+        let props: any = {}
         $('.changelog_property_' + type).each(function () {
             props[$(this).data('name')] = '' + $(this).html()
         })
@@ -108,7 +109,7 @@ class Changelog {
      * @param {string} strType
      * @param {function} objCallback
      */
-    public static loadDate (
+    public static loadDate(
         strSystemId: string,
         strDate: string,
         strType: string,
@@ -123,14 +124,8 @@ class Changelog {
             function (body: any, status: string, jqXHR: any) {
                 let data = JSON.parse(body)
                 let props = data.properties
-                $('#date_' + strType).html(
-                    "<a href='#' onclick='Changelog.selectColumn(\"" +
-                        strType +
-                        "\");return false;' style='display:block;'>" +
-                        data.date +
-                        '</a>'
-                )
-                for (var prop in props) {
+                $('#date_' + strType).html("<a href='#' onclick='Changelog.selectColumn(\"" + strType + "\");return false;' style='display:block;'>" + data.date + '</a>')
+                for (let prop in props) {
                     $('#property_' + prop + '_' + strType).html(props[prop])
                 }
 
@@ -155,98 +150,116 @@ class Changelog {
     /**
      * Loads the chart for the next year
      */
-    public static loadNextYear () {
+    public static loadNextYear() {
         $('#changelogTimeline').fadeOut()
-
-        Changelog.now = moment(Changelog.now)
-            .add(1, 'years')
-            .toDate()
-        Changelog.yearAgo = moment(Changelog.yearAgo)
-            .add(1, 'years')
-            .toDate()
+        Changelog.now = Changelog.moment(Changelog.now).add(1, 'years').toDate()
+        Changelog.yearAgo = Changelog.moment(Changelog.yearAgo).add(1, 'years').toDate()
         Changelog.loadChartData()
     }
 
     /**
      * Loads the chart for the previous year
      */
-    public static loadPrevYear () {
+    public static loadPrevYear() {
         $('#changelogTimeline').fadeOut()
-
-        Changelog.now = moment(Changelog.now)
-            .subtract(1, 'years')
-            .toDate()
-        Changelog.yearAgo = moment(Changelog.yearAgo)
-            .subtract(1, 'years')
-            .toDate()
+        Changelog.now = Changelog.moment(Changelog.now).subtract(1, 'years').toDate()
+        Changelog.yearAgo = Changelog.moment(Changelog.yearAgo).subtract(1, 'years').toDate()
         Changelog.loadChartData()
     }
 
     /**
      * Loads the chart
      */
-    public static loadChartData () {
-        var now = moment(Changelog.now).format('YYYYMMDD235959')
-        var yearAgo = moment(Changelog.yearAgo).format('YYYYMMDD235959')
+    public static loadChartData() {
+        import(/* webpackChunkName: "calendar-heatmap" */ 'calendar-heatmap').then(({default: calendarHeatMap}) => {
+            import(/* webpackChunkName: "d3" */ 'd3').then(({default: d3}) => {
 
-        Ajax.genericAjaxCall(
-            'system',
-            'changelogChartData',
-            '&systemid=' +
-                Changelog.systemId +
-                '&now=' +
-                now +
-                '&yearAgo=' +
-                yearAgo,
-            function (body: any, status: string, jqXHR: any) {
-                let data = JSON.parse(body)
+                let now = Changelog.moment(Changelog.now).format('YYYYMMDD235959')
+                let yearAgo = Changelog.moment(Changelog.yearAgo).format('YYYYMMDD235959')
 
-                var chartData = d3.time
-                    .days(Changelog.yearAgo, Changelog.now)
-                    .map(function (dateElement) {
-                        var count = 0
-                        if (
-                            data.hasOwnProperty(
-                                moment(dateElement).format('YYYYMMDD')
-                            )
-                        ) {
-                            count = data[moment(dateElement).format('YYYYMMDD')]
-                        }
-                        return {
-                            date: dateElement,
-                            count: count
-                        }
-                    })
+                Ajax.genericAjaxCall(
+                    'system',
+                    'changelogChartData',
+                    '&systemid=' + Changelog.systemId + '&now=' + now + '&yearAgo=' + yearAgo,
+                    function (body: any, status: string, jqXHR: any) {
+                        let data = JSON.parse(body)
 
-                var heatmap = calendarHeatMap
-                    .data(chartData)
-                    .selector('#changelogTimeline')
-                    .months(Changelog.lang.months)
-                    .days(Changelog.lang.days)
-                    .width(700)
-                    .padding(16)
-                    .tooltipEnabled(true)
-                    .tooltipUnit(Changelog.lang.tooltipUnit)
-                    .tooltipUnitPlural(Changelog.lang.tooltipUnitPlural)
-                    .tooltipDateFormat('DD.MM.YYYY')
-                    .tooltipHtml(Changelog.lang.tooltipHtml)
-                    .legendEnabled(false)
-                    .toggleDays(false)
-                    .colorRange(['#eeeeee', '#6cb121'])
-                    .onClick(function (data: DatePoint) {
-                        var date = moment(data.date).format('YYYYMMDD235959')
-                        Changelog.loadDate(
-                            Changelog.systemId,
-                            date,
-                            Changelog.selectedColumn,
-                            Changelog.compareTable
-                        )
-                    })
-                heatmap(Changelog.now, Changelog.yearAgo) // render the chart
 
-                $('#changelogTimeline').fadeIn()
-            }
-        )
+                        let chartData = d3.time.days(Changelog.yearAgo, Changelog.now)
+                            .map(function (dateElement) {
+                                let count = 0
+                                if (
+                                    data.hasOwnProperty(
+                                        Changelog.moment(dateElement).format('YYYYMMDD')
+                                    )
+                                ) {
+                                    count = data[Changelog.moment(dateElement).format('YYYYMMDD')]
+                                }
+                                return {
+                                    date: dateElement,
+                                    count: count
+                                }
+                            })
+
+
+                        let heatmap = calendarHeatMap
+                            .data(chartData)
+                            .selector('#changelogTimeline')
+                            .months(Changelog.lang.months)
+                            .days(Changelog.lang.days)
+                            .width(700)
+                            .padding(16)
+                            .tooltipEnabled(true)
+                            .tooltipUnit(Changelog.lang.tooltipUnit)
+                            .tooltipUnitPlural(Changelog.lang.tooltipUnitPlural)
+                            .tooltipDateFormat('DD.MM.YYYY')
+                            .tooltipHtml(Changelog.lang.tooltipHtml)
+                            .legendEnabled(false)
+                            .toggleDays(false)
+                            .colorRange(['#eeeeee', '#6cb121'])
+                            .onClick(function (data: DatePoint) {
+                                let date = Changelog.moment(data.date).format('YYYYMMDD235959')
+                                Changelog.loadDate(
+                                    Changelog.systemId,
+                                    date,
+                                    Changelog.selectedColumn,
+                                    Changelog.compareTable
+                                )
+                            })
+
+                        heatmap(Changelog.now, Changelog.yearAgo) // render the chart
+
+                        $('#changelogTimeline').fadeIn()
+                    }
+                )
+            })
+        })
+    }
+
+    public static initChangelog(lang: object, systemId: string, leftDate: string, rightDate: string) {
+
+
+        import(/* webpackChunkName: "moment" */ 'moment').then(({default: moment}) => {
+
+            Changelog.moment = moment
+
+            Changelog.now = moment().endOf('day').toDate()
+            Changelog.yearAgo = moment().startOf('day').subtract(1, 'year').toDate()
+
+
+            Changelog.lang = lang
+            Changelog.systemId = systemId
+
+
+            Changelog.selectColumn("right")
+            Changelog.loadChartData()
+
+            Changelog.loadDate(systemId, leftDate, "left", function () {
+                Changelog.loadDate(systemId, rightDate, "right", Changelog.compareTable)
+            })
+
+        })
+
     }
 }
 ;(<any>window).Changelog = Changelog

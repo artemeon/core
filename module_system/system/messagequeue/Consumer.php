@@ -57,7 +57,7 @@ class Consumer
     public function consumeAll(): void
     {
         $startTime = time();
-        $result = $this->connection->getPArray('SELECT command_id, command_class, command_payload FROM agp_system_commands', [], 0, self::MAX_PREFETCH);
+        $result = $this->connection->getPArray('SELECT command_id, command_class, command_payload FROM agp_system_commands', [], 0, self::MAX_PREFETCH, false);
 
         foreach ($result as $row) {
             // directly delete the event since otherwise this would block the queue in case the event throws an

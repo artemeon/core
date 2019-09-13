@@ -100,13 +100,15 @@ class ServiceProvider implements ServiceProviderInterface
             $headerToken = new HeaderToken(
                 $c[\Kajona\System\System\ServiceProvider::STR_DB],
                 $c[self::JWT_MANAGER],
-                $c[\Kajona\System\System\ServiceProvider::STR_SESSION]
+                $c[\Kajona\System\System\ServiceProvider::STR_SESSION],
+                $c[\Kajona\System\System\ServiceProvider::STR_LANG]
             );
 
             $queryToken = new QueryToken(
                 $c[\Kajona\System\System\ServiceProvider::STR_DB],
                 $c[self::JWT_MANAGER],
-                $c[\Kajona\System\System\ServiceProvider::STR_SESSION]
+                $c[\Kajona\System\System\ServiceProvider::STR_SESSION],
+                $c[\Kajona\System\System\ServiceProvider::STR_LANG]
             );
 
             return new Composite($headerToken, $queryToken);
