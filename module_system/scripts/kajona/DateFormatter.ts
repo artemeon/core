@@ -4,11 +4,13 @@
 class DateFormatter {
     /**
      * Formats an Agp Date and gives it in the given Format
-     * @param date
-     * @param wishedFormat
+     * @param date the longInt value of the agpDate
+     * @param dateFormat the required date format
      */
-    public static formatAgpDate (date : number, wishedFormat : string) : string {
-        if ((wishedFormat !== 'mm/dd/yyyy' && (wishedFormat !== 'dd.mm.yyyy'))) {
+    public static formatAgpDate (date : number, dateFormat : string) : string {
+        const GERMAN_FORMAT : string = 'dd.mm.yyyy'
+        const ENGLISH_FORMAT : string = 'mm/dd/yyyy'
+        if ((dateFormat !== ENGLISH_FORMAT && (dateFormat !== GERMAN_FORMAT))) {
             throw new Error('Unknown given date format')
         }
         if (typeof date !== 'number') {
@@ -22,22 +24,14 @@ class DateFormatter {
         let day : string = ''
         let formattedDate : string = ''
         let stringDate : string = date.toString()
-        // set year
-        for (let i = 0; i < 4; i++) {
-            year += stringDate[i]
-        }
-        // set month
-        for (let i = 4; i < 6; i++) {
-            month += stringDate[i]
-        }
-        // set day
-        for (let i = 6; i < 8; i++) {
-            day += stringDate[i]
-        }
+
+        year = stringDate.substr(0, 4)
+        month = stringDate.substr(4, 2)
+        day = stringDate.substr(6, 2)
         // format the date
-        switch (wishedFormat) {
-            case 'mm/dd/yyyy' : formattedDate = month + '/' + day + '/' + year; break
-            case 'dd.mm.yyyy' : formattedDate = day + '.' + month + '.' + year; break
+        switch (dateFormat) {
+            case ENGLISH_FORMAT : formattedDate = month + '/' + day + '/' + year; break
+            case GERMAN_FORMAT : formattedDate = day + '.' + month + '.' + year; break
         }
         return formattedDate
     }
