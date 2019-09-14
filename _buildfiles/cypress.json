@@ -1,4 +1,6 @@
 {
     "integrationFolder": "../../",
-    "testFiles" : 	"**/*.cypress.js"
+    "testFiles" : 	"**/*.cypress.ts" ,
+    "videosFolder" : "bin/videos",
+    "screenshotsFolder" : "bin/screenshots"
 }

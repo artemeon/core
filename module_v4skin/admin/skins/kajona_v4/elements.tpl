@@ -241,23 +241,6 @@ Multiselect
     <option value="%%key%%" selected="selected">%%value%%</option>
 </input_multiselect_row_selected>
 
-Date interval
-<input_date_interval>
-    <div class="form-group">
-        <label for="%%name%%_unit" class="col-sm-3 control-label">%%title%%</label>
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-md-8">
-                    <input type="number" name="%%name%%" id="%%name%%" value="%%value%%" class="form-control %%class%%" %%disabled%%>
-                </div>
-                <div class="col-md-4">
-                    <select name="%%name%%_unit" id="%%name%%_unit" class="form-control %%class%%" %%disabled%% %%addons%%>%%units%%</select>
-                </div>
-            </div>
-        </div>
-    </div>
-</input_date_interval>
-
 Toggle Button-Bar
 <input_toggle_buttonbar>
     <div class="form-group">
@@ -1230,7 +1213,10 @@ place ajaxScript before the closing input_tagselector-tag.
     <div class="panel panel-default panel-combined">
         <div class="panel-heading">
             <span class="linkcontainer collapsed">
-                %%combined_header%%
+            %%combined_header%%
+                <a rel="tooltip" data-kajona-module="search" onclick="var event = new Event('openSearchbar'); document.body.dispatchEvent(event);">
+                    <i class="fa fa-search"></i>
+                </a>
             </span>
         </div>
         %%combined_body%%
@@ -1270,17 +1256,7 @@ place ajaxScript before the closing input_tagselector-tag.
     <div id='changelogTimeline' style='text-align:center;'></div>
 
     <script type="text/javascript">
-            Changelog.lang = %%strLang%%;
-            Changelog.systemId = "%%strSystemId%%";
-            Changelog.format = Util.transformDateFormat('%%strDateFormat%%', "momentjs");
-            Changelog.now = moment().endOf('day').toDate();
-            Changelog.yearAgo = moment().startOf('day').subtract(1, 'year').toDate();
-            Changelog.selectColumn("right");
-            Changelog.loadChartData();
-
-            Changelog.loadDate("%%strSystemId%%", "%%strLeftDate%%", "left", function(){
-                Changelog.loadDate("%%strSystemId%%", "%%strRightDate%%", "right", Changelog.compareTable);
-            });
+        Changelog.initChangelog(%%strLang%%, '%%strSystemId%%', '%%strLeftDate%%', '%%strRightDate%%');
     </script>
 </changelog_heatmap>
 

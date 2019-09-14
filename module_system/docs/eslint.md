@@ -18,7 +18,7 @@ If you are using Phpstorm this should be straightforward. Just open the setting 
 </div>
 
 - Select Manual ESLint configuration
-- Select the globally installed eslint package (!important if for any reason you did install eslint as a project dependencie this will not work)
+- Select the local installed eslint package (!important global installed lint packages do not work)
 - Select the .eslintrc.json file created at the root directory
 - You are ready to go !
 

@@ -10,7 +10,6 @@
 
     {{ head|raw }}
     <script src="_webpath_/files/extract/assets/less.min.js?_system_browser_cachebuster_"></script>
-    <script src="_webpath_/files/extract/assets/vendors.chunks.min.js?_system_browser_cachebuster_"></script>
     <script src="_webpath_/files/extract/assets/agp.min.js?_system_browser_cachebuster_"></script>
 
     <script src="http://localhost:35729/livereload.js"></script>
@@ -32,13 +31,7 @@
                     {{ login|raw }}
                 </div>
                 <div class="col-md-8 col-sm-9 hidden-xs" style="text-align: right;">
-                    <form class="navbar-search pull-left" action="_webpath_/#/search/search" onsubmit="Forms.defaultOnSubmit(this);return false;">
-
-                        <div class="input-group">
-                            <input type="text" name="search_query" class="form-control search-query" placeholder="{{ "globalSearchPlaceholder"|lang("dashboard") }}" id="globalSearchInput">
-                            <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
-                        </div>
-                    </form>
+                    <div id="searchbarContainer"></div>
                     <div class="pull-right header-logo" onclick="document.location='#'">
                         &nbsp;
                     </div>

@@ -6,15 +6,16 @@
 
 namespace Kajona\System\System\Messagequeue\Command;
 
-use Kajona\System\System\Messagequeue\Command;
+use Kajona\System\System\Messagequeue\CommandInterface;
 
 /**
  * Command which dispatches a core event
  *
  * @author christoph.kappestein@artemeon.de
  * @since 7.2
+ * @executor system_message_queue_executor_call_event
  */
-class CallEventCommand extends Command
+class CallEventCommand implements CommandInterface
 {
     /**
      * @var string
@@ -68,7 +69,7 @@ class CallEventCommand extends Command
     /**
      * @inheritDoc
      */
-    public static function fromArray(array $data): Command
+    public static function fromArray(array $data): CommandInterface
     {
         return new self(
             $data['name'] ?? null,

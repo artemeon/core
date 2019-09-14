@@ -9,6 +9,7 @@
 // ***********************************************************
 
 const webpack = require('@cypress/webpack-preprocessor')
+const wbPack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const path = require('path')
 const webpackOptions = {
@@ -36,11 +37,39 @@ const webpackOptions = {
                 ],
 
                 exclude: /node_modules/
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    {
+                        loader: 'style-loader' // creates style nodes from JS strings
+                    },
+                    {
+                        loader: 'css-loader' // translates CSS into CommonJS
+                    },
+                    {
+                        loader: 'less-loader' // compiles Less to CSS
+                    }
+                ]
+            },
+            {
+                test: /\.css$/, // normal css loader
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                test: /\.woff($|\?)|\.woff2($|\?)|\.ttf($|\?)|\.eot($|\?)|\.svg($|\?)|\.(png|jpg|gif)$/, // loader for the fonts/images , makes import of this files possible
+                loader: 'url-loader'
             }
         ]
     },
     plugins: [
-        new VueLoaderPlugin()
+        new VueLoaderPlugin(),
+        new wbPack.ProvidePlugin({
+            // Automatically load modules instead of having to import or require them everywhere. needed for alot of jquery based modules
+            jQuery: 'jquery',
+            $: 'jquery',
+            jquery: 'jquery'
+        })
     ],
     resolve: {
         modules: [path.resolve(__dirname, '../../node_modules')], // necessary to resolve npm packages

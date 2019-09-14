@@ -681,5 +681,13 @@ class Date
         return $this;
     }
 
+    /**
+     * @param \DateTimeInterface $dateTime
+     * @return Date
+     */
+    public static function fromDateTime(\DateTimeInterface $dateTime): Date
+    {
+        return new static($dateTime->format('YmdHis'));
+    }
 }
 

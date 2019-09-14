@@ -1,5 +1,5 @@
 <template>
-  <div class="form-group has-feedback">
+  <div class="form-group has-feedback core-component-multiselect">
     <label :for="id" class="col-sm-3 control-label">{{label}}</label>
     <div class="col-sm-6">
       <MSelect

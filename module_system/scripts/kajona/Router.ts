@@ -45,7 +45,6 @@ class Router {
      */
     private static arrFormCallbacks: Callbacks = {}
 
-    Interface
     /**
      * Global markers to reference on leave / save monitored elements
      * @type {{Interface: {monitoredEl: null, submittedEl: null}}}

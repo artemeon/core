@@ -6,11 +6,7 @@
 
 namespace Kajona\System\System\Messagequeue;
 
-use Kajona\System\System\CoreEventdispatcher;
 use Kajona\System\System\Database;
-use Kajona\System\System\Messagequeue\Command\CallEventCommand;
-use Kajona\System\System\Messagequeue\Command\SendMessageCommand;
-use Kajona\System\System\MessagingMessagehandler;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -29,7 +25,7 @@ class Consumer
     /**
      * Count of events which are max processed
      */
-    private const MAX_PREFETCH = 50;
+    private const MAX_PREFETCH = 512;
 
     /**
      * @var Database
@@ -37,9 +33,9 @@ class Consumer
     private $connection;
 
     /**
-     * @var CoreEventdispatcher
+     * @var ExecutorFactory
      */
-    private $eventDispatcher;
+    private $executorFactory;
 
     /**
      * @var LoggerInterface
@@ -48,20 +44,20 @@ class Consumer
 
     /**
      * @param Database $connection
-     * @param CoreEventdispatcher $eventDispatcher
+     * @param ExecutorFactory $executorFactory
      * @param LoggerInterface $logger
      */
-    public function __construct(Database $connection, CoreEventdispatcher $eventDispatcher, LoggerInterface $logger)
+    public function __construct(Database $connection, ExecutorFactory $executorFactory, LoggerInterface $logger)
     {
         $this->connection = $connection;
-        $this->eventDispatcher = $eventDispatcher;
+        $this->executorFactory = $executorFactory;
         $this->logger = $logger;
     }
 
     public function consumeAll(): void
     {
         $startTime = time();
-        $result = $this->connection->getPArray('SELECT command_id, command_class, command_payload FROM agp_system_commands', [], 0, self::MAX_PREFETCH);
+        $result = $this->connection->getPArray('SELECT command_id, command_class, command_payload FROM agp_system_commands', [], 0, self::MAX_PREFETCH, false);
 
         foreach ($result as $row) {
             // directly delete the event since otherwise this would block the queue in case the event throws an
@@ -98,32 +94,13 @@ class Consumer
 
             $command = call_user_func_array($callable, [$payload]);
 
-            if ($command instanceof Command) {
-                $this->handleCommand($command);
+            if ($command instanceof CommandInterface) {
+                $this->executorFactory->factory(get_class($command))->execute($command);
             } else {
                 throw new \RuntimeException('Could not create command');
             }
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
-        }
-    }
-
-    /**
-     * Handles the event
-     *
-     * @TODO in the future we want to specify the executor either through a factory or through an annotation at the
-     * command class
-     *
-     * @param Command $command
-     */
-    private function handleCommand(Command $command)
-    {
-        if ($command instanceof CallEventCommand) {
-            $this->eventDispatcher->notifyGenericListeners($command->getName(), $command->getArguments());
-        } elseif ($command instanceof SendMessageCommand) {
-            (new MessagingMessagehandler())->sendMessageObject($command->getMessage(), $command->getReceivers());
-        } else {
-            throw new \RuntimeException('Could not handle command class');
         }
     }
 }

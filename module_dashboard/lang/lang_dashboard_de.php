@@ -53,4 +53,4 @@ $lang["_dashboard_cal_dav_valid_time_"]   = "Gültigkeit des 'CalDav'-Kalenderca
 $lang["_dashboard_cal_dav_month_before_"] = "Aktivitäten für wie viele Monate vor dem heutigen Tag sollten im Internetkalender angezeigt werden (nur positive values werden eine Auswirkung haben)?";
 $lang["_dashboard_cal_dav_month_after_"]  = "Aktivitäten für wie viele Monate nach dem heutigen Tag sollten im Internetkalender angezeigt werden (nur positive values werden eine Auswirkung haben)?";
 
-$lang["dashboard_ical_url"]               = "Kalender exportieren (ics)";
+$lang["dashboard_ical_url"]               = "Kalender exportieren/integrieren";

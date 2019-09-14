@@ -93,7 +93,7 @@ class Lists {
         jsDialog_1.setContent(
             curConfirm,
             this.strDialogStart,
-            "javascript:Lists.executeActions('+reloadOnFinish+');",
+            "javascript:Lists.executeActions(" + (reloadOnFinish ? 1 : 0) + ");",
             true
         )
         jsDialog_1.init()

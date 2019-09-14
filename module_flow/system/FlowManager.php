@@ -63,6 +63,15 @@ class FlowManager
     }
 
     /**
+     * @param string $class
+     * @return bool
+     */
+    public function isFlowConfiguredForClass(string $class): bool
+    {
+        return $this->getFlowForClass($class) instanceof FlowConfig;
+    }
+
+    /**
      * Returns all available transitions which are valid for the current model status. This means
      * that the assigned conditions are validated. If the argument bitValidateConditions is false
      * all visible transitions are returned

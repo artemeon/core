@@ -32,14 +32,14 @@ class Producer
     /**
      * Dispatches the command which will be executed in the future
      *
-     * @param Command $command
+     * @param CommandInterface $command
      */
-    public function dispatch(Command $command): void
+    public function dispatch(CommandInterface $command): void
     {
         $this->connection->insert('agp_system_commands', [
             'command_id' => generateSystemid(),
             'command_class' => get_class($command),
             'command_payload' => \json_encode($command->toArray()),
-        ]);
+        ], [false, false, false]);
     }
 }

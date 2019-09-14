@@ -46,3 +46,10 @@ $lang["workflow_deferredindexer_cfg_val1"] = "Seconds between workflow runs";
 $lang["workflow_deferredindexer_cfg_val2"] = "Max number of object to index per run";
 
 $lang["search_reduce_hits_link"] = "The query returns a lot of hits. Please refine the query by using additional filters or conditions:<br /><ul><li>Multiple terms are seperated by a blank space: term1 term2</li><li>If a term must be included, the term may be marked with a + character: term1 +term2</li><li>If a term should be excluded, the term may be marked with a - symbol: term1 -term2</li></ul>";
+
+$lang["last_modification_date"] = "Last modification" ;
+$lang["last_modification_user"] = "by";
+$lang["module_label"] = "Module";
+$lang["additional_information"] = "Additional information";
+$lang["delete_action"] = "Delete";
+

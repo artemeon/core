@@ -310,10 +310,10 @@ class Link
 
             if (!$bitTooltip) {
                 $strLink = "<a href=\"#\" onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\" " .
-                "title=\"" . strip_tags($strAlt) . "\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
+                    "title=\"" . strip_tags($strAlt) . "\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
             } else {
                 $strLink = "<a href=\"#\" onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\" " .
-                "title=\"" . strip_tags($strAlt) . "\" rel=\"tooltip\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
+                    "title=\"" . strip_tags($strAlt) . "\" rel=\"tooltip\">" . AdminskinHelper::getAdminImage($strImage, $strAlt, true) . "</a>";
             }
         }
 
@@ -321,7 +321,7 @@ class Link
             $bitTooltip = $bitTooltip && $strAlt != "";
 
             $strLink = "<a href=\"#\" " . ($bitPortalEditor ? "class=\"pe_link\"" : "") . " " . ($bitTooltip ? "title=\"" . strip_tags($strAlt) . "\" rel=\"tooltip\" " : "") . " " .
-            "onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\">" . $strText . "</a>";
+                "onclick=\"window.open('" . Link::getLinkAdminHref($strModule, $strAction, $strParams) . "','" . $strTitle . "','scrollbars=yes,resizable=yes,width=" . $intWidth . ",height=" . $intHeight . "'); return false;\">" . $strText . "</a>";
         }
         return $strLink;
     }
@@ -490,6 +490,26 @@ class Link
         }
         $strParams = http_build_query($arrParams, null, "&");
         return $strParams;
+    }
+
+    /** creates a link containing #/vm/ at the beginning in order to enter vue context (similar to router-link of vue-router)
+     *
+     * @param $strVueLink
+     * @param string $strText
+     * @param string $strAlt
+     * @param string $strImage
+     * @param bool $bitTooltip
+     * @param string $strCss
+     * @param string $strOnClick
+     * @return string
+     */
+    public static function getVueLink($strVueLink, $strText = "", $strAlt = "", $strImage = "", $bitTooltip = true, $strCss = "", $strOnClick = "")
+    {
+        $strHref = "href=\"#/vm/" . $strVueLink . "\"";
+        if (!empty($strOnClick)) {
+            $strHref .= ' onclick="' . htmlspecialchars($strOnClick) . '"';
+        }
+        return self::getLinkAdminManual($strHref, $strText, $strAlt, $strImage, "", "", $bitTooltip, $strCss);
     }
 
 }

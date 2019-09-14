@@ -1,0 +1,14 @@
+
+AuthName "AGP Auth"
+AuthType SSPI
+NTLMAuth On
+NTLMAuthoritative On
+
+<RequireAny>
+  Require valid-user
+  Require user "ANONYMOUS LOGON"
+  Require user "NT-AUTORITÄT\ANONYMOUS-ANMELDUNG"
+  Require user "NT AUTHORITY\ANONYMOUS LOGON"
+</RequireAny>
+
+#in root htaccess: RewriteRule (authenticate(.*))$ - [L]

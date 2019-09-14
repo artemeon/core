@@ -11,6 +11,7 @@ use Kajona\System\System\Carrier;
 use Kajona\System\System\Lang;
 use Kajona\System\System\StringUtil;
 use Kajona\System\System\Validators\DateIntervalValidator;
+use Kajona\System\View\Components\Formentry\InputDateinterval\InputDateInterval;
 
 /**
  * Provides a simple input to enter a date interval i.e. 1 month
@@ -34,6 +35,7 @@ class FormentryDateInterval extends FormentryBase implements FormentryPrintableI
      * In most cases, based on the current toolkit.
      *
      * @return string
+     * @throws \Exception
      */
     public function renderField()
     {
@@ -51,7 +53,8 @@ class FormentryDateInterval extends FormentryBase implements FormentryPrintableI
             $objInterval = new \DateInterval($strValue);
         }
 
-        $strReturn .= $objToolkit->formInputInterval($this->getStrEntryName(), $this->getStrLabel(), $objInterval, "", $this->getBitReadonly());
+        $dateInterval  = new InputDateInterval($this->getStrEntryName(), $this->getStrLabel(), $objInterval);
+        $strReturn .= $dateInterval->renderComponent();
 
         return $strReturn;
     }

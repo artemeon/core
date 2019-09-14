@@ -12,14 +12,14 @@ namespace Kajona\System\System\Messagequeue;
  * @author christoph.kappestein@artemeon.de
  * @since 7.2
  */
-abstract class Command
+interface CommandInterface
 {
     /**
      * Returns the command data to a simple associative array which can be encoded by json_encode
      *
      * @return array
      */
-    abstract public function toArray() : array;
+    public function toArray() : array;
 
     /**
      * Returns the command object based on the array structure which was previously returns by the toArray method
@@ -27,5 +27,5 @@ abstract class Command
      * @param array $data
      * @return static
      */
-    abstract public static function fromArray(array $data): Command;
+    public static function fromArray(array $data): CommandInterface;
 }

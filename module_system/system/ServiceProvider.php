@@ -3,6 +3,9 @@
 namespace Kajona\System\System;
 
 use Kajona\System\System\Messagequeue\Consumer;
+use Kajona\System\System\Messagequeue\Executor\CallEventExecutor;
+use Kajona\System\System\Messagequeue\Executor\SendMessageExecutor;
+use Kajona\System\System\Messagequeue\ExecutorFactory;
 use Kajona\System\System\Messagequeue\Producer;
 use Kajona\System\System\Lifecycle\User\GroupLifecycle;
 use Kajona\System\System\Lifecycle\User\UserLifecycle;
@@ -157,6 +160,21 @@ class ServiceProvider implements ServiceProviderInterface
      * @see \Kajona\System\System\Messagequeue\Consumer
      */
     const MESSAGE_QUEUE_CONSUMER = "system_message_queue_consumer";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\ExecutorFactory
+     */
+    const MESSAGE_QUEUE_EXECUTOR_FACTORY = "system_message_queue_executor_factory";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Executor\CallEventExecutor
+     */
+    const MESSAGE_QUEUE_EXECUTOR_CALL_EVENT = "system_message_queue_executor_call_event";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Executor\SendMessageExecutor
+     */
+    const MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE = "system_message_queue_executor_send_message";
 
     public function register(Container $objContainer)
     {
@@ -326,9 +344,23 @@ class ServiceProvider implements ServiceProviderInterface
         $objContainer[self::MESSAGE_QUEUE_CONSUMER] = function ($c) {
             return new Consumer(
                 $c[self::STR_DB],
-                $c[self::STR_TEMPLATE_ENGINE],
+                $c[self::MESSAGE_QUEUE_EXECUTOR_FACTORY],
                 $c[self::STR_LOGGER]
             );
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_FACTORY] = function ($c) {
+            return new ExecutorFactory($c);
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_CALL_EVENT] = function ($c) {
+            return new CallEventExecutor(
+                $c[self::EVENT_DISPATCHER]
+            );
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE] = function ($c) {
+            return new SendMessageExecutor();
         };
     }
 }

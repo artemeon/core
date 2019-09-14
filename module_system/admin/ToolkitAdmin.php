@@ -661,75 +661,6 @@ class ToolkitAdmin extends Toolkit
     }
 
     /**
-     * Returns a regular text-input field
-     *
-     * @param string $strName
-     * @param string $strTitle
-     * @param string $strValue
-     * @param string $strClass
-     * @param string $strOpener
-     * @param bool $bitReadonly
-     *
-     * @param string $strInstantEditor
-     * @return string
-     */
-    public function formInputInterval($strName, $strTitle = "", \DateInterval $objValue = null, $strClass = "", $bitReadonly = false)
-    {
-        $objLang = Lang::getInstance();
-        $arrKeyValues = [
-            "D" => $objLang->getLang("commons_interval_day_days", "system"),
-            "W" => $objLang->getLang("commons_interval_week_weeks", "system"),
-            "M" => $objLang->getLang("commons_interval_month_months", "system"),
-            "Y" => $objLang->getLang("commons_interval_year_years", "system"),
-        ];
-
-        $strKeySelected = "";
-        $strValue = "";
-        if ($objValue !== null) {
-            if ($objValue->d > 0) {
-                if ($objValue->d % 7 == 0) {
-                    $strKeySelected = "W";
-                    $strValue = $objValue->d / 7;
-                } else {
-                    $strKeySelected = "D";
-                    $strValue = $objValue->d;
-                }
-            } elseif ($objValue->m > 0) {
-                $strKeySelected = "M";
-                $strValue = $objValue->m;
-            } elseif ($objValue->y > 0) {
-                $strKeySelected = "Y";
-                $strValue = $objValue->y;
-            }
-        }
-        if (empty($strKeySelected)) {
-            $strKeySelected = "D";
-        }
-
-        $strOptions = "";
-        foreach ($arrKeyValues as $strKey => $strVal) {
-            $arrTemplate = array();
-            $arrTemplate["key"] = $strKey;
-            $arrTemplate["value"] = $strVal;
-            if ((string) $strKey == (string) $strKeySelected) {
-                $strOptions .= $this->objTemplate->fillTemplateFile($arrTemplate, "/admin/skins/kajona_v4/elements.tpl", "input_dropdown_row_selected");
-            } else {
-                $strOptions .= $this->objTemplate->fillTemplateFile($arrTemplate, "/admin/skins/kajona_v4/elements.tpl", "input_dropdown_row");
-            }
-        }
-
-        $arrTemplate = array();
-        $arrTemplate["name"] = $strName;
-        $arrTemplate["value"] = $strValue;
-        $arrTemplate["title"] = $strTitle;
-        $arrTemplate["class"] = $strClass;
-        $arrTemplate["units"] = $strOptions;
-        $arrTemplate["readonly"] = ($bitReadonly ? "readonly=\"readonly\"" : "");
-
-        return $this->objTemplate->fillTemplateFile($arrTemplate, "/admin/skins/kajona_v4/elements.tpl", "input_date_interval");
-    }
-
-    /**
      * Returning a complete dropdown but in multiselect-style
      *
      * @param string $strName
@@ -1769,7 +1700,6 @@ JS;
                 "messaging" => "fa-envelope",
                 "dashboard" => "fa-home",
                 "tags" => "fa-tags",
-                "search" => "fa-search",
             ];
 
             $strModules = "";

@@ -652,6 +652,11 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
             $arrGroups[$strKey] .= $objOneField->renderField();
         }
 
+        if (count($arrGroups) === 1 && !empty($arrGroups[self::DEFAULT_GROUP])) {
+            // in case we have only one tab dont render tabs
+            return $arrGroups[self::DEFAULT_GROUP];
+        }
+
         if ($this->intGroupStyle == self::GROUP_TYPE_HIDDEN) {
             $bitFirst = true;
             foreach ($this->arrGroupSort as $strKey) {

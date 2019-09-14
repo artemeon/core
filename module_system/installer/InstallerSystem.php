@@ -259,7 +259,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $this->objDB->createTable('agp_system_commands', [
             'command_id' => [DbDatatypes::STR_TYPE_CHAR20, false],
             'command_class' => [DbDatatypes::STR_TYPE_CHAR254, false],
-            'command_payload' => [DbDatatypes::STR_TYPE_CHAR500, false]
+            'command_payload' => [DbDatatypes::STR_TYPE_TEXT, false]
         ], [
             'command_id'
         ]);

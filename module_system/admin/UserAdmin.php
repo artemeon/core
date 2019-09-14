@@ -758,14 +758,18 @@ class UserAdmin extends AdminEvensimpler implements AdminInterface
 
         //flush the navigation cache in order to get new items for a possible updated list
         AdminHelper::flushActionNavigationCache();
-
+        $i18nLang = json_encode( $this->objSession->getAdminLanguage(false, true)) ;
         if ($this->getObjModule()->rightView()) {
-            $this->adminReload(Link::getLinkAdminHref($this->getArrModule("modul"), "list"));
-        } else {
-            $this->adminReload(Link::getLinkAdminHref($objUser->getStrAdminModule()));
-        }
+            $url =Link::getLinkAdminHref($this->getArrModule("modul"), "list");
+            $strReturn .= "<script> i18n.locale = ".$i18nLang."; document.location.href ='{$url}';</script>" ;
 
+        } else {
+            $url = Link::getLinkAdminHref($objUser->getStrAdminModule());
+            $strReturn .= "<script> i18n.locale = ".$i18nLang."; document.location.href ='{$url}';</script>" ;
+
+        }
         return $strReturn;
+
     }
 
     /**

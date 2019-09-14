@@ -14,6 +14,7 @@ const liveReloadOptions = {
     protocol: 'http'
 }
 
+
 module.exports = async env => {
     const devMode = env.NODE_ENV !== 'production'
     console.log('Build Type : ', env.NODE_ENV)
@@ -27,7 +28,9 @@ module.exports = async env => {
         },
         output: {
             filename: './[name].min.js',
-            path: path.resolve(__dirname, '../../files/extract/assets/')
+            chunkFilename: './[name].min.js',
+            path: path.resolve(__dirname, '../../files/extract/assets/'),
+            publicPath: './files/extract/assets/',
         },
 
         module: {
@@ -45,7 +48,12 @@ module.exports = async env => {
                 {
                     test: /\.tsx?$/, // typescript loader for the .ts and .tsx files
                     use: [
-                        {loader: 'babel-loader'},
+                        {
+                            loader: 'babel-loader',
+                            options: {
+                                "plugins": ["@babel/plugin-syntax-dynamic-import"]
+                            }
+                        },
                         {
                             loader: 'ts-loader',
                             options: {
@@ -175,10 +183,6 @@ module.exports = async env => {
                     })
                 ]
                 : [],
-            splitChunks: {
-                chunks: 'all', // make a separate vendors.chunks bundle for all the npm modules (avoides duplicated dependecies + smaller bundle size)
-                name: 'vendors.chunks'
-            }
         }
     }
 }
