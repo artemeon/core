@@ -12,6 +12,7 @@ namespace Kajona\Dashboard\Installer;
 use Kajona\Dashboard\System\DashboardConfig;
 use Kajona\Dashboard\System\DashboardUserRoot;
 use Kajona\Dashboard\System\DashboardWidget;
+use Kajona\Dashboard\System\ICalendar;
 use Kajona\System\System\InstallerBase;
 use Kajona\System\System\InstallerInterface;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
@@ -19,6 +20,7 @@ use Kajona\System\System\Objectfactory;
 use Kajona\System\System\OrmSchemamanager;
 use Kajona\System\System\SystemAspect;
 use Kajona\System\System\SystemModule;
+use Kajona\System\System\SystemSetting;
 
 /**
  * Installer for the system-module
@@ -37,6 +39,11 @@ class InstallerDashboard extends InstallerBase implements InstallerInterface {
         $objManager->createTable(DashboardWidget::class);
         $objManager->createTable(DashboardConfig::class);
         $objManager->createTable(DashboardUserRoot::class);
+        $objManager->createTable(ICalendar::class);
+
+        $this->registerConstant("_dashboard_cal_dav_month_after_", 12, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
+        $this->registerConstant("_dashboard_cal_dav_month_before_", 3, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
+        $this->registerConstant("_dashboard_cal_dav_valid_time_", 15, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
 
         //the dashboard
         $this->registerModule("dashboard", _dashboard_module_id_, "", "DashboardAdmin.php", $this->objMetadata->getStrVersion());
@@ -65,6 +72,11 @@ class InstallerDashboard extends InstallerBase implements InstallerInterface {
         $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
         if($arrModule["module_version"] == "7.1") {
             $strReturn .= $this->update_71_711();
+        }
+
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.1") {
+            $strReturn .= $this->update_711_712();
         }
 
         return $strReturn."\n\n";
@@ -146,5 +158,19 @@ class InstallerDashboard extends InstallerBase implements InstallerInterface {
         return $return;
 	}
 
+    private function update_711_712()
+    {
+        $message = "Updating to 7.1.2".PHP_EOL;
 
+        $schema = new OrmSchemamanager();
+        $schema->updateTable(ICalendar::class);
+        $this->registerConstant("_dashboard_cal_dav_month_after_", 12, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
+        $this->registerConstant("_dashboard_cal_dav_month_before_", 3, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
+        $this->registerConstant("_dashboard_cal_dav_valid_time_", 15, SystemSetting::$int_TYPE_INT, _dashboard_module_id_);
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.2");
+
+        return $message;
+
+    }
 }

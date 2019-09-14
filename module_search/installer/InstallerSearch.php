@@ -9,12 +9,16 @@
 
 namespace Kajona\Search\Installer;
 
+use Kajona\Search\Admin\SearchAdmin;
 use Kajona\Search\System\SearchIndexwriter;
 use Kajona\Search\System\SearchSearch;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\DbDatatypes;
 use Kajona\System\System\InstallerBase;
 use Kajona\System\System\InstallerRemovableInterface;
+use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
+use Kajona\System\System\OrmDeletedhandlingEnum;
+use Kajona\System\System\OrmObjectlist;
 use Kajona\System\System\OrmSchemamanager;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\SystemSetting;
@@ -66,7 +70,7 @@ class InstallerSearch extends InstallerBase implements InstallerRemovableInterfa
 
 		$strReturn .= "Registering module...\n";
 		//register the module
-		$this->registerModule("search", _search_module_id_, "", "SearchAdmin.php", $this->objMetadata->getStrVersion());
+		$this->registerModule("search", _search_module_id_, "", SearchAdmin::class, $this->objMetadata->getStrVersion(), false);
 
         $strReturn .= "Registering config-values...\n";
         $this->registerConstant("_search_deferred_indexer_", "false", SystemSetting::$int_TYPE_BOOL, _search_module_id_);
@@ -149,6 +153,11 @@ class InstallerSearch extends InstallerBase implements InstallerRemovableInterfa
             $strReturn .= $this->update_701_71();
         }
 
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1") {
+            $strReturn .= $this->update_71_72();
+        }
+
 
         return $strReturn."\n\n";
 	}
@@ -183,6 +192,29 @@ class InstallerSearch extends InstallerBase implements InstallerRemovableInterfa
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1");
         return $strReturn;
     }
+
+    private function update_71_72()
+    {
+        $strReturn = "Updating to 7.2...\n";
+
+        $strReturn .= "Removing saved search objects".PHP_EOL;
+        OrmObjectlist::setObjHandleLogicalDeletedGlobal(OrmDeletedhandlingEnum::INCLUDED);
+        foreach(SearchSearch::getObjectListFiltered() as $search) {
+            ServiceLifeCycleFactory::getLifeCycle($search)->deleteObjectFromDatabase($search);
+        }
+
+        $strReturn .= "Hiding search from backend navi".PHP_EOL;
+
+        $module = SystemModule::getModuleByName("search");
+        $module->setStrNameAdmin(SearchAdmin::class);
+        $module->setIntNavigation(0);
+        ServiceLifeCycleFactory::getLifeCycle($module)->update($module);
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.2");
+        return $strReturn;
+    }
+
+
 
 
     private function updateIndex() {

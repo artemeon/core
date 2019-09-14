@@ -21,7 +21,7 @@ use Kajona\System\System\OrmCondition;
 class MediamanagerRepoFilter extends FilterBase
 {
     /**
-     * @var boolean
+     * @var bool
      * @tableColumn repo_search_index
      */
     private $bitSearchIndex;

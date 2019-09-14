@@ -34,6 +34,7 @@
 * [webpack](../../module_system/docs/webpack.md)
 * [eslint](../../module_system/docs/eslint.md)
 * [cypress.io](../../module_system/docs/cypress.io.md)
+* [storybook](../../module_system/docs/storybook.md)
 
 ## module_wizard
 * [manual_wizard](../../module_wizard/docs/manual_wizard.md)

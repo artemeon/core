@@ -233,10 +233,10 @@ class TagsTag extends Model implements ModelInterface, AdminListableInterface, S
         $objORM = new OrmObjectlist();
         $strQuery = "SELECT member.*
                        FROM agp_tags_member as member,
-                            agp_system as system,
+                            agp_system as agp_system,
                             agp_tags_tag as tag
                       WHERE tags_tagid = ?
-                        AND system.system_id = member.tags_systemid
+                        AND agp_system.system_id = member.tags_systemid
                         AND member.tags_tagid = tag.tags_tag_id
                         ".$objORM->getDeletedWhereRestriction()."
                         AND (tags_tag_private IS NULL OR tags_tag_private != 1 OR (tags_owner IS NULL OR tags_owner = '' OR tags_owner = ?))
@@ -255,11 +255,11 @@ class TagsTag extends Model implements ModelInterface, AdminListableInterface, S
         $strQuery = "SELECT COUNT(*) AS cnt
                        FROM agp_tags_member as member,
                             agp_tags_tag as tag,
-                            agp_system as system
+                            agp_system as agp_system
                       WHERE member.tags_tagid = ?
                         AND member.tags_tagid = tag.tags_tag_id
                         ".$objORM->getDeletedWhereRestriction()."
-                        AND system.system_id = member.tags_systemid
+                        AND agp_system.system_id = member.tags_systemid
                         AND (tags_tag_private IS NULL OR tags_tag_private != 1 OR (tags_owner IS NULL OR tags_owner = '' OR tags_owner = ?)) ";
 
         $arrRow = $this->objDB->getPRow($strQuery, array($this->getSystemid(), $this->objSession->getUserID()));
@@ -275,16 +275,16 @@ class TagsTag extends Model implements ModelInterface, AdminListableInterface, S
      */
     public function getArrAssignedRecords($intStart = null, $intEnd = null) {
         $objORM = new OrmObjectlist();
-        $strQuery = "SELECT system.system_id
+        $strQuery = "SELECT agp_system.system_id
                        FROM agp_tags_member as member,
                             agp_tags_tag,
-                            agp_system as system
+                            agp_system as agp_system
                       WHERE tags_tagid = ?
                         AND tags_tagid = tags_tag_id
-                        AND system.system_id = member.tags_systemid
+                        AND agp_system.system_id = member.tags_systemid
                         ".$objORM->getDeletedWhereRestriction()."
                         AND (tags_tag_private IS NULL OR tags_tag_private != 1 OR (tags_owner IS NULL OR tags_owner = '' OR tags_owner = ?))
-                   ORDER BY system.system_id ASC";
+                   ORDER BY agp_system.system_id ASC";
 
         $arrRecords = $this->objDB->getPArray($strQuery, array($this->getSystemid(), $this->objSession->getUserID()), $intStart, $intEnd);
 

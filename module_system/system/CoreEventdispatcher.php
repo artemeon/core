@@ -9,7 +9,6 @@
 
 namespace Kajona\System\System;
 
-
 /**
  * The core eventmanager is used to trigger and fire internal events such as status-changed or record-deleted-events.
  * Therefore the corresponding interface-implementers are called and notified.
@@ -177,7 +176,5 @@ class CoreEventdispatcher
 
         return $bitReturn;
     }
-
-
 }
 

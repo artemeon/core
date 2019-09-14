@@ -1,0 +1,14 @@
+<?php
+
+$user = $_SERVER['REMOTE_USER'];
+echo <<<HTML
+<html>
+<body>
+    <form action="../index.php?module=ntlmauth&action=callback" method="post" name="loginForm">
+		<input type="hidden" name="REMOTE_USER" value="{$user}" />
+        <input type="submit" value="Login" />
+    </form>
+    <script type="text/javascript">document.forms['loginForm'].submit();</script>
+</body>
+</html>
+HTML;

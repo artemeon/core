@@ -27,31 +27,57 @@ class FormentryStatus extends FormentryToggleButtonbar
     const STR_MODEL_ANNOTATION = "@fieldModelClass";
 
     /**
+     * @inheritDoc
+     */
+    public function __construct($formName, $sourceProperty, $sourceObject = null, ?string $modelClass = null)
+    {
+        parent::__construct($formName, $sourceProperty, $sourceObject);
+
+        if ($modelClass !== null) {
+            $this->setModelClass($modelClass);
+        }
+    }
+
+    /**
      * Overwritten in order to load key-value pairs declared by annotations
      */
     protected function updateValue()
     {
         parent::updateValue();
 
-        $objSourceObject = $this->getObjSourceObject();
-        if ($objSourceObject !== null) {
-            /** @var FlowManager $objFlowManager */
-            $objFlowManager = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::STR_MANAGER);
-
-            // try to find the matching source property
-            $strSourceProperty = $this->getCurrentProperty(self::STR_MODEL_ANNOTATION);
-            if ($strSourceProperty == null) {
-                return;
+        $sourceObject = $this->getObjSourceObject();
+        if ($sourceObject !== null) {
+            $modelClass = $this->getModelClassFromAnnotation($sourceObject);
+            if ($modelClass !== null) {
+                $this->setModelClass($modelClass);
             }
-
-            // get model class
-            $objReflection = new Reflection($objSourceObject);
-            $strModelClass = $objReflection->getAnnotationValueForProperty($strSourceProperty, self::STR_MODEL_ANNOTATION);
-            if (empty($strModelClass)) {
-                $strModelClass = get_class($objSourceObject);
-            }
-
-            $this->setArrKeyValues($objFlowManager->getArrStatusForClass($strModelClass));
         }
+    }
+
+    protected function getModelClassFromAnnotation($sourceObject): ?string
+    {
+        // try to find the matching source property
+        $sourceProperty = $this->getCurrentProperty(self::STR_MODEL_ANNOTATION);
+        if ($sourceProperty === null) {
+            return null;
+        }
+
+        // get model class
+        $reflection = new Reflection($sourceObject);
+        $modelClass = $reflection->getAnnotationValueForProperty($sourceProperty, self::STR_MODEL_ANNOTATION);
+        if (empty($modelClass)) {
+            return get_class($sourceObject);
+        }
+
+        return $modelClass;
+    }
+
+    protected function setModelClass(string $modelClass): void
+    {
+        /** @var FlowManager $flowManager */
+        $flowManager = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::STR_MANAGER);
+        $keyValues = $flowManager->getArrStatusForClass($modelClass);
+
+        $this->setArrKeyValues($keyValues);
     }
 }

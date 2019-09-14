@@ -197,7 +197,8 @@ class RequestDispatcher
                             if (ResponseObject::getInstance()->getStrStatusCode() == "" || ResponseObject::getInstance()->getStrStatusCode() == HttpStatuscodes::SC_OK) {
                                 ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_INTERNAL_SERVER_ERROR);
                             }
-
+                            //no session update anymore, plz
+                            Session::getInstance()->setBitBlockDbUpdate(true);
                             $strReturn = Exception::renderException($objEx);
                         }
 

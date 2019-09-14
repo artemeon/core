@@ -8,6 +8,7 @@ namespace Kajona\Api\System;
 
 use Kajona\System\Admin\Exceptions\ModelNotFoundException;
 use Kajona\System\System\CoreEventdispatcher;
+use Kajona\System\System\Exception;
 use Kajona\System\System\ObjectBuilder;
 use Kajona\System\System\RequestEntrypointEnum;
 use Kajona\System\System\SystemEventidentifier;
@@ -20,6 +21,8 @@ use PSX\Http\Request;
 use PSX\Uri\Uri;
 use Slim\App;
 use Slim\Container as SlimContainer;
+use Slim\Exception\MethodNotAllowedException;
+use Slim\Exception\NotFoundException;
 use Slim\Http\Request as SlimRequest;
 use Slim\Http\Response as SlimResponse;
 
@@ -42,6 +45,11 @@ class AppBuilder
     private $objectBuilder;
 
     /**
+     * @var CoreEventdispatcher
+     */
+    private $eventDispatcher;
+
+    /**
      * @var Container
      */
     private $container;
@@ -49,27 +57,41 @@ class AppBuilder
     /**
      * @param EndpointScanner $endpointScanner
      * @param ObjectBuilder $objectBuilder
+     * @param CoreEventdispatcher $eventDispatcher
      * @param Container $container
      */
-    public function __construct(EndpointScanner $endpointScanner, ObjectBuilder $objectBuilder, Container $container)
+    public function __construct(EndpointScanner $endpointScanner, ObjectBuilder $objectBuilder, CoreEventdispatcher $eventDispatcher, Container $container)
     {
         $this->endpointScanner = $endpointScanner;
         $this->objectBuilder = $objectBuilder;
+        $this->eventDispatcher = $eventDispatcher;
         $this->container = $container;
     }
 
     /**
      * Creates a new app, attaches all available routes and executes the app
      *
-     * @throws \Kajona\System\System\Exception
-     * @throws \Slim\Exception\MethodNotAllowedException
-     * @throws \Slim\Exception\NotFoundException
+     * @throws Exception
+     * @throws MethodNotAllowedException
+     * @throws NotFoundException
      */
     public function run()
     {
         define("_autotesting_", false);
 
-        $app = $this->newApp();
+        $this->build()->run();
+
+        $this->eventDispatcher->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_ENDPROCESSING, []);
+        $this->eventDispatcher->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_AFTERCONTENTSEND, [RequestEntrypointEnum::XML()]);
+    }
+
+    /**
+     * @return App
+     * @throws Exception
+     */
+    public function build(): App
+    {
+        $app = new App($this->newContainer());
         $objectBuilder = $this->objectBuilder;
         $container = $this->container;
         $routes = $this->endpointScanner->getEndpoints();
@@ -102,12 +124,14 @@ class AppBuilder
                         if (!$authorization->isAuthorized($request)) {
                             throw new UnauthorizedException("Request not authorized", "Bearer");
                         }
+                    } else {
+                        throw new \RuntimeException('No authorization defined');
                     }
 
                     $body = $request->getParsedBody();
                     $httpContext = new HttpContext(new Request(new Uri($request->getUri()->__toString()), $request->getMethod(), $request->getHeaders()), $args);
 
-                    if (in_array($request->getMethod(), ["GET", "HEAD"])) {
+                    if (in_array($request->getMethod(), ["GET", "HEAD", 'DELETE'])) {
                         $data = call_user_func_array([$instance, $route["methodName"]], [$httpContext]);
                     } else {
                         $data = call_user_func_array([$instance, $route["methodName"]], [$body, $httpContext]);
@@ -144,16 +168,13 @@ class AppBuilder
             });
         }
 
-        $app->run();
-
-        CoreEventdispatcher::getInstance()->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_ENDPROCESSING, array());
-        CoreEventdispatcher::getInstance()->notifyGenericListeners(SystemEventidentifier::EVENT_SYSTEM_REQUEST_AFTERCONTENTSEND, array(RequestEntrypointEnum::XML()));
+        return $app;
     }
 
     /**
-     * @return App
+     * @return SlimContainer
      */
-    private function newApp()
+    private function newContainer(): SlimContainer
     {
         $container = new SlimContainer();
         $container['notFoundHandler'] = function ($c) {
@@ -181,6 +202,6 @@ class AppBuilder
             };
         };
 
-        return new App($container);
+        return $container;
     }
 }

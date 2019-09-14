@@ -49,3 +49,8 @@ $lang["add_button_title"]                = "Add";
 $lang["select_col_button_info"]          = "Select dashboard column";
 $lang["form_dashboard_default"]          = "Default dashboard";
 $lang["form_dashboard_default_hint"]     = "Will be loaded at login";
+
+$lang["_dashboard_cal_dav_valid_time_"]   = "'CalDav' calendar cache validity in minutes";
+$lang["_dashboard_cal_dav_month_before_"] = "Activities for how many month before today should be in internet calendar shown (only positive values will have an effect)?";
+$lang["_dashboard_cal_dav_month_after_"]  = "Activities for how many month after today should be in internet calendar shown (only positive values will have an effect)?";
+$lang["dashboard_ical_url"]               = "Export/Integrate calendar";

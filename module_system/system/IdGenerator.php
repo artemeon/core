@@ -37,7 +37,7 @@ class IdGenerator extends Model implements ModelInterface
     private $strKey = '';
 
     /**
-     * @var integer
+     * @var int
      * @tableColumn agp_idgenerator.generator_count
      * @tableColumnDatatype int
      */

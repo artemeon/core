@@ -1,12 +1,11 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import FailCodeModule from 'core_customer/module_hsbcact/scripts/modules/FailCodeModule'
+import SearchModule from 'core/module_search/scripts/modules/SearchModule'
+// import VueI18n from 'vue-i18n'
 Vue.use(<any>Vuex)
-
+// Vue.use(VueI18n)
 export default new Vuex.Store({
-    // state: {},
-    // mutations: {},
-    // actions: {},
-    // getters: {},
-    // modules: { failCode: FailCodeModule }
+    modules: {
+        SearchModule: SearchModule
+    }
 })

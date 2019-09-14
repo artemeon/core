@@ -278,7 +278,7 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
                             $objUser->setStrUsername($arrSingleUser["username"]);
                             $objUser->setStrSubsystem("ldap");
                             $objUser->setIntAdmin(1);
-                            $objUser->updateObjectToDb();
+                            ServiceLifeCycleFactory::getLifeCycle($objUser)->update($objUser);
 
                             /** @var $objSourceUser UsersourcesUserLdap */
                             $objSourceUser = $objUser->getObjSourceUser();
@@ -288,7 +288,7 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
                                 $objSourceUser->setStrGivenname($arrSingleUser["givenname"]);
                                 $objSourceUser->setStrEmail($arrSingleUser["mail"]);
                                 $objSourceUser->setIntCfg($objSingleLdap->getIntCfgNr());
-                                $objSourceUser->updateObjectToDb();
+                                ServiceLifeCycleFactory::getLifeCycle($objSourceUser)->update($objSourceUser);
                             }
 
                             $arrReturn[] = $objUser;

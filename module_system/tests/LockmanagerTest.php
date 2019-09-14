@@ -5,6 +5,7 @@ namespace Kajona\System\Tests;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
+use Kajona\System\System\Objectfactory;
 use Kajona\System\System\SystemAspect;
 use Kajona\System\System\SystemSetting;
 use Kajona\System\System\UserGroup;
@@ -135,12 +136,12 @@ class LockmanagerTest extends Testbase
 
 
         //add user 2 to admin group
-        $objGroup = new UserGroup(SystemSetting::getConfigValue("_admins_group_id_"));
+        $objGroup = Objectfactory::getInstance()->getObject(SystemSetting::getConfigValue("_admins_group_id_"));
         $this->assertTrue($objGroup->getObjSourceGroup()->addMember($objUser2->getObjSourceUser()));
 
         //relogin
         $this->flushDBCache();
-        $objUser2 = new UserUser($objUser2->getSystemid());
+        $objUser2 = Objectfactory::getInstance()->getObject($objUser2->getSystemid());
         $this->assertTrue(Carrier::getInstance()->getObjSession()->loginUser($objUser2));
 
         //force unlock now allowed since user is not in admin group

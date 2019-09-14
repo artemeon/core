@@ -12,6 +12,8 @@ use Kajona\System\System\Date;
 use Kajona\System\System\Reflection;
 use Kajona\System\System\StringUtil;
 use Kajona\System\System\Validators\DateValidator;
+use Kajona\System\View\Components\Formentry\Datesingle\Datesingle;
+use Kajona\System\View\Components\Formentry\Datetime\Datetime;
 
 
 /**
@@ -52,9 +54,11 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
             $objDate = new Date($this->getStrValue());
         }
 
-        $strReturn .= $objToolkit->formDateSingle($this->getStrEntryName(), $this->getStrLabel(), $objDate, "", false, $this->getBitReadonly());
+        $date = new Datesingle($this->getStrEntryName(), $this->getStrLabel(), $objDate);
+        $date->setReadOnly($this->getBitReadonly());
+        $date->setDataArray($this->getDataAttributes());
 
-        return $strReturn;
+        return $date->renderComponent();
     }
 
 

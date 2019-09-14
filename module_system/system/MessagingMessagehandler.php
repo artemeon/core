@@ -123,9 +123,8 @@ class MessagingMessagehandler
      *
      * @param MessagingMessage $objMessage
      * @param UserGroup[]|UserUser[]|UserGroup|UserUser $arrRecipients
-     * @param Date|null $objSendDate
      */
-    public function sendMessageObject(MessagingMessage $objMessage, $arrRecipients, Date $objSendDate = null)
+    public function sendMessageObject(MessagingMessage $objMessage, $arrRecipients)
     {
         $objValidator = new EmailValidator();
         $objNowDate = new Date();
@@ -146,34 +145,21 @@ class MessagingMessagehandler
             $objConfig = MessagingConfig::getConfigForUserAndProvider($objOneUser->getSystemid(), $objMessage->getObjMessageProvider());
 
             if ($objConfig->getBitEnabled()) {
-                if ($objSendDate !== null) {
-                    $objSendDate->setBeginningOfDay();
-                }
+                //clone the message
+                $objCurrentMessage = new MessagingMessage();
+                $objCurrentMessage->setStrTitle($objMessage->getStrTitle());
+                $objCurrentMessage->setStrBody($objMessage->getStrBody());
+                $objCurrentMessage->setStrUser($objOneUser->getSystemid());
+                $objCurrentMessage->setStrInternalIdentifier($objMessage->getStrInternalIdentifier());
+                $objCurrentMessage->setStrMessageProvider($objMessage->getStrMessageProvider());
+                $objCurrentMessage->setStrMessageRefId($objMessage->getStrMessageRefId());
+                $objCurrentMessage->setStrSenderId(validateSystemid($objMessage->getStrSenderId()) ? $objMessage->getStrSenderId() : Carrier::getInstance()->getObjSession()->getUserID());
+                $objCurrentMessage->setStrAttachment($objMessage->getStrAttachment());
 
-                if ($objSendDate !== null && $objSendDate->getTimeInOldStyle() > $objNowDate->getTimeInOldStyle()) {
-                    // insert into queue
-                    $objMessageQueue = new MessagingQueue();
-                    $objMessageQueue->setStrRecipient($objOneUser->getSystemid());
-                    $objMessageQueue->setObjSendDate($objSendDate);
-                    $objMessageQueue->setMessage($objMessage);
-                    ServiceLifeCycleFactory::getLifeCycle(get_class($objMessageQueue))->update($objMessageQueue);
-                } else {
-                    //clone the message
-                    $objCurrentMessage = new MessagingMessage();
-                    $objCurrentMessage->setStrTitle($objMessage->getStrTitle());
-                    $objCurrentMessage->setStrBody($objMessage->getStrBody());
-                    $objCurrentMessage->setStrUser($objOneUser->getSystemid());
-                    $objCurrentMessage->setStrInternalIdentifier($objMessage->getStrInternalIdentifier());
-                    $objCurrentMessage->setStrMessageProvider($objMessage->getStrMessageProvider());
-                    $objCurrentMessage->setStrMessageRefId($objMessage->getStrMessageRefId());
-                    $objCurrentMessage->setStrSenderId(validateSystemid($objMessage->getStrSenderId()) ? $objMessage->getStrSenderId() : Carrier::getInstance()->getObjSession()->getUserID());
-                    $objCurrentMessage->setStrAttachment($objMessage->getStrAttachment());
+                ServiceLifeCycleFactory::getLifeCycle(get_class($objCurrentMessage))->update($objCurrentMessage);
 
-                    ServiceLifeCycleFactory::getLifeCycle(get_class($objCurrentMessage))->update($objCurrentMessage);
-
-                    if ($objConfig->getBitBymail() && $objValidator->validate($objOneUser->getStrEmail())) {
-                        $this->sendMessageByMail($objCurrentMessage, $objOneUser);
-                    }
+                if ($objConfig->getBitBymail() && $objValidator->validate($objOneUser->getStrEmail())) {
+                    $this->sendMessageByMail($objCurrentMessage, $objOneUser);
                 }
             }
         }

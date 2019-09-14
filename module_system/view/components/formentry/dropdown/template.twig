@@ -3,7 +3,7 @@
     <label for="{{ name|e('html_attr') }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6 {{ class|e('html_attr') }}">
         <select name="{{ name|e('html_attr') }}" id="{{ name|e('html_attr') }}" class="form-control {% if icon_values %}selectpicker{% endif %} {{ class|e('html_attr') }}" {{ addons|raw }} {% if readOnly %}disabled="disabled"{% endif %} {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %}>
-            <option value='' disabled {% if no_select %}selected{% endif %}>{{ data.placeholder }}</option>
+            <option value='' disabled hidden {% if no_select %}selected{% endif %}>{{ data.placeholder }}</option>
             {% for key, value in options %}
                 {% if key == selected and not no_select %}
                     {% if icon_values %}

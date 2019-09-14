@@ -21,6 +21,11 @@ class TextRow extends AbstractComponent
 {
 
     /**
+     * @var array
+     */
+    protected $data = [];
+
+    /**
      * @var string
      */
     protected $strText;
@@ -49,9 +54,32 @@ class TextRow extends AbstractComponent
     {
         $data = [
             "text" => $this->strText,
-            "class" => $this->strClass
+            "class" => $this->strClass,
+            "data" => $this->data
         ];
 
         return $this->renderTemplate($data);
     }
+    /**
+     * Method to set additional data attributes on an element
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setData(string $key, $value)
+    {
+        $this->data[$key] = $value;
+    }
+
+    /**
+     * Method to set additional data attributes on an element
+     *
+     * @param $data
+     */
+    public function setDataArray($data)
+    {
+        $this->data = $data;
+    }
+
+
 }

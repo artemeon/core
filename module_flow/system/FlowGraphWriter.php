@@ -270,71 +270,20 @@ class FlowGraphWriter
         $strAction = Lang::getInstance()->getLang("modul_titel_transition_action", "flow");
         $strCondition = Lang::getInstance()->getLang("modul_titel_transition_condition", "flow");
 
-        $strInit = "{}";
         $strHeight = "";
         if (self::$bitIsIe) {
-            $strInit = '{flowchart:{
-                htmlLabels:false,
-                useMaxWidth:true
-            }}';
             $strHeight = "height: 900px;";
         }
+
+        $isIe = self::$bitIsIe ? 'true' : 'false';
 
         return <<<HTML
 <div id='flow-graph' class='mermaid' style='color:#fff; {$strHeight} '>{$strGraph}</div>
 <script type="text/javascript">
-    var callback = function(statusId) {
-        var link = "{$strLinkTransition}";
-        if (link) {
-            location.href = link.replace('{$strTmpSystemId}', statusId);
-        }
-    };
-
-    Loader.loadFile(["/core/module_flow/scripts/mermaid/mermaid.forest.css"], function(){
-            mermaid.initialize({$strInit});
-            mermaid.init(undefined, $("#flow-graph"));
-
-            $('div > span.edgeLabel > span').each(function(){
-                var data = $(this).data();
-                var transitionId;
-                for (var key in data) {
-                    transitionId = key;
-                }
-
-                var actionLink = "{$strLinkTransitionAction}".replace('{$strTmpSystemId}', transitionId);
-                var conditionLink = "{$strLinkTransitionCondition}".replace('{$strTmpSystemId}', transitionId);
-
-                var html = '';
-                if (actionLink) {
-                    html+= '<a href="' + actionLink + '" title="{$strAction}"><i class="kj-icon fa fa-play-circle-o"></i></a>';
-                    html+= ' ';
-                }
-                if (conditionLink) {
-                    html+= '<a href="' + conditionLink + '" title="{$strCondition}"><i class="kj-icon fa fa-table"></i></a>';
-                }
-
-                $(this).html(html);
-            });
-
-            $('.node').on('click', function(){
-                var statusId = $(this).attr('id');
-                var link = "{$strLinkTransition}";
-                if (link) {
-                    location.href = link.replace('{$strTmpSystemId}', statusId);
-                }
-            });
-
-            $('.node div').css('cursor', 'pointer');
-        });
+        let mm = new window.Mermaidwrapper('{$strTmpSystemId}', '{$strLinkTransition}', '{$strLinkTransitionAction}', '{$strLinkTransitionCondition}', '{$strAction}', '{$strCondition}', {$isIe})
+        mm.renderGraph();
+        
 </script>
-<style type="text/css">
-.mermaid .label {
-    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: normal;
-    font-size: 13px;
-}
-
-</style>
 HTML;
     }
 

@@ -16,6 +16,12 @@ echo "| Delete all tables                                                       
 echo "|                                                                               |\n";
 echo "+-------------------------------------------------------------------------------+\n";
 
+$arrTables = \Kajona\System\System\Carrier::getInstance()->getObjDB()->getTables();
+foreach($arrTables as $strOneTable) {
+    $strQuery = "DROP TABLE " . $strOneTable;
+    echo " executing " . $strQuery . "\n";
+    \Kajona\System\System\Carrier::getInstance()->getObjDB()->_pQuery($strQuery, array());
+}
 if(issetPost("dodelete")) {
     $strUsername = getPost("username");
     $strPassword = getPost("password");
@@ -29,12 +35,6 @@ if(issetPost("dodelete")) {
         if(in_array(SystemSetting::getConfigValue("_admins_group_id_"), $arrGroupIds)) {
             echo "User is member of admin-group.\n";
 
-            $arrTables = \Kajona\System\System\Carrier::getInstance()->getObjDB()->getTables();
-            foreach($arrTables as $strOneTable) {
-                $strQuery = "DROP TABLE " . $strOneTable;
-                echo " executing " . $strQuery . "\n";
-                \Kajona\System\System\Carrier::getInstance()->getObjDB()->_pQuery($strQuery, array());
-            }
 
         }
         else {

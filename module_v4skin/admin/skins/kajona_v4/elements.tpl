@@ -183,13 +183,6 @@ Divider to split up a page in logical sections
 
 
 ---------------------------------------------------------------------------------------------------------
--- ACTION ELEMENTS --------------------------------------------------------------------------------------
-
-Element containing one button / action, multiple put together, e.g. to edit or delete a record.
-To avoid side-effects, no line-break in this case -> not needed by default, but in classics-style!
-<list_button><span class="listButton">%%content%%</span></list_button>
-
----------------------------------------------------------------------------------------------------------
 -- FORM ELEMENTS ----------------------------------------------------------------------------------------
 
 <form_start>
@@ -247,23 +240,6 @@ Multiselect
 <input_multiselect_row_selected>
     <option value="%%key%%" selected="selected">%%value%%</option>
 </input_multiselect_row_selected>
-
-Date interval
-<input_date_interval>
-    <div class="form-group">
-        <label for="%%name%%_unit" class="col-sm-3 control-label">%%title%%</label>
-        <div class="col-sm-6">
-            <div class="row">
-                <div class="col-md-8">
-                    <input type="number" name="%%name%%" id="%%name%%" value="%%value%%" class="form-control %%class%%" %%disabled%%>
-                </div>
-                <div class="col-md-4">
-                    <select name="%%name%%_unit" id="%%name%%_unit" class="form-control %%class%%" %%disabled%% %%addons%%>%%units%%</select>
-                </div>
-            </div>
-        </div>
-    </div>
-</input_date_interval>
 
 Toggle Button-Bar
 <input_toggle_buttonbar>
@@ -424,266 +400,6 @@ Download-Field
         </div>
     </div>
 </input_upload_disabled>
-
-Upload-Field for multiple files with progress bar
-<input_upload_multiple>
-
-    <div id="%%name%%" class="fileupload-wrapper">
-            <div class="fileupload-buttonbar drop-zone">
-
-                <span class="btn btn-default fileinput-button">
-                    <i class="fa fa-plus-square"></i>
-                    <span>[lang,mediamanager_upload,mediamanager]</span>
-                    <input type="file" name="%%name%%" multiple>
-                </span>
-
-                <button type="submit" class="btn btn-default start" style="display: none;">
-                    <i class="fa fa-upload"></i>
-                    <span>[lang,upload_multiple_uploadFiles,mediamanager]</span>
-                </button>
-
-                <button type="reset" class="btn btn-default cancel" style="display: none;">
-                    <i class="fa fa-ban"></i>
-                    <span>[lang,upload_multiple_cancel,mediamanager]</span>
-                </button>
-
-                <span class="fileupload-process"></span>
-                <div class="alert alert-info">
-                    [lang,upload_dropArea,mediamanager]<br />
-                     %%allowedExtensions%%
-                </div>
-            </div>
-
-            <div class="fileupload-progress" style="display: none;">
-
-                <div class="progress" aria-valuemin="0" aria-valuemax="100">
-                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width:0%;"></div>
-                </div>
-
-                <div class="progress-extended">&nbsp;</div>
-            </div>
-
-        <table class="table admintable table-striped-tbody files"></table>
-
-        <div class="hidden fileupload-list-template">
-            <table>
-                <tbody class="template-upload fade">
-                <tr>
-                    <td><span class="preview"></span></td>
-                    <td><p class="name"></p>
-                    <div class="error"></div>
-                    </td>
-                    <td><p class="size"></p>
-                        <div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div></div>
-                    </td>
-                <td>
-                    <button class="btn start " disabled style="display: none;">Start</button>
-                    <button class="btn cancel ">[lang,upload_multiple_cancel,mediamanager]</button>
-                </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        (function () {
-            var filesToUpload = 0;
-            var uploader = Fileupload.initUploader({
-                baseElement: $('#%%name%%'),
-                paramName: '%%name%%',
-                formData: [
-                    {name: 'systemid', value: '%%mediamanagerRepoId%%'},
-                    {name: 'inputElement', value : '%%name%%'}
-                ],
-
-                maxFileSize: %%maxFileSize%%,
-                acceptFileTypes: %%acceptFileTypes%%,
-                uploadTemplate: function (o) {
-                var rows = $();
-                $.each(o.files, function (index, file) {
-                    var row = $('#%%name%% .fileupload-list-template .template-upload').clone();
-                    row.find('.name').text(file.name);
-                    row.find('.size').text(o.formatFileSize(file.size));
-                    if (file.error) {
-                        row.find('.error').text(file.error);
-                    }
-                    rows = rows.add(row);
-                });
-                return rows;
-            }
-        });
-
-            uploader.getUploader()
-                .bind('fileuploadadded', function (e) {
-                    $(this).find('.fileupload-buttonbar button.start').css('display', '');
-                    $(this).find('.fileupload-buttonbar button.cancel').css('display', '');
-                    $(this).find('.fileupload-progress').css('display', '');
-                    filesToUpload++;
-                })
-                .bind('fileuploadfail', function (e) {
-                    filesToUpload--;
-                    $(this).trigger('kajonahideelements');
-                })
-                .bind('fileuploaddone', function (e) {
-                    filesToUpload--;
-                    $(this).trigger('kajonahideelements');
-                })
-                .bind('fileuploadstop', function (e) {
-                    $(this).trigger('kajonahideelements');
-                    document.location.reload();
-                })
-                .bind('kajonahideelements', function() {
-                    if(filesToUpload === 0) {
-                        $(this).find('.fileupload-buttonbar button.start').css('display', 'none');
-                        $(this).find('.fileupload-buttonbar button.cancel').css('display', 'none');
-                        $(this).find('.fileupload-progress').css('display', 'none');
-                    }
-                });
-        })();
-    </script>
-</input_upload_multiple>
-
-
-
-
-Upload-Field for multiple files with progress bar
-<input_upload_inline>
-    <div id="%%name%%_upl" class="form-group fileupload-wrapper">
-        <label for="%%name%%" class="col-sm-3 control-label">%%title%%</label>
-        <div  class="col-sm-6 inputText ">
-
-            <table class="table admintable table-striped-tbody files form-control drop-zone" id="%%name%%">
-
-            </table>
-
-            <div class="hidden fileupload-list-template">
-                <table>
-                <tbody class="template-upload fade" data-uploadid="">
-                    <tr class="progress-row">
-                        <td colspan="4">
-                            <div class="progress">
-                                <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr class="file-details">
-                        <td><span class="preview"></span></td>
-                        <td class="marker">
-                            <span class="mark"></span>
-                        </td>
-                        <td>
-                            <span class="name"></span><div class="error"></div>
-                        </td>
-                        <td>
-                            <span class="date"></span>
-                        </td>
-                        <td>
-                            <span class="size"></span>
-                        </td>
-                        <td class="actions">
-                            <span class="dl-link hidden"><a href=""><i class="kj-icon fa fa-download"></i></a></span>
-                            <span class="del-button hidden"></span>
-                        </td>
-                    </tr>
-                </tbody>
-                </table>
-            </div>
-
-            <div class="archive-list "></div>
-        </div>
-        <div class="col-sm-2 form-opener">
-            <span class="listButton">
-                <span class=" fileinput-button">
-                    <input type="file" name="%%name%%" multiple>
-                    %%addButton%%
-                </span>
-            </span>
-            %%helpButton%%
-            %%moveButton%%
-            %%archiveButton%%
-        </div>
-    </div>
-
-    <script type="text/javascript">
-        (function () {
-            /**
-             *
-             * @type {UploadManager}
-             */
-            var uploader = Fileupload.initUploader({
-                baseElement: $('#%%name%%_upl'),
-                autoUpload: true,
-                readOnly: %%readOnly%%,
-                multiUpload: %%multiUpload%%,
-                paramName: '%%name%%_upl',
-                formData: [
-                    {name: 'systemid', value: '%%mediamanagerRepoId%%'},
-                    {name: 'inputElement', value : '%%name%%_upl'},
-                    {name: 'folder', value : '%%folder%%'}
-            ],
-                maxFileSize: %%maxFileSize%%,
-                acceptFileTypes: %%acceptFileTypes%%,
-                downloadTemplate: function (o) {
-                    var rows = $();
-                    $.each(o.files, function (index, file) {
-                        var row = $('#%%name%%_upl .fileupload-list-template .template-upload').clone();
-                        //file.name = file.name.replace(/(.{60})/g,"$1 ");
-                        row.find('.mark').html(file.mark);
-                        row.find('.name').text(file.name);
-                        row.find('.date').text(file.createDate);
-                        row.find('.size').text(o.formatFileSize(file.size));
-                        if (file.error) {
-                            row.find('.error').text(file.error);
-                        }
-                        if (file.url) {
-                            row.find(".dl-link a").attr('href', file.url);
-                            row.find(".dl-link").removeClass('hidden');
-                        }
-                        if (file.deleteButton && !%%readOnly%%) {
-                            row.find('.del-button').html(file.deleteButton).removeClass('hidden');
-                        }
-                        row.attr('data-uploadid', file.systemid);
-                        rows = rows.add(row);
-                    });
-                return rows;
-            },
-            uploadTemplate: function (o) {
-                var rows = $();
-                $.each(o.files, function (index, file) {
-                    var row = $('#%%name%%_upl .fileupload-list-template .template-upload').clone();
-                    row.find('.name').text(file.name);
-                    row.find('.size').text(o.formatFileSize(file.size));
-                    if (file.error) {
-                        row.find('.error').text(file.error);
-                    }
-                    rows = rows.add(row);
-                });
-                return rows;
-            }
-        });
-
-            //load files from the backend
-            Ajax.genericAjaxCall("mediamanager", "fileUploadList", "&systemid=%%mediamanagerRepoId%%&folder=%%folder%%", function(data) {
-                uploader.getUploader().fileupload('option', 'done').call(uploader.getUploader(), $.Event('done'), {result: data});
-            }, null, null, "post", "json");
-
-            if ($('#version_%%name%%').length > 0) {
-                $('#version_%%name%%').on('click', function() {
-                    uploader.fileVersioning();
-                });
-            }
-
-            if ($('#archive_%%name%%').length > 0) {
-                $('#archive_%%name%%').on('click', function() {
-                    uploader.fileArchiving("%%targetSystemId%%", "%%archiveTitle%%", "%%archiveBody%%", "%%archiveTitle%%");
-                });
-            }
-
-            uploader.renderArchiveList();
-        })();
-    </script>
-</input_upload_inline>
 
 An easy date-selector
 If you want to use the js-date-picker, leave %%calendarCommands%% at the end of the section
@@ -1497,7 +1213,10 @@ place ajaxScript before the closing input_tagselector-tag.
     <div class="panel panel-default panel-combined">
         <div class="panel-heading">
             <span class="linkcontainer collapsed">
-                %%combined_header%%
+            %%combined_header%%
+                <a rel="tooltip" data-kajona-module="search" onclick="var event = new Event('openSearchbar'); document.body.dispatchEvent(event);">
+                    <i class="fa fa-search"></i>
+                </a>
             </span>
         </div>
         %%combined_body%%
@@ -1537,17 +1256,7 @@ place ajaxScript before the closing input_tagselector-tag.
     <div id='changelogTimeline' style='text-align:center;'></div>
 
     <script type="text/javascript">
-            Changelog.lang = %%strLang%%;
-            Changelog.systemId = "%%strSystemId%%";
-            Changelog.format = Util.transformDateFormat('%%strDateFormat%%', "momentjs");
-            Changelog.now = moment().endOf('day').toDate();
-            Changelog.yearAgo = moment().startOf('day').subtract(1, 'year').toDate();
-            Changelog.selectColumn("right");
-            Changelog.loadChartData();
-
-            Changelog.loadDate("%%strSystemId%%", "%%strLeftDate%%", "left", function(){
-                Changelog.loadDate("%%strSystemId%%", "%%strRightDate%%", "right", Changelog.compareTable);
-            });
+        Changelog.initChangelog(%%strLang%%, '%%strSystemId%%', '%%strLeftDate%%', '%%strRightDate%%');
     </script>
 </changelog_heatmap>
 

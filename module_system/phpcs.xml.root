@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ruleset name="AGP">
+    <description>PHPCS configuration for AGP development</description>
+
+    <file>./core</file>
+    <file>./core_agp</file>
+    <file>./core_customer</file>
+
+    <arg name="extensions" value="php,php.root/PHP" />
+
+    <exclude-pattern>*/module_*/(docs|img|lang|less|scripts|templates|view)/*</exclude-pattern>
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+
+    <rule ref="PSR12" />
+
+    <rule ref="Generic.Files.LineLength.TooLong">
+        <properties>
+            <property name="lineLimit" value="240"/>
+            <property name="absoluteLineLimit" value="0"/>
+        </properties>
+    </rule>
+
+    <arg name="report" value="checkstyle" />
+</ruleset>

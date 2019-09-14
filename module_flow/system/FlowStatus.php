@@ -53,7 +53,7 @@ class FlowStatus extends Model implements ModelInterface, AdminListableInterface
     protected $strName;
 
     /**
-     * @var integer
+     * @var int
      * @tableColumn agp_flow_step.step_index
      * @tableColumnDatatype int
      */
@@ -177,7 +177,7 @@ class FlowStatus extends Model implements ModelInterface, AdminListableInterface
     }
 
     /**
-     * @param string $arrRoles
+     * @param array $arrRoles
      */
     public function setRoles(array $arrRoles)
     {

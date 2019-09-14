@@ -96,7 +96,6 @@ class class_project_setup
         self::createRootGitIgnore();
         self::createDefaultPackageconfig();
         self::createRootTsconfig();
-        self::creatRootEslintConfig();
         self::loadNpmDependencies();
         self::buildJavascript();
         self::scanComposer();
@@ -137,48 +136,7 @@ JSON;
         file_put_contents(self::$strRealPath . "/tsconfig.json", $content);
     }
 
-    private static function creatRootEslintConfig(){
-        $content = <<<JSON
-{
-  "env": {
-    "node": true
-  },
-  "extends": ["plugin:vue/essential", "@vue/standard", "@vue/typescript"],
-  "rules": {
-    "semi": ["error", "never"],
-    "indent": [
-      "error",
-      4,
-      {
-        "SwitchCase": 1,
-        "VariableDeclarator": 1,
-        "outerIIFEBody": 1,
-        "MemberExpression": 1,
-        "FunctionDeclaration": { "parameters": 1, "body": 1 },
-        "FunctionExpression": { "parameters": 1, "body": 1 },
-        "CallExpression": { "arguments": 1 },
-        "ArrayExpression": 1,
-        "ObjectExpression": 1,
-        "ImportDeclaration": 1,
-        "flatTernaryExpressions": false,
-        "ignoreComments": false
-      }
-    ],
-    "quotes": [
-      "error",
-      "single",
-      { "avoidEscape": true, "allowTemplateLiterals": true }
-    ]
-  },
-  "parserOptions": {
-    "parser": "@typescript-eslint/parser"
-  }
-}
 
-
-JSON;
-        file_put_contents(self::$strRealPath . "/.eslintrc.json", $content);
-    }
 
 
     private static function createDefaultPackageconfig()
@@ -291,10 +249,10 @@ TEXT;
         echo "Build js files" . PHP_EOL;
         $arrOutput = array();
 
-        $workingDirectory = \getcwd();
-        \chdir(__DIR__ . '/_buildfiles');
+        $workingDirectory = getcwd();
+        chdir(__DIR__ . '/_buildfiles');
         exec('npm run build', $arrOutput, $exitCode);
-        \chdir($workingDirectory);
+        chdir($workingDirectory);
 
         if ($exitCode !== 0) {
             echo "Error exited with a non successful status code";
@@ -310,11 +268,11 @@ TEXT;
 
         $arrOutput = array();
 
-        $workingDirectory = \getcwd();
-        \chdir(__DIR__ . '/_buildfiles');
+        $workingDirectory = getcwd();
+        chdir(__DIR__ . '/_buildfiles');
         exec('npm config set registry "http://packages.artemeon.int:4873/"');
         exec('npm install', $arrOutput, $exitCode);
-        \chdir($workingDirectory);
+        chdir($workingDirectory);
 
         if ($exitCode !== 0) {
             echo "Error exited with a non successful status code";

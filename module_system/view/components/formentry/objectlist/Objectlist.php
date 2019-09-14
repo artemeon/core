@@ -145,7 +145,7 @@ class Objectlist extends FormentryComponentAbstract
 
                 $rows[] = [
                     'systemid' => $item->getSystemid(),
-                    'displayName' => html_entity_decode($this->getDisplayName($item)),
+                    'displayName' => html_entity_decode($this->getDisplayName($item)).($item->getIntRecordDeleted() === 1 ? ' (' .Carrier::getInstance()->getObjLang()->getLang('commons_deleted', 'system'). ')' : ''),
                     'path'        => $this->getPathName($item),
                     'icon'        => AdminskinHelper::getAdminImage($icon),
                     'removeLink'  => $removeLink,

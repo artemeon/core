@@ -7,7 +7,7 @@ module.exports = {
         let modulesPaths = null
         if (!fs.existsSync('./../../project/packageconfig.json')) {
             // fallback: the complete ts file list
-            return glob.sync('../../core*/module_*/scripts/**/*.ts')
+            return glob.sync('../../core*/module_*/scripts/**/*.ts', { ignore: ['../../core*/module_*/scripts/**/*.e2e.cypress.ts', '../../core*/module_*/scripts/**/*.unit.cypress.ts', '../../core*/module_*/scripts/**/*.story.ts'] })
         }
         let packageConfig = require('./../../project/packageconfig.json')
 
@@ -24,7 +24,8 @@ module.exports = {
                     )
                 }
             }
-            modulesPaths = await globby(moduleMap)
+            modulesPaths = await globby(moduleMap, { ignore: ['../../core*/module_*/scripts/**/*.e2e.cypress.ts', '../../core*/module_*/scripts/**/*.unit.cypress.ts', '../../core*/module_*/scripts/**/*.story.ts'] })
+
             // console.log("included ts files : ", modulesPaths);
             return modulesPaths
         } catch (e) {

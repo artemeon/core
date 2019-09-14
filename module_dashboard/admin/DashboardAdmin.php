@@ -16,12 +16,14 @@ use Kajona\Dashboard\System\DashboardUserRoot;
 use Kajona\Dashboard\System\DashboardWidget;
 use Kajona\Dashboard\System\EventEntry;
 use Kajona\Dashboard\System\EventRepository;
+use Kajona\Dashboard\System\Filter\DashboardICalendarFilter;
+use Kajona\Dashboard\System\ICalendar;
 use Kajona\Dashboard\System\Lifecycle\ConfigLifecycle;
 use Kajona\Dashboard\System\TodoJstreeNodeLoader;
 use Kajona\Dashboard\System\TodoRepository;
 use Kajona\Dashboard\View\Components\Dashboard\Dashboard;
-use Kajona\Dashboard\View\Components\Widgetlist\WidgetList;
 use Kajona\Dashboard\View\Components\Widget\Widget;
+use Kajona\Dashboard\View\Components\Widgetlist\WidgetList;
 use Kajona\System\Admin\AdminEvensimpler;
 use Kajona\System\Admin\AdminFormgenerator;
 use Kajona\System\Admin\AdminInterface;
@@ -46,6 +48,7 @@ use Kajona\System\View\Components\Dynamicmenu\DynamicMenu;
 use Kajona\System\View\Components\Menu\Item\Separator;
 use Kajona\System\View\Components\Menu\Item\Text;
 use Kajona\System\View\Components\Menu\Menu;
+use Kajona\V4skin\Admin\Skins\Kajona_V4\AdminskinImageresolver;
 
 /**
  * The dashboard admin class
@@ -159,7 +162,7 @@ class DashboardAdmin extends AdminEvensimpler implements AdminInterface
             $return .= $this->objToolkit->addToContentToolbar(Link::getLinkAdminDialog("dashboard", "listWidgets", [], $this->getLang("action_add_widget_to_dashboard"), $this->getLang("action_add_widget_to_dashboard"), "icon_new"));
         }
 
-$params = Carrier::getAllParams();
+        $params = Carrier::getAllParams();
         unset($params["module"]);
         unset($params["action"]);
 
@@ -258,15 +261,15 @@ $params = Carrier::getAllParams();
             $strWidgetClass = $objDashboardWidget->getStrClass();
             if ($strWidgetClass::isEditable()) {
                 $arrActions[] =
-                Link::getLinkAdminManual(
-                    "href=\"#\" onclick=\"Dashboard.editWidget('{$objDashboardWidget->getSystemid()}'); return false;\"",
-                    (AdminskinHelper::getAdminImage("icon_edit")) . " " . $this->getLang("editWidget"),
-                    "",
-                    "",
-                    "",
-                    "",
-                    false
-                );
+                    Link::getLinkAdminManual(
+                        "href=\"#\" onclick=\"Dashboard.editWidget('{$objDashboardWidget->getSystemid()}'); return false;\"",
+                        (AdminskinHelper::getAdminImage("icon_edit")) . " " . $this->getLang("editWidget"),
+                        "",
+                        "",
+                        "",
+                        "",
+                        false
+                    );
             }
         }
         if ($objDashboardWidget->rightDelete()) {
@@ -277,10 +280,10 @@ $params = Carrier::getAllParams();
             $strConfirmationLinkHref = "javascript:Dashboard.removeWidget(\'" . $objDashboardWidget->getSystemid() . "\');";
 
             $arrActions[] =
-            Link::getLinkAdminManual(
-                "href=\"#\" onclick=\"DialogHelper.showConfirmationDialog('{$strHeader}', '{$strQuestion}', '{$strConfirmationButtonLabel}', '{$strConfirmationLinkHref}'); return false;\"",
-                (AdminskinHelper::getAdminImage("icon_delete")) . " " . Carrier::getInstance()->getObjLang()->getLang("commons_delete", "system"), "", "", "", "", false
-            );
+                Link::getLinkAdminManual(
+                    "href=\"#\" onclick=\"DialogHelper.showConfirmationDialog('{$strHeader}', '{$strQuestion}', '{$strConfirmationButtonLabel}', '{$strConfirmationLinkHref}'); return false;\"",
+                    (AdminskinHelper::getAdminImage("icon_delete")) . " " . Carrier::getInstance()->getObjLang()->getLang("commons_delete", "system"), "", "", "", "", false
+                );
         }
 
         $widget = new Widget();
@@ -303,17 +306,42 @@ $params = Carrier::getAllParams();
      */
     protected function actionCalendar()
     {
-        $strReturn = "";
+        $return = "";
 
-        $strReturn .= "<div id='dashboard-calendar' class='calendar'></div>";
-        $strReturn .= "<script type=\"text/javascript\">";
-        $strReturn .= <<<JS
+        $return .= "<div id='dashboard-calendar' class='core-component-calendar'></div>";
+        $return .= "<script type=\"text/javascript\">";
+        $return .= <<<JS
 
         DashboardCalendar.init();
 JS;
-        $strReturn .= "</script>";
+        $return .= "</script>";
 
-        return $strReturn;
+        $icalLink = Link::getLinkAdminManual(["href" => "#", "onclick" => "DashboardCalendar.getICalendarURL();return false"], AdminskinHelper::getAdminImage("icon_downloads").' '. $this->getLang("dashboard_ical_url", "dashboard"));
+        $return .= $this->objToolkit->addToContentToolbar($icalLink);
+
+        return $return;
+    }
+
+    /**
+     * Returns a iCal URL
+     * @return array
+     * @throws Exception
+     * @permissions view
+     * @responseType json
+     */
+    public function actionApiGetOrCreateICalUrl()
+    {
+        $filter = new DashboardICalendarFilter();
+        $userId = Carrier::getInstance()->getObjSession()->getUserID();
+        $filter->setStrUserSystemId($userId);
+        $iCal = ICalendar::getSingleObjectFiltered($filter);
+        if (empty($iCal)) {
+            $iCal = new ICalendar();
+            $iCal->setStrUserId($userId);
+            $this->objLifeCycleFactory->factory(get_class($iCal))->update($iCal);
+        }
+        $iCalLink = _apipath_ . '/v1/calendar/export/caldav/' . $iCal->getStrSystemid();
+        return ["url" => $iCalLink];
     }
 
     /**
@@ -394,9 +422,9 @@ JS;
     /**
      * Creates the form to edit a widget (NOT the dashboard entry!)
      *
-     * @throws Exception
      * @return string "" in case of success
      * @permissions edit
+     * @throws Exception
      */
     protected function actionEditWidget()
     {
@@ -619,12 +647,12 @@ JS;
             /** @var EventEntry $objEvent */
             $strIcon = AdminskinHelper::getAdminImage($objEvent->getStrIcon());
             $arrRow = array(
-                "title" => strip_tags($objEvent->getStrDisplayName()),
+                "title" => '$ICON ' . strip_tags($objEvent->getStrDisplayName()),
                 "tooltip" => $objEvent->getStrDisplayName(),
                 "icon" => $strIcon,
                 "allDay" => true,
                 "url" => htmlspecialchars_decode($objEvent->getStrHref()),
-                "className" => array($objEvent->getStrCategory(), "calendar-event"),
+                "className" => array("calendar-event"),
             );
 
             if ($objEvent->getObjStartDate() instanceof Date && $objEvent->getObjEndDate() instanceof Date) {

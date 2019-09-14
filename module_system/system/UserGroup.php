@@ -9,21 +9,20 @@
 
 namespace Kajona\System\System;
 
-use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
 use Kajona\System\System\Usersources\UsersourcesGroupInterface;
-
 
 /**
  * Model for a user-group, can be based on any type of usersource
  * Groups are NOT represented in the system-table.
  *
- * @package module_user
  * @author sidler@mulchprod.de
  *
  * @module user
  * @moduleId _user_modul_id_
  *
  * @targetTable agp_user_group.group_id
+ *
+ * @lifeCycleService system_life_cycle_user_group
  */
 class UserGroup extends Model implements ModelInterface, AdminListableInterface, VersionableInterface
 {
@@ -131,26 +130,6 @@ class UserGroup extends Model implements ModelInterface, AdminListableInterface,
         }
         return "";
     }
-
-    /**
-     * @inheritDoc
-     */
-    protected function onInsertToDb()
-    {
-        Logger::getInstance(Logger::USERSOURCES)->info("saved new group subsystem ".$this->getStrSubsystem()." / ".$this->getStrSystemid());
-        //create the new instance on the remote-system
-        $objSources = new UserSourcefactory();
-        $objProvider = $objSources->getUsersource($this->getStrSubsystem());
-        $objTargetGroup = $objProvider->getNewGroup();
-        ServiceLifeCycleFactory::getLifeCycle(get_class($objTargetGroup))->update($objTargetGroup);
-        $objTargetGroup->setNewRecordId($this->getSystemid());
-        $this->objDB->flushQueryCache();
-
-        $this->setIntShortId(IdGenerator::generateNextId(self::INT_SHORTID_IDENTIFIER));
-
-        return true;
-    }
-
 
     /**
      * Returns all groups from database

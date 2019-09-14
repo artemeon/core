@@ -1,1 +1,1 @@
-<p class="{{ class }} core-component-formentry-textrow">{{ text|raw }}</p>
+<p class="{{ class }} core-component-formentry-textrow" {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %}>{{ text|raw }}</p>

@@ -2,6 +2,13 @@
 
 namespace Kajona\System\System;
 
+use Kajona\System\System\Messagequeue\Consumer;
+use Kajona\System\System\Messagequeue\Executor\CallEventExecutor;
+use Kajona\System\System\Messagequeue\Executor\SendMessageExecutor;
+use Kajona\System\System\Messagequeue\ExecutorFactory;
+use Kajona\System\System\Messagequeue\Producer;
+use Kajona\System\System\Lifecycle\User\GroupLifecycle;
+use Kajona\System\System\Lifecycle\User\UserLifecycle;
 use Kajona\System\System\Permissions\PermissionHandlerFactory;
 use Kajona\System\System\Security\PasswordRotator;
 use Kajona\System\System\Security\PasswordValidator;
@@ -105,6 +112,16 @@ class ServiceProvider implements ServiceProviderInterface
     const STR_LIFE_CYCLE_MESSAGES_ALERT = "system_life_cycle_messages_alert";
 
     /**
+     * @see \Kajona\System\System\Lifecycle\User\UserLifecycle
+     */
+    const LIFE_CYLE_USER_USER = "system_life_cycle_user_user";
+
+    /**
+     * @see \Kajona\System\System\Lifecycle\User\GroupLifecycle
+     */
+    const LIFE_CYLE_USER_GROUP = "system_life_cycle_user_group";
+
+    /**
      * @see \Kajona\System\System\MessagingMessagehandler
      */
     const STR_MESSAGE_HANDLER = "system_message_handler";
@@ -128,6 +145,36 @@ class ServiceProvider implements ServiceProviderInterface
      * @see \Kajona\System\System\DropdownLoaderInterface
      */
     const STR_DROPDOWN_LOADER = "system_dropdown_loader";
+
+    /**
+     * @see \Kajona\System\System\CoreEventdispatcher
+     */
+    const EVENT_DISPATCHER = "system_event_dispatcher";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Producer
+     */
+    const MESSAGE_QUEUE_PRODUCER = "system_message_queue_producer";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Consumer
+     */
+    const MESSAGE_QUEUE_CONSUMER = "system_message_queue_consumer";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\ExecutorFactory
+     */
+    const MESSAGE_QUEUE_EXECUTOR_FACTORY = "system_message_queue_executor_factory";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Executor\CallEventExecutor
+     */
+    const MESSAGE_QUEUE_EXECUTOR_CALL_EVENT = "system_message_queue_executor_call_event";
+
+    /**
+     * @see \Kajona\System\System\Messagequeue\Executor\SendMessageExecutor
+     */
+    const MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE = "system_message_queue_executor_send_message";
 
     public function register(Container $objContainer)
     {
@@ -210,6 +257,10 @@ class ServiceProvider implements ServiceProviderInterface
             return Logger::getInstance();
         };
 
+        $objContainer[self::EVENT_DISPATCHER] = function ($c) {
+            return CoreEventdispatcher::getInstance();
+        };
+
         $objContainer[self::STR_CACHE_MANAGER] = function ($c) {
             return new CacheManager();
         };
@@ -233,6 +284,20 @@ class ServiceProvider implements ServiceProviderInterface
         $objContainer[self::STR_LIFE_CYCLE_MESSAGES_ALERT] = function ($c) {
             return new MessagingAlertLifeCycle(
                 $c[ServiceProvider::STR_PERMISSION_HANDLER_FACTORY]
+            );
+        };
+
+        $objContainer[self::LIFE_CYLE_USER_USER] = function ($c) {
+            return new UserLifecycle(
+                $c[ServiceProvider::STR_PERMISSION_HANDLER_FACTORY],
+                Logger::getInstance(Logger::USERSOURCES)
+            );
+        };
+
+        $objContainer[self::LIFE_CYLE_USER_GROUP] = function ($c) {
+            return new GroupLifecycle(
+                $c[ServiceProvider::STR_PERMISSION_HANDLER_FACTORY],
+                Logger::getInstance(Logger::USERSOURCES)
             );
         };
 
@@ -268,6 +333,34 @@ class ServiceProvider implements ServiceProviderInterface
 
         $objContainer[self::STR_DROPDOWN_LOADER] = function ($c) {
             return new DropdownConfigLoader();
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_PRODUCER] = function ($c) {
+            return new Producer(
+                $c[self::STR_DB]
+            );
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_CONSUMER] = function ($c) {
+            return new Consumer(
+                $c[self::STR_DB],
+                $c[self::MESSAGE_QUEUE_EXECUTOR_FACTORY],
+                $c[self::STR_LOGGER]
+            );
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_FACTORY] = function ($c) {
+            return new ExecutorFactory($c);
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_CALL_EVENT] = function ($c) {
+            return new CallEventExecutor(
+                $c[self::EVENT_DISPATCHER]
+            );
+        };
+
+        $objContainer[self::MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE] = function ($c) {
+            return new SendMessageExecutor();
         };
     }
 }

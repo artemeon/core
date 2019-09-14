@@ -4,7 +4,7 @@
     <div class="col-sm-6 {{ class|e('html_attr') }}">
         <div class="input-group">
             <div class="input-group-addon"><i class="fa fa-calendar-o"></i></div>
-            <input id="{{ name|e('html_attr') }}" name="{{ name|e('html_attr') }}" class="form-control {{ class|e('html_attr') }}" size="16" type="text" value="{{ value|date_to_string(false) }}" {% if readOnly %}disabled{% endif %} autocomplete="off">
+            <input id="{{ name|e('html_attr') }}" name="{{ name|e('html_attr') }}" class="form-control {{ class|e('html_attr') }}" size="16" type="text" value="{{ value|date_to_string(false) }}" {% if readOnly %}disabled{% endif %} autocomplete="off" {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %}>
         </div>
     </div>
     {% if opener %}

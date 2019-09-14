@@ -42,9 +42,6 @@ class SystemSession extends Model implements ModelInterface
     private $strLoginstatus = "";
     private $bitResetUser = null;
 
-    private $bitValid = false;
-
-
     /**
      * Constructor to create a valid object
      *
@@ -112,8 +109,6 @@ class SystemSession extends Model implements ModelInterface
             }
 
             $this->strDbSystemid = $this->getSystemid();
-
-            $this->bitValid = true;
         }
     }
 
@@ -127,9 +122,6 @@ class SystemSession extends Model implements ModelInterface
      */
     public function updateObjectToDb($strPrevId = false)
     {
-
-        $this->bitValid = true;
-
         if ($this->strDbSystemid == "") {
             $this->strDbSystemid = $this->getSystemid();
 
@@ -312,7 +304,7 @@ class SystemSession extends Model implements ModelInterface
      */
     public function isSessionValid()
     {
-        return $this->bitValid && $this->getIntReleasetime() > time();
+        return $this->getIntReleasetime() > time();
     }
 
 

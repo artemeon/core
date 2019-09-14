@@ -123,10 +123,11 @@ interface SystemEventidentifier {
 
 
     /**
-     * Invoked if the permissions of a record have been changed.
-     * Triggered only by the "root" node of the change cascade.
+     * Invoked if the permissions of a record have been changed. Gets called only on the root id. The array of affected
+     * systemids contains all affected child ids
      *
      * @param string $strSystemid
+     * @param array $arrAffectedSystemids
      * @param array $arrPermissions
      *
      * @since 5.1
@@ -237,4 +238,14 @@ interface SystemEventidentifier {
      * @since 4.5
      */
     const EVENT_SYSTEM_USERLOGOUT = "core.system.userlogout";
+
+    /**
+     * Callback method, triggered each time a new user is created.
+     *
+     * @param string $strUserid
+     *
+     * @return bool
+     * @since 7.2
+     */
+    const EVENT_SYSTEM_USERCREATED = "core.system.usercreated";
 }

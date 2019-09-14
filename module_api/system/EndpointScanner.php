@@ -62,6 +62,10 @@ class EndpointScanner
                     throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
                 }
 
+                if (empty($authorization)) {
+                    throw new \RuntimeException("Provided no authorization at {$class}::{$methodName}");
+                }
+
                 $routes[] = [
                     "httpMethod" => $method,
                     "path" => $path,

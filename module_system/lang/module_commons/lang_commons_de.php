@@ -37,6 +37,7 @@ $lang["commons_create_date"]             = "Anlagedatum";
 $lang["commons_save_as_image"]          = "Als Bild speichern";
 $lang["commons_lastmodification_date"]   = "Letztes Änderungsdatum";
 $lang["commons_delete"]                  = "Löschen";
+$lang["commons_deleted"]                  = "Gelöscht";
 $lang["commons_delete_category_question"] = "Möchten Sie die Kategorie &quot;<b>%%element_name%%</b>&quot; wirklich löschen?";
 $lang["commons_delete_error"]            = "Fehler beim Löschen des Datensatzes";
 $lang["commons_delete_ok"]               = "Datensatz erfolgreich gelöscht";

@@ -133,24 +133,27 @@ class Lang
     }
 
     /**
-     * Returns all properties for a specific module
+     * Returns all properties for a specific module , and if wanted a specific language
      *
      * @param string $strModule
-     *
+     * @param string $strLanguage
      * @return array
      */
-    public function getProperties($strModule)
+    public function getProperties($strModule , $strLanguage = null)
     {
-        //Did we already load this text?
-        if (!isset($this->arrTexts[$this->strLanguage][$strModule])) {
-            $this->loadText($strModule);
+        if($strLanguage===null){
+            $strLanguage = $this->strLanguage ;
         }
-
-        if (isset($this->arrTexts[$this->strLanguage][$strModule])) {
-            return $this->arrTexts[$this->strLanguage][$strModule];
+        //Did we already load this text?
+        if (!isset($this->arrTexts[$strLanguage][$strModule])) {
+            $this->loadText($strModule , $strLanguage);
+        }
+        if (isset($this->arrTexts[$strLanguage][$strModule])) {
+            return $this->arrTexts[$strLanguage][$strModule];
         } else {
             return [];
         }
+
     }
 
     /**

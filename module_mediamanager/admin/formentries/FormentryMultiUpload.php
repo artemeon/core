@@ -10,16 +10,14 @@ use Kajona\Mediamanager\System\MediamanagerFile;
 use Kajona\Mediamanager\System\MediamanagerFileFilter;
 use Kajona\Mediamanager\System\MediamanagerRepo;
 use Kajona\Mediamanager\System\Validators\MediamanagerUploadValidator;
+use Kajona\Mediamanager\View\Components\Formentry\Inputuploadinline\InputUploadInline;
 use Kajona\System\Admin\Formentries\FormentryBase;
 use Kajona\System\Admin\FormentryPrintableInterface;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\Reflection;
-use Kajona\System\System\SystemModule;
-use Kajona\System\System\SystemSession;
 use Kajona\System\System\SystemSetting;
-use Kajona\System\System\Validators\DummyValidator;
-use Kajona\System\System\Validators\SystemidValidator;
+
 
 
 /**
@@ -116,7 +114,13 @@ class FormentryMultiUpload extends FormentryBase implements FormentryPrintableIn
         }
 
         //and render the multiupload fields
-        $strReturn .= $objToolkit->formInputUploadInline($this->getStrEntryName(), $this->getStrLabel(), $objRepo, $this->getStrValue(), $this->getBitReadonly(), $this->getShowVersioning(), $this->isMultiUpload(), $this->isShowArchive(), $this->getTargetSystemId());
+        $inputUploadInline = new InputUploadInline($this->getStrEntryName(), $this->getStrLabel(), $objRepo, $this->getStrValue());
+        $inputUploadInline->setReadOnly($this->getBitReadonly());
+        $inputUploadInline->setVersioning($this->getShowVersioning());
+        $inputUploadInline->setMultiUpoad($this->isMultiUpload());
+        $inputUploadInline->setShowArchive($this->isShowArchive());
+        $inputUploadInline->setTargetSystemId($this->getTargetSystemId());
+        $strReturn .= $inputUploadInline->renderComponent();
 
         return $strReturn;
     }

@@ -17,9 +17,13 @@ use Kajona\System\System\Validators\TextValidator;
  * @since 4.0
  * @package module_formgenerator
  */
-class FormentryFile extends FormentryBase implements FormentryInterface {
+class FormentryFile extends FormentryBase implements FormentryInterface
+{
 
-    public function __construct($strFormName, $strSourceProperty, $objSourceObject = null) {
+    private $asSystemidDownload = false;
+
+    public function __construct($strFormName, $strSourceProperty, $objSourceObject = null)
+    {
         parent::__construct($strFormName, $strSourceProperty, $objSourceObject);
 
         //set the default validator
@@ -32,16 +36,33 @@ class FormentryFile extends FormentryBase implements FormentryInterface {
      *
      * @return string
      */
-    public function renderField() {
+    public function renderField()
+    {
         $objToolkit = Carrier::getInstance()->getObjToolkit("admin");
         $strReturn = "";
-        if($this->getStrHint() != null)
+        if ($this->getStrHint() != null) {
             $strReturn .= $objToolkit->formTextRow($this->getStrHint());
+        }
 
-        $strReturn .= $objToolkit->formInputFileSelector($this->getStrEntryName(), $this->getStrLabel(), $this->getStrValue(), SystemSetting::getConfigValue("_mediamanager_default_filesrepoid_"));
+        $strReturn .= $objToolkit->formInputFileSelector($this->getStrEntryName(), $this->getStrLabel(), $this->getStrValue(), SystemSetting::getConfigValue("_mediamanager_default_filesrepoid_"), "", $this->asSystemidDownload);
 
         return $strReturn;
     }
 
+    /**
+     * @return bool
+     */
+    public function isAsSystemidDownload(): bool
+    {
+        return $this->asSystemidDownload;
+    }
+
+    /**
+     * @param bool $asSystemidDownload
+     */
+    public function setAsSystemidDownload(bool $asSystemidDownload): void
+    {
+        $this->asSystemidDownload = $asSystemidDownload;
+    }
 
 }

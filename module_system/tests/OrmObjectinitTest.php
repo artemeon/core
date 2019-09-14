@@ -189,7 +189,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return Date
      */
-    public function getObjDate()
+    public function getObjDate(): ?Date
     {
         return $this->objDate;
     }
@@ -197,7 +197,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param Date $objDate
      */
-    public function setObjDate($objDate)
+    public function setObjDate(Date $objDate)
     {
         $this->objDate = $objDate;
     }
@@ -205,7 +205,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return string
      */
-    public function getStrChar20()
+    public function getStrChar20(): ?string
     {
         return $this->strChar20;
     }
@@ -213,7 +213,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param string $strChar20
      */
-    public function setStrChar20($strChar20)
+    public function setStrChar20(string $strChar20)
     {
         $this->strChar20 = $strChar20;
     }
@@ -221,7 +221,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return string
      */
-    public function getStrChar254()
+    public function getStrChar254(): ?string
     {
         return $this->strChar254;
     }
@@ -229,7 +229,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param string $strChar254
      */
-    public function setStrChar254($strChar254)
+    public function setStrChar254(string $strChar254)
     {
         $this->strChar254 = $strChar254;
     }
@@ -237,7 +237,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return string
      */
-    public function getStrText()
+    public function getStrText(): ?string
     {
         return $this->strText;
     }
@@ -245,7 +245,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param string $strText
      */
-    public function setStrText($strText)
+    public function setStrText(string $strText)
     {
         $this->strText = $strText;
     }
@@ -253,7 +253,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return string
      */
-    public function getStrLongtext()
+    public function getStrLongtext(): ?string
     {
         return $this->strLongtext;
     }
@@ -261,7 +261,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param string $strLongtext
      */
-    public function setStrLongtext($strLongtext)
+    public function setStrLongtext(string $strLongtext)
     {
         $this->strLongtext = $strLongtext;
     }
@@ -269,7 +269,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return int
      */
-    public function getIntInteger()
+    public function getIntInteger(): ?int
     {
         return $this->intInteger;
     }
@@ -277,7 +277,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param int $intInteger
      */
-    public function setIntInteger($intInteger)
+    public function setIntInteger(int $intInteger)
     {
         $this->intInteger = $intInteger;
     }
@@ -285,7 +285,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return int
      */
-    public function getIntBigint()
+    public function getIntBigint(): ?int
     {
         return $this->intBigint;
     }
@@ -293,7 +293,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param int $intBigint
      */
-    public function setIntBigint($intBigint)
+    public function setIntBigint(int $intBigint)
     {
         $this->intBigint = $intBigint;
     }
@@ -301,7 +301,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return float
      */
-    public function getFloatDouble()
+    public function getFloatDouble(): ?float
     {
         return $this->floatDouble;
     }
@@ -309,7 +309,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param float $floatDouble
      */
-    public function setFloatDouble($floatDouble)
+    public function setFloatDouble(float $floatDouble)
     {
         $this->floatDouble = $floatDouble;
     }
@@ -317,7 +317,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @return bool
      */
-    public function getBitBoolean()
+    public function getBitBoolean(): ?bool
     {
         return $this->bitBoolean;
     }
@@ -325,7 +325,7 @@ class OrmObjectinitTestclass extends Model implements ModelInterface
     /**
      * @param bool $bitBoolean
      */
-    public function setBitBoolean($bitBoolean)
+    public function setBitBoolean(bool $bitBoolean)
     {
         $this->bitBoolean = $bitBoolean;
     }

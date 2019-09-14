@@ -80,7 +80,7 @@ class DialogHelper {
      * @returns {module:dialog}
      */
     public static showInfoModal (title: string, content: string) {
-        var dialogInstance = new Dialog('jsDialog0', 0)
+        var dialogInstance = new Dialog('jsDialog_0', 0)
         dialogInstance.setTitle(title)
         dialogInstance.setContentRaw(content)
         dialogInstance.init(300, 300)

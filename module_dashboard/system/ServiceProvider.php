@@ -20,6 +20,9 @@ class ServiceProvider implements ServiceProviderInterface
 
     const STR_DASHBOARD_LIFECYLCE_CONFIG = "dashboard_life_cycle_config";
 
+    const DASHBOARD_ICAL_GENERATOR = "dashboard_ical_generator";
+
+
     public function register(Container $objContainer)
     {
         $objContainer[self::STR_DASHBOARD_INITIALIZER] = function ($c) {
@@ -31,6 +34,10 @@ class ServiceProvider implements ServiceProviderInterface
                 $c[\Kajona\System\System\ServiceProvider::STR_PERMISSION_HANDLER_FACTORY],
                 $c[\Kajona\System\System\ServiceProvider::STR_SESSION]
             );
+        };
+
+        $objContainer[self::DASHBOARD_ICAL_GENERATOR] = function ($c) {
+            return new ServiceICalGenerator();
         };
     }
 }

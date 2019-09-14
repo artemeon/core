@@ -1,6 +1,8 @@
 import $ from 'jquery'
 import CacheManager from './CacheManager'
-
+import axios from 'axios'
+import to from 'await-to-js'
+import { LocaleMessageObject } from 'vue-i18n'
 interface QueueEntry {
     text: string
     module: string
@@ -196,6 +198,42 @@ class Lang {
             strText = strText.replace('{' + i + '}', arrParams[i])
         }
         return strText
+    }
+
+    /**
+    * fetch lang props of whole module and save it in localstorage
+    * @param moduleName name of the module to fetch
+    * @param language wished language of module
+    */
+    public static async fetchModule (moduleName : string, language : string) : Promise<LocaleMessageObject> {
+        let cacheVersion = CacheManager.get(moduleName +
+            '_' +
+            language +
+            '_' +
+            KAJONA_BROWSER_CACHEBUSTER)
+        if (cacheVersion) {
+            return JSON.parse(cacheVersion)
+        }
+        let [err, res] = await to(axios({
+            url: KAJONA_WEBPATH +
+            '/xml.php?admin=1&module=system&action=fetchProperty',
+            method: 'POST',
+            params: {
+                target_module: moduleName,
+                language: language
+            }
+        }))
+        if (res) {
+            CacheManager.set(
+                moduleName +
+                    '_' +
+                    language +
+                    '_' +
+                    KAJONA_BROWSER_CACHEBUSTER,
+                JSON.stringify(res.data)
+            )
+            return res.data
+        }
     }
 }
 ;(<any>window).Lang = Lang

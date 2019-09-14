@@ -509,15 +509,13 @@ class MessagingMessage extends Model implements ModelInterface, AdminListableInt
     }
 
     /**
-     * Creates a message object based on a json encoded string
+     * Creates a message object based on the provided data
      *
-     * @param string $json
-     * @return static|null
+     * @param array $data
+     * @return static
      */
-    public static function fromJson($json)
+    public static function fromArray(array $data)
     {
-        $data = json_decode($json, true);
-
         $message = new static();
         $message->setStrTitle($data["message_title"] ?? null);
         $message->setStrBody($data["message_body"] ?? null);

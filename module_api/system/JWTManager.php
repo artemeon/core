@@ -52,12 +52,13 @@ class JWTManager
             'iss' => _webpath_,
             'sub' => $user->getSystemid(),
             'exp' => $expirationTime,
-            'iat' => time(),
+            'iat' => \time(),
             'name' => $user->getStrUsername(),
             'lastname' => $user->getStrName(),
             'forename' => $user->getStrForename(),
             'lang' => $user->getStrAdminlanguage(),
             'admin' => $user->getIntAdmin(),
+            'nonce' => \bin2hex(\random_bytes(6)),
         ];
 
         return JWT::encode($payload, $this->projectSecret->getToken(), self::ALG);

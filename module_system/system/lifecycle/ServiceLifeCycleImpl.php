@@ -2,13 +2,10 @@
 
 namespace Kajona\System\System\Lifecycle;
 
-use AGP\Prozessverwaltung\System\ProzessverwaltungObjectBase;
-use Kajona\System\System\Carrier;
 use Kajona\System\System\Database;
 use Kajona\System\System\Permissions\PermissionHandlerFactory;
 use Kajona\System\System\Permissions\PermissionHandlerInterface;
 use Kajona\System\System\RedirectException;
-use Kajona\System\System\Reflection;
 use Kajona\System\System\Root;
 
 /**
@@ -53,7 +50,7 @@ class ServiceLifeCycleImpl implements ServiceLifeCycleInterface
             }
 
             // call permission handler if available
-            if ($objModel instanceof ProzessverwaltungObjectBase && !$objModel->isObjectdesignerTemplate()) {
+            if ($objModel instanceof Root) {
                 $this->invokePermissionHandler($objOldModel, $objModel);
             }
 

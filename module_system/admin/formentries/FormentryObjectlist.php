@@ -402,6 +402,8 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
 
         $strObjectName .= strip_tags($objObject->getStrDisplayName());
 
+        $strObjectName .= ($objObject->getIntRecordDeleted() === 1 ? ' (' .Carrier::getInstance()->getObjLang()->getLang('commons_deleted', 'system'). ')' : '');
+
         return $strObjectName;
     }
 

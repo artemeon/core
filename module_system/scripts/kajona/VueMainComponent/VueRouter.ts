@@ -1,23 +1,14 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import FailCode from 'core_customer/module_hsbcact/scripts/components/FailCodeWrapper/FailCodeWrapper.vue'
-import store from './Store'
-Vue.use(<any>Router)
+import VueRouter from 'vue-router'
+import Router from '../Router'
+Vue.use(<any>VueRouter)
 
-export default new Router({
-    routes: [ {
-        path: '/vm/hsbcact/failCode',
-        component: FailCode,
-        props: route => ({
-            query: {
-                objects: route.query.objects
-            }
-        }),
-        beforeEnter: (to, from, next) => {
-            let objects = to.query.objects.toString()
-            let str = objects.split(',')
-            store.commit('failCode/SET_OBJECTS', str)
-            next()
-        }
-    }]
+const router = new VueRouter({
+    routes: []
 })
+function resetContainer (to, from, next) : void {
+    Router.cleanPage(true)
+    next()
+}
+
+export default router

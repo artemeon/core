@@ -15,7 +15,6 @@
           <i class="kj-icon fa fa-trash-o"></i>
         </a>
       </span>
-        </span>
     </div>
   </div>
 </template>

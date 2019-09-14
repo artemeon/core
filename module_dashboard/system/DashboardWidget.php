@@ -58,6 +58,19 @@ class DashboardWidget extends \Kajona\System\System\Model implements \Kajona\Sys
      */
     private $strContent = "";
 
+    /**
+     * @return string
+     */
+    private function getWidgetClassName()
+    {
+        $class = $this->getStrClass();
+        if (empty($class) || !class_exists($class)) {
+            return "";
+        }
+
+        $adminWidgetAmtasks = new $class;
+        return $adminWidgetAmtasks->getWidgetName();
+    }
 
     /**
      * Returns the name to be used when rendering the current object, e.g. in admin-lists.
@@ -66,9 +79,8 @@ class DashboardWidget extends \Kajona\System\System\Model implements \Kajona\Sys
      */
     public function getStrDisplayName()
     {
-        return "dashboard widget ".$this->getSystemid();
+        return 'Dashboard Widget "' . $this->getWidgetClassName() . '"';
     }
-
 
     /**
      * Looks up all widgets available in the filesystem.

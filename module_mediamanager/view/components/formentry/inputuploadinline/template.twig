@@ -1,0 +1,139 @@
+<div id="{{ name }}_upl" class="form-group fileupload-wrapper core-component-formentry-inputuploadinline">
+    <label for="{{ name }}" class="col-sm-3 control-label">{{ title }}</label>
+    <div class="col-sm-6 inputText ">
+
+        <table class="table admintable table-striped-tbody files form-control drop-zone" id="{{ name }}">
+
+        </table>
+
+        <div class="hidden fileupload-list-template">
+            <table>
+                <tbody class="template-upload fade" data-uploadid="">
+                <tr class="progress-row">
+                    <td colspan="4">
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0"
+                                 aria-valuemax="100" style="width: 0%;"></div>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="file-details">
+                    <td><span class="preview"></span></td>
+                    <td class="marker">
+                        <span class="mark"></span>
+                    </td>
+                    <td>
+                        <span class="name"></span>
+                        <div class="error"></div>
+                    </td>
+                    <td>
+                        <span class="date"></span>
+                    </td>
+                    <td>
+                        <span class="size"></span>
+                    </td>
+                    <td class="actions">
+                        <span class="dl-link hidden"><a href=""><i class="kj-icon fa fa-download"></i></a></span>
+                        <span class="del-button hidden"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="archive-list "></div>
+    </div>
+    <div class="col-sm-2 form-opener">
+            <span class="listButton">
+                <span class=" fileinput-button">
+                    <input type="file" name="{{ name }}" multiple>
+                    {{ addButton|raw }}
+                </span>
+            </span>
+        {{ helpButton|raw }}
+        {{ moveButton|raw }}
+        {{ archiveButton|raw }}
+    </div>
+</div>
+<script type="text/javascript">
+    (function () {
+        var readOnly = {% if readOnly %} true {% else %} false {% endif %};
+        var multiUpload = {% if multiUpload %} true {% else %} false {% endif %};
+        /**
+         * @type {UploadManager}
+         */
+        var uploader = Fileupload.initUploader({
+            baseElement: $('#{{ name }}_upl'),
+            autoUpload: true,
+            prependFiles: true,
+            readOnly: readOnly,
+            multiUpload: multiUpload,
+            paramName: '{{ name }}_upl',
+            formData: [
+                {name: 'systemid', value: '{{ mediamanagerRepoId }}'},
+                {name: 'inputElement', value: '{{ name }}_upl'},
+                {name: 'folder', value: '{{ folder }}'}
+            ],
+            maxFileSize: {{ maxFileSize }},
+            acceptFileTypes: {{ acceptFileTypes|raw }},
+            downloadTemplate: function (o) {
+                var rows = $();
+                $.each(o.files, function (index, file) {
+                    var row = $('#{{ name }}_upl .fileupload-list-template .template-upload').clone();
+                    row.find('.mark').html(file.mark);
+                    row.find('.name').text(file.name);
+                    row.find('.date').text(file.createDate);
+                    row.find('.size').text(o.formatFileSize(file.size));
+                    if (file.error) {
+                        row.find('.error').text(file.error);
+                    }
+                    if (file.url) {
+                        row.find(".dl-link a").attr('href', file.url);
+                        row.find(".dl-link").removeClass('hidden');
+                    }
+                    if (file.deleteButton && !readOnly) {
+                        row.find('.del-button').html(file.deleteButton).removeClass('hidden');
+                    }
+                    row.attr('data-uploadid', file.systemid);
+                    rows = rows.add(row);
+                });
+                return rows;
+            },
+            uploadTemplate: function (o) {
+                var rows = $();
+                $.each(o.files, function (index, file) {
+                    var row = $('#{{ name }}_upl .fileupload-list-template .template-upload').clone();
+                    row.find('.name').text(file.name);
+                    row.find('.size').text(o.formatFileSize(file.size));
+                    if (file.error) {
+                        row.find('.error').text(file.error);
+                    }
+                    rows = rows.add(row);
+                });
+                return rows;
+            }
+        });
+
+        //load files from the backend
+        Ajax.genericAjaxCall("mediamanager", "fileUploadList", "&systemid={{ mediamanagerRepoId }}&folder={{ folder }}", function (data) {
+            uploader.getUploader().fileupload('option', 'done').call(uploader.getUploader(), $.Event('done'), {result: data});
+        }, null, null, "post", "json");
+
+        if ($('#version_{{ name }}').length > 0) {
+            $('#version_{{ name }}').on('click', function () {
+                uploader.fileVersioning();
+            });
+        }
+
+        if ($('#archive_{{ name }}').length > 0) {
+            $('#archive_{{ name }}').on('click', function () {
+                uploader.fileArchiving("{{ targetSystemId }}", "{{ archiveTitle }}", "{{ archiveBody }}", "{{ archiveTitle }}");
+            });
+        }
+
+        uploader.renderArchiveList();
+    })()
+
+</script>
+
+

@@ -7,10 +7,12 @@
     <meta name="robots" content="noindex, nofollow" />
     <meta name="generator" content="Kajona Core, https://github.com/artemeon/core" />
 
-    <script src="_webpath_{{ "module_system"|webpath }}/scripts/agp.min.js"></script>
-    <script src="_webpath_{{ "module_system"|webpath }}/scripts/vendors.chunks.min.js"></script>
+    {{ head|raw }}
+    <script src="_webpath_/files/extract/assets/less.min.js?_system_browser_cachebuster_"></script>
+    <script src="_webpath_/files/extract/assets/agp.min.js?_system_browser_cachebuster_"></script>
 </head>
 <body class="installer">
+<div id="vueContainer"></div>
 
 <div class="navbar navbar-fixed-top hidden-sm hidden-xs">
     <div class="container">
@@ -87,6 +89,10 @@
     <footer>
         <a href="https://github.com/artemeon/core" target="_blank">Kajona Core Framework</a>
     </footer>
+</div>
 
+    <script type="text/javascript">
+        App.init();
+    </script>
 </body>
 </html>

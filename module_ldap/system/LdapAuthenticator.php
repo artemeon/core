@@ -10,6 +10,7 @@ namespace Kajona\Ldap\System;
 
 use Kajona\Ldap\System\Usersources\UsersourcesUserLdap;
 use Kajona\System\System\Database;
+use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
 use Kajona\System\System\Usersources\UsersourcesUserInterface;
 use Kajona\System\System\UserUser;
 
@@ -49,7 +50,7 @@ class LdapAuthenticator implements LdapAuthenticatorInterface
                         $objUser->setStrEmail($arrSingleUser["mail"]);
                         $objUser->setStrDN($arrSingleUser["identifier"]);
                         $objUser->setIntCfg($objSingleLdap->getIntCfgNr());
-                        $objUser->updateObjectToDb();
+                        ServiceLifeCycleFactory::getLifeCycle($objUser)->update($objUser);
                         Database::getInstance()->flushQueryCache();
                     }
 

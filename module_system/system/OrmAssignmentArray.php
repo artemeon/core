@@ -45,6 +45,7 @@ class OrmAssignmentArray extends ArrayObject
      *
      * @param Root $objTargetObject
      * @param int $strProperty
+     * @param $objDeletedHandling
      */
     public function __construct(Root $objTargetObject, $strProperty, $objDeletedHandling)
     {
@@ -182,6 +183,14 @@ class OrmAssignmentArray extends ArrayObject
     public function getObjDeletedHandling()
     {
         return $this->objDeletedHandling;
+    }
+
+    /**
+     * @param OrmDeletedhandlingEnum $objDeletedHandling
+     */
+    public function setObjDeletedHandling(OrmDeletedhandlingEnum $objDeletedHandling): void
+    {
+        $this->objDeletedHandling = $objDeletedHandling;
     }
 
 

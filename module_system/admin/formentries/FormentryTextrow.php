@@ -9,6 +9,7 @@ namespace Kajona\System\Admin\Formentries;
 use Kajona\System\Admin\FormentryPrintableInterface;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Validators\DummyValidator;
+use Kajona\System\View\Components\Textrow\TextRow;
 
 
 /**
@@ -45,7 +46,9 @@ class FormentryTextrow extends FormentryBase implements FormentryPrintableInterf
         }
 
         if ($this->bitFullWidth) {
-            $strReturn .= $objToolkit->getTextRow($this->getStrValue());
+            $cmp = new TextRow($this->getStrValue());
+            $cmp->setDataArray($this->getDataAttributes());
+            $strReturn .=  $cmp->renderComponent();
         } else {
             $strReturn .= $objToolkit->formTextRow($this->getStrValue());
         }

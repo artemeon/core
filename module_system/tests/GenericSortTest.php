@@ -8,7 +8,7 @@ use Kajona\System\System\OrmDeletedhandlingEnum;
 use Kajona\System\System\OrmObjectlist;
 use Kajona\System\System\SystemAspect;
 
-class SortTest extends Testbase
+class GenericSortTest extends Testbase
 {
 
 

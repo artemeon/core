@@ -1,7 +1,5 @@
-/// <reference path="calendarheatmap.d.ts" />
 /// <reference path="catcomplete.d.ts" />
 /// <reference path="jstree.ts" />
-/// <reference path="moment.d.ts" />
 /// <reference path="tageditor.d.ts" />
 
 declare module 'jquery' {

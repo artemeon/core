@@ -30,18 +30,7 @@ class PermissionsAnnotationTest extends TestCase
             }
         );
 
-
-        $arrFilesFrontend = Resourceloader::getInstance()->getFolderContent("/portal", [".php"], true, null,
-            function (&$strOneFile, $strPath) {
-                if (in_array($strOneFile, ["global_includes.php"])) {
-                    $strOneFile = null;
-                } else {
-                    $strOneFile = Classloader::getInstance()->getInstanceFromFilename($strPath, AbstractController::class, null, [], true);
-                }
-            }
-        );
-
-        foreach (array_merge($arrFilesBackend, $arrFilesFrontend) as $objController) {
+        foreach (array_merge($arrFilesBackend) as $objController) {
             if ($objController == null) {
                 continue;
             }

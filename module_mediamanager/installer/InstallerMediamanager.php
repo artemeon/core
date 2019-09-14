@@ -202,14 +202,14 @@ class InstallerMediamanager extends InstallerBase implements InstallerInterface
         $objRepo = new MediamanagerRepo();
         $objRepo->setStrTitle("Temp uploads");
         $objRepo->setStrPath(_filespath_."/temp");
-        $objRepo->updateObjectToDb();
+        ServiceLifeCycleFactory::getLifeCycle($objRepo)->update($objRepo);
         $objRepo->syncRepo();
         $strReturn .= "ID of new repo: ".$objRepo->getSystemid()."\n";
 
         $strReturn .= "Setting the repository as the default files repository\n";
         $objSetting = SystemSetting::getConfigByName("_mediamanager_default_temprepoid_");
         $objSetting->setStrValue($objRepo->getSystemid());
-        $objSetting->updateObjectToDb();
+        ServiceLifeCycleFactory::getLifeCycle($objSetting)->update($objSetting);
 
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.0.1");
         return $strReturn;

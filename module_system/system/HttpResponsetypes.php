@@ -44,6 +44,8 @@ class HttpResponsetypes
 
     const STR_TYPE_PHAR = "Content-type: application/phar";
 
+    const STR_TYPE_ICAL = "Content-type: text/calendar; charset=utf-8";
+
     /**
      * Transforms a reponse-type string into the matching http type
      * Used by the AbstractController class.

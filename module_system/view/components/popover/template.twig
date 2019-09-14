@@ -3,16 +3,34 @@
     <span href="#" title="{{ title|escape("html_attr") }}" data-toggle="popover" data-html="true" data-placement="{{ placement|escape("html_attr") }}" data-trigger="{{ trigger|escape("html_attr") }}" id="{{ id|escape("html_attr") }}">{{ link|raw }}</span>
 
     {% if contentEndpoint %}
-        <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}"><div class="lc_{{ id|escape("html_attr") }}"></div></div>
+        <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}"></div>
         <script type="text/javascript">
-         $('#{{ id|escape("html_attr") }}').popover({ content: function() { return $('#pc_{{ id|escape("html_attr") }}').html()}}).on('show.bs.popover', function() {
 
-                if($('#pc_{{ id|escape("js") }}').hasClass('loadDone')) {
-                    return;
-                }
-                Ajax.loadUrlToElement('.lc_{{ id|escape("html_attr") }}', '{{ contentEndpoint|raw }}', '', false, 'post', function() {});
-                $('#pc_{{ id|escape("html_attr") }}').addClass('loadDone');
-            })
+         $('#{{ id|escape("html_attr") }}').popover({
+             content: function(){
+                 if ($('#pc_{{ id|escape("js") }}').hasClass('loadDone')) {
+                     window.setTimeout(function(){
+                         $('#lc_{{ id|escape("js") }}').html($('#pc_{{ id|escape("js") }}').html());
+                     }, 0.25);
+
+                     return '<div id="lc_{{ id|escape("js") }}"></div>';
+                 }
+
+                 return '<div id="lc_{{ id|escape("js") }}"></div>';
+             },
+         }).on('inserted.bs.popover', function() {
+             var pc = $('#pc_{{ id|escape("js") }}');
+             var lc = $('#lc_{{ id|escape("js") }}');
+             if (pc.hasClass('loadDone')) {
+                return true;
+             }
+
+             lc.html('<div class="loadingContainer"></div>');
+             Ajax.loadUrlToElement(pc, '{{ contentEndpoint|raw }}', '', false, 'post', function(){
+                 lc.html(pc.html());
+             });
+             pc.addClass('loadDone');
+         })
         </script>
     {% else %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}">{{ content|raw }}</div>

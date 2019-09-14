@@ -15,13 +15,11 @@ namespace Kajona\System\System;
  * Therefore it is essential to have getters and setters for each mapped
  * property (java bean syntax).
  *
- * @package module_system
  * @author sidler@mulchprod.de
  * @since 4.6
  */
 class OrmObjectinit extends OrmBase
 {
-
 
     /**
      * Initializes the object from the database.
@@ -29,93 +27,110 @@ class OrmObjectinit extends OrmBase
      * Requires that the object is identified by its systemid.
      *
      * @return void
+     * @throws Exception
+     * @throws OrmException
      */
     public function initObjectFromDb()
     {
         //try to do a default init
-        $objReflection = new Reflection($this->getObjObject());
+        $reflection = new Reflection($this->getObjObject());
 
         if (validateSystemid($this->getObjObject()->getSystemid()) && $this->hasTargetTable()) {
             if (OrmRowcache::getCachedInitRow($this->getObjObject()->getSystemid()) !== null) {
-                $arrRow = OrmRowcache::getCachedInitRow($this->getObjObject()->getSystemid());
+                $row = OrmRowcache::getCachedInitRow($this->getObjObject()->getSystemid());
             } else {
-                $strQuery = "SELECT *
-                          ".$this->getQueryBase()."
-                           AND agp_system.system_id = ? ";
+                $query = 'SELECT *
+                          ' . $this->getQueryBase() . '
+                           AND agp_system.system_id = ? ';
 
-                $arrRow = Carrier::getInstance()->getObjDB()->getPRow($strQuery, array($this->getObjObject()->getSystemid()));
+                $row = Carrier::getInstance()->getObjDB()->getPRow($query, array($this->getObjObject()->getSystemid()));
             }
 
-            if (method_exists($this->getObjObject(), "setArrInitRow")) {
-                $this->getObjObject()->setArrInitRow($arrRow);
+            if (method_exists($this->getObjObject(), 'setArrInitRow')) {
+                $this->getObjObject()->setArrInitRow($row);
             }
 
             //get the mapped properties
-            $arrProperties = $objReflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_TABLECOLUMN);
+            $properties = $reflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_TABLECOLUMN);
 
-            foreach ($arrProperties as $strPropertyName => $strColumn) {
-                $arrColumn = explode(".", $strColumn);
+            foreach ($properties as $propertyName => $column) {
+                $columnParts = explode('.', $column);
 
-                if (count($arrColumn) == 2) {
-                    $strColumn = $arrColumn[1];
+                if (count($columnParts) === 2) {
+                    $column = $columnParts[1];
                 }
 
-                if (!isset($arrRow[$strColumn])) {
+                if (!isset($row[$column])) {
                     continue;
                 }
 
                 //skip columns from the system-table, they are set later on
-                if (count($arrColumn) == 2 && $arrColumn[0] == "agp_system") {
+                if (count($columnParts) === 2 && $columnParts[0] === 'agp_system') {
                     continue;
                 }
 
-                $strSetter = $objReflection->getSetter($strPropertyName);
-                if ($strSetter !== null) {
-                    //some properties may be set converted, e.g. a date object
-                    $strVar = $objReflection->getAnnotationValueForProperty($strPropertyName, "@var");
-                    if (StringUtil::indexOf($strVar, "Date") !== false) {
-                        $arrRow[$strColumn] = !empty($arrRow[$strColumn]) ? new Date($arrRow[$strColumn]) : null;
-                    } elseif ($arrRow[$strColumn] != null && (StringUtil::toLowerCase(StringUtil::substring($strSetter, 0, 6)) == "setint" || StringUtil::toLowerCase(StringUtil::substring($strSetter, 0, 7)) == "setlong")) {
-                        //different casts on 32bit / 64bit
-                        if ($arrRow[$strColumn] > PHP_INT_MAX) {
-                            $arrRow[$strColumn] = (float)$arrRow[$strColumn];
-                        } else {
-                            $arrRow[$strColumn] = (int)$arrRow[$strColumn];
-                        }
-                    } elseif ($arrRow[$strColumn] != null && StringUtil::toLowerCase(StringUtil::substring($strSetter, 0, 6)) == "setbit") {
-                        $arrRow[$strColumn] = boolval($arrRow[$strColumn]);
-                    } elseif ($arrRow[$strColumn] != null && StringUtil::toLowerCase(StringUtil::substring($strSetter, 0, 8)) == "setfloat") {
-                        $arrRow[$strColumn] = (float)$arrRow[$strColumn];
-                    }
-
-                    $this->getObjObject()->{$strSetter}($arrRow[$strColumn]);
-                }
+                $setter = $reflection->getSetter($propertyName);
+                $value = $this->convertToDatatype($reflection->getAnnotationValueForProperty($propertyName, "@var"), $row[$column]);
+                $this->getObjObject()->{$setter}($value);
             }
 
-            $this->initAssignmentProperties();
+            $this->initAssignmentProperties($reflection);
         }
+    }
+
+    /**
+     * Casts the values' datatype based on the value of the var annotation
+     * @param string $varDatatype
+     * @param $value
+     * @return bool|float|int|Date|string|null
+     */
+    private function convertToDatatype(string $varDatatype, $value)
+    {
+        if ($value === null) {
+            return $value;
+        }
+        if ($varDatatype === 'string') {
+            return (string)$value;
+        }
+        if ($varDatatype === 'Date') {
+            return !empty($value) ? new Date($value) : null;
+        }
+        if ($varDatatype === 'int' || $varDatatype === 'long') {
+            //different casts on 32bit / 64bit
+            if ($value > PHP_INT_MAX) {
+                return (float)$value;
+            }
+
+            return (int)$value;
+        }
+        if ($varDatatype === 'bool' || $varDatatype === 'boolean') {
+            return (bool)$value;
+        }
+        if ($varDatatype === 'float') {
+            return (float)$value;
+        }
+
+        return $value;
     }
 
     /**
      * Injects the lazy loading objects for assignment properties into the current object
      *
+     * @param Reflection $reflection
      * @return void
      */
-    private function initAssignmentProperties()
+    private function initAssignmentProperties(Reflection $reflection): void
     {
-        $objReflection = new Reflection($this->getObjObject());
-
         //get the mapped properties
-        $arrProperties = $objReflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_OBJECTLIST, ReflectionEnum::PARAMS);
+        $properties = $reflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_OBJECTLIST, ReflectionEnum::PARAMS);
 
-        foreach ($arrProperties as $strPropertyName => $arrValues) {
-            $objPropertyLazyLoader = new OrmAssignmentArray($this->getObjObject(), $strPropertyName, $this->getIntCombinedLogicalDeletionConfig());
+        foreach ($properties as $propertyName => $values) {
+            $propertyLazyLoader = new OrmAssignmentArray($this->getObjObject(), $propertyName, $this->getIntCombinedLogicalDeletionConfig());
 
-            $strSetter = $objReflection->getSetter($strPropertyName);
-            if ($strSetter !== null) {
-                $this->getObjObject()->{$strSetter}($objPropertyLazyLoader);
+            $setter = $reflection->getSetter($propertyName);
+            if ($setter !== null) {
+                $this->getObjObject()->{$setter}($propertyLazyLoader);
             }
         }
-
     }
 }

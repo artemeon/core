@@ -297,12 +297,17 @@ class Date
      * Sets the current day to the next day.
      * Includes the handling of month / year shifts.
      *
-     * @since 3.4
      * @return Date
+     * @throws Exception
+     * @since 3.4
      */
     public function setNextDay()
     {
         $objDate = DateTime::createFromFormat($this->strParseFormat, $this->getLongTimestamp());
+        if ($objDate === false) {
+            throw new Exception("invalid timestamp: " . $this->getLongTimestamp(), Exception::$level_ERROR);
+        }
+
         $objDate->add(DateInterval::createFromDateString('1 day'));
         $this->setTimeInOldStyle($objDate->getTimestamp());
 //        $this->validateDate();
@@ -676,5 +681,13 @@ class Date
         return $this;
     }
 
+    /**
+     * @param \DateTimeInterface $dateTime
+     * @return Date
+     */
+    public static function fromDateTime(\DateTimeInterface $dateTime): Date
+    {
+        return new static($dateTime->format('YmdHis'));
+    }
 }
 

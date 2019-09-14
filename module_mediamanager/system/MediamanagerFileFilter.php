@@ -21,7 +21,7 @@ use Kajona\System\System\OrmObjectlistOrderby;
 class MediamanagerFileFilter extends FilterBase
 {
     /**
-     * @var boolean
+     * @var bool
      * @tableColumn file_search_content
      */
     private $bitIndexPending;

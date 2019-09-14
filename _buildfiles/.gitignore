@@ -4,3 +4,5 @@
 /packages/
 /composer/vendor/
 node_modules
+/bin/videos/
+/bin/screenshots/

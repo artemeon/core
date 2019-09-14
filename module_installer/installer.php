@@ -8,9 +8,9 @@
 
 namespace Kajona\Installer;
 
+use Kajona\Installer\System\SamplecontentInstallerHelper;
 use Kajona\Packagemanager\System\PackagemanagerManager;
 use Kajona\Packagemanager\System\PackagemanagerMetadata;
-use Kajona\Installer\System\SamplecontentInstallerHelper;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Classloader;
 use Kajona\System\System\Cookie;
@@ -20,13 +20,13 @@ use Kajona\System\System\Exception;
 use Kajona\System\System\HttpResponsetypes;
 use Kajona\System\System\Lang;
 use Kajona\System\System\RequestEntrypointEnum;
-use Kajona\System\System\Resourceloader;
 use Kajona\System\System\ResponseObject;
 use Kajona\System\System\ScriptletHelper;
 use Kajona\System\System\ServiceProvider;
 use Kajona\System\System\Session;
 use Kajona\System\System\SystemEventidentifier;
 use Kajona\System\System\SystemModule;
+use Kajona\System\System\SystemSetting;
 use Kajona\System\System\Template;
 
 /**
@@ -760,6 +760,21 @@ class Installer
 
         $strProgress = "";
 
+
+
+        $parts = [];
+        foreach ([
+                     'KAJONA_DEBUG' => 1,
+                     'KAJONA_WEBPATH' => _webpath_,
+                     'KAJONA_BROWSER_CACHEBUSTER' => SystemSetting::getConfigValue("_system_browser_cachebuster_"),
+                     'KAJONA_LANGUAGE' => Carrier::getInstance()->getObjSession()->getAdminLanguage(),
+                     'KAJONA_PHARMAP' => array_values(Classloader::getInstance()->getArrPharModules()),
+                 ] as $name => $value) {
+            $parts[] = $name . ' = ' . json_encode($value) . ';';
+        }
+
+        $head = "<script type=\"text/javascript\">" . implode("\n", $parts) . "</script>";
+
         /** @var \Twig_Environment $twig */
         $twig = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::STR_TEMPLATE_ENGINE);
         $strReturn = $twig->render("core/module_installer/templates/base.twig" , array(
@@ -773,7 +788,8 @@ class Installer
             'installer_version'     => $this->strVersion,
             'log_content'           => $this->strLogfile,
             'systemlog'             => $this->getLang("installer_systemlog"),
-            'logfile'               => $this->strLogfile
+            'logfile'               => $this->strLogfile,
+            'head'                  => $head
         ));
 
         $strReturn = $this->callScriptlets($strReturn);

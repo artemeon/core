@@ -91,6 +91,7 @@ class Config
         define("_templatenr_", $this->getDebug("templatenr"));
         define("_memory_", $this->getDebug("memory"));
         define("_cache_", $this->getDebug("cache"));
+        define("_apipath_", _webpath_ . "/api.php");
 
 
         if ($this->getConfig("images_cachepath") != "") {

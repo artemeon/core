@@ -24,7 +24,6 @@ use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
 use Kajona\System\System\MessagingAlert;
 use Kajona\System\System\MessagingConfig;
 use Kajona\System\System\MessagingMessage;
-use Kajona\System\System\MessagingQueue;
 use Kajona\System\System\OrmSchemamanager;
 use Kajona\System\System\Resourceloader;
 use Kajona\System\System\Session;
@@ -38,6 +37,7 @@ use Kajona\System\System\SystemPwHistory;
 use Kajona\System\System\SystemSetting;
 use Kajona\System\System\UserGroup;
 use Kajona\System\System\UserUser;
+use Kajona\System\System\Workflows\WorkflowCommandConsumer;
 use Kajona\Workflows\System\WorkflowsHandler;
 use Kajona\Workflows\System\WorkflowsWorkflow;
 
@@ -242,7 +242,6 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $objManager->createTable(MessagingMessage::class);
         $objManager->createTable(MessagingConfig::class);
         $objManager->createTable(MessagingAlert::class);
-        $objManager->createTable(MessagingQueue::class);
 
         // password change history
         $strReturn .= "Installing password reset history...\n";
@@ -255,6 +254,15 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         // password history
         $strReturn .= "Installing password history...\n";
         $objManager->createTable(SystemPwHistory::class);
+
+        // create message queue table
+        $this->objDB->createTable('agp_system_commands', [
+            'command_id' => [DbDatatypes::STR_TYPE_CHAR20, false],
+            'command_class' => [DbDatatypes::STR_TYPE_CHAR254, false],
+            'command_payload' => [DbDatatypes::STR_TYPE_TEXT, false]
+        ], [
+            'command_id'
+        ]);
 
         //Now we have to register module by module
 
@@ -547,6 +555,10 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         if($arrModule["module_version"] == "7.1.6") {
             $strReturn .= $this->update_716_717();
         }
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1.7") {
+            $strReturn .= $this->update_717_718();
+        }
 
 
         return $strReturn."\n\n";
@@ -792,6 +804,32 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         return $return;
     }
 
+    private function update_717_718(): string
+    {
+        $return = "Updating to 7.1.8...".PHP_EOL;
+        $return .= "Add command table".PHP_EOL;
 
+        $this->objDB->createTable('agp_system_commands', [
+            'command_id' => [DbDatatypes::STR_TYPE_CHAR20, false],
+            'command_class' => [DbDatatypes::STR_TYPE_CHAR254, false],
+            'command_payload' => [DbDatatypes::STR_TYPE_CHAR500, false]
+        ], [
+            'command_id'
+        ]);
 
+        if (WorkflowsWorkflow::getWorkflowsForClassCount(WorkflowCommandConsumer::class, false) == 0) {
+            $workflow = new WorkflowsWorkflow();
+            $workflow->setStrClass(WorkflowCommandConsumer::class);
+            ServiceLifeCycleFactory::getLifeCycle(get_class($workflow))->update($workflow);
+        }
+
+        // delete messaging message queue workflow
+        $wf = WorkflowsHandler::getHandlerByClass('Kajona\System\System\Workflows\WorkflowMessageQueue');
+        if ($wf !== null) {
+            $wf->deleteObjectFromDatabase();
+        }
+
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.8");
+        return $return;
+    }
 }

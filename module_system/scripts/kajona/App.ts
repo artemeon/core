@@ -7,15 +7,18 @@ import V4skin from 'core/module_v4skin/scripts/kajona/V4skin'
 import Dialog from 'core/module_v4skin/scripts/kajona/Dialog'
 import Folderview from './Folderview'
 import DialogHelper from 'core/module_v4skin/scripts/kajona/DialogHelper'
-import moment from 'moment'
-import mermaid from 'mermaid'
 import VueMain from './VueMainComponent/VueMain.vue'
 import Vue from 'vue'
 import store from './VueMainComponent/Store'
 import VueRouter from './VueMainComponent/VueRouter'
+import i18n from './VueMainComponent/VueLang'
+import GlobalAxiosConfig from './GlobalAxiosConfig'
+import VueI18n from 'vue-i18n'
+import KeymapsController from './KeymapsController'
 
 declare global {
     interface Window {
+        i18n : VueI18n
         VueContainer : Vue
         KAJONA: Kajona
         // eslint-disable-next-line camelcase
@@ -78,6 +81,9 @@ class App {
 
         // configure toastr global
         toastr.options.positionClass = 'toast-bottom-right'
+        // Axios Wrapper
+        KeymapsController.init()
+        GlobalAxiosConfig.init()
     }
     public static initVue (): void {
         Vue.config.productionTip = false
@@ -85,12 +91,14 @@ class App {
             Vue.config.devtools = true
         }
 
+        window.i18n = i18n
         window.VueContainer = new Vue({
             el: '#vueContainer',
             // @ts-ignore
             router: VueRouter,
             // @ts-ignore
             store: store,
+            i18n: i18n,
             render: h => h(VueMain)
         })
     }
