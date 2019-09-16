@@ -2,6 +2,7 @@ import $ from 'jquery'
 import {Component, Vue, Prop} from 'vue-property-decorator'
 import uuid from 'uuid//v1'
 import Tooltip from '../../kajona/Tooltip'
+import DateFormatter from "core/module_system/scripts/kajona/DateFormatter";
 
 @Component
 class Datepicker extends Vue {
@@ -51,7 +52,8 @@ class Datepicker extends Vue {
     }
 
     private onDateChange(e: DatepickerEventObject): void {
-        this.$emit('change', $('#' + this.id).val())
+        const date = DateFormatter.rfc3339($('#' + this.id).datepicker('getDate'));
+        this.$emit('change', date)
     }
 
     private deleteInput(): void {
