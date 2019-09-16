@@ -74,6 +74,10 @@ abstract class ApiTestCase extends TestCase
         $users = UserUser::getAllUsersByName($userName);
         $user = array_shift($users);
 
+        if (!$user instanceof UserUser) {
+            throw new \RuntimeException(sprintf('User %s does not exist', $userName));
+        }
+
         /** @var JWTManager $tokenGenerator */
         $tokenGenerator = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::JWT_MANAGER);
         $token = $tokenGenerator->generate($user);
