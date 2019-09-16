@@ -10,9 +10,12 @@ declare(strict_types=1);
 namespace Kajona\Api\Tests;
 
 use Kajona\Api\System\AppBuilder;
+use Kajona\Api\System\JWTManager;
 use Kajona\Api\System\ServiceProvider;
 use Kajona\System\System\Carrier;
+use Kajona\System\System\Database;
 use Kajona\System\System\Exception;
+use Kajona\System\System\UserUser;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Slim\Exception\MethodNotAllowedException;
@@ -58,6 +61,31 @@ abstract class ApiTestCase extends TestCase
         $appBuilder = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::APP_BUILDER);
 
         return $appBuilder->build()->process($request, $response);
+    }
+
+    /**
+     * Generates a new access token for the provided user
+     *
+     * @param string $userName
+     * @return string
+     */
+    protected function generateAccessTokenForUser(string $userName)
+    {
+        $users = UserUser::getAllUsersByName($userName);
+        $user = array_shift($users);
+
+        /** @var JWTManager $tokenGenerator */
+        $tokenGenerator = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::JWT_MANAGER);
+        $token = $tokenGenerator->generate($user);
+
+        $connection = Database::getInstance();
+        $connection->update('agp_user', [
+            'user_accesstoken' => $token
+        ], [
+            'user_id' => $user->getSystemid()
+        ]);
+
+        return $token;
     }
 
     private function createStringStream(?string $body)
