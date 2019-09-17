@@ -8,7 +8,7 @@ import DateFormatter from "core/module_system/scripts/kajona/DateFormatter";
 class Datepicker extends Vue {
     @Prop({type: String, required: true}) label !: string;
     @Prop({type: String, required: true}) format !: string;
-    @Prop({type: String, required: true}) displayType !: string;
+    @Prop({type: String, required: false}) displayType !: string;
     @Prop({type: String, required: false}) tooltip !: string;
     @Prop({type: String, required: false}) value !: string;
 
