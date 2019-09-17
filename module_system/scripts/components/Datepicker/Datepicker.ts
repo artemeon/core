@@ -48,7 +48,9 @@ class Datepicker extends Vue {
                 calendarWeeks: true
             }).on('changeDate', this.onDateChange)
         }
-        input.datepicker('setDate', new Date(this.value))
+        if (this.value) {
+            input.datepicker('setDate', new Date(this.value))
+        }
     }
 
     private onDateChange(e: DatepickerEventObject): void {
@@ -57,7 +59,8 @@ class Datepicker extends Vue {
     }
 
     private deleteInput(): void {
-        this.$emit('change', '')
+        $('#' + this.id).val('');
+        this.$emit('change', null)
     }
 }
 
