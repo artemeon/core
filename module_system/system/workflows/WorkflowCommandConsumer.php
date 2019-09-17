@@ -67,7 +67,7 @@ class WorkflowCommandConsumer implements WorkflowsHandlerInterface
     {
         /** @var Consumer $consumer */
         $consumer = Carrier::getInstance()->getContainer()->offsetGet(ServiceProvider::MESSAGE_QUEUE_CONSUMER);
-        $consumer->consumeAll();
+        $consumer->consumeCommands();
 
         // trigger again
         return false;
