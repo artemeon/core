@@ -118,16 +118,17 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
     }
 
     /**
-     * temporary solution for dateproblems from frontend ajax post requests
+     * convert given Date format into agp longTimestamp and set value
      *
-     * @param $value
-     * @param $format
+     * @param string $value
      * @return FormentryBase
+     * @throws \Exception
      */
-    public function setValueByDateFormat(string $value, string $format = 'm/d/Y'): FormentryBase
+    public function setValueFromFormattedDate(?string $value): FormentryBase
     {
-        if (!empty($value) && !Date::isDateValue($value)) {
-            $value = Date::fromDateTime(\DateTime::createFromFormat($format, $value));
+        if ($value !== null) {
+            $time = new \DateTime($value);
+            $value = Date::fromDateTime($time);
         }
 
         return $this->setStrValue($value);
@@ -173,7 +174,7 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
     public function jsonSerialize(): array
     {
         $fieldParams = parent::jsonSerialize();
-        $fieldParams['value']       = $this->getValueAsFormattedDate();
+        $fieldParams['value']       = !empty($this->getStrValue()) ? $this->getValueAsFormattedDate() : '';
         $fieldParams['displayType'] = $this->displayType;
         $fieldParams['dateFormat']  = Carrier::getInstance()->getObjLang()->getLang('dateStyle_' . $this->displayType, 'system');
 
