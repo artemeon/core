@@ -28,7 +28,6 @@ use Kajona\System\System\ValidationError;
 use Kajona\System\System\ValidatorInterface;
 use Kajona\System\System\Validators\SystemidValidator;
 use Kajona\System\View\Components\Tabbedcontent\Tabbedcontent;
-use phpDocumentor\Reflection\Types\Boolean;
 
 /**
  * The admin-form generator is used to create, validate and manage forms for the backend.
@@ -1619,7 +1618,7 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
      */
     public function getFormParams(): ?array
     {
-        return $this->formParams ?? null;
+        return $this->formParams;
     }
 
     /**
