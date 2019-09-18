@@ -65,16 +65,15 @@ class SearchApiController implements ApiControllerInterface
         if ($filtermodules != "") {
             $objSearch->setFilterModules($filtermodules);
         }
-        if ($search_changestartdate != "") {
-            $objDate = new Date();
-            $objDate->generateDateFromParams('search_changestartdate', ['search_changestartdate' => $search_changestartdate]);
-            $objSearch->setObjChangeStartdate($objDate);
+
+        if (!empty($search_changestartdate)) {
+            $startDate = new \DateTime($search_changestartdate);
+            $objSearch->setObjChangeStartdate(Date::fromDateTime($startDate));
         }
 
-        if ($search_changeenddate != "") {
-            $objDate = new Date();
-            $objDate->generateDateFromParams("search_changeenddate", ["search_changeenddate" => $search_changeenddate]);
-            $objSearch->setObjChangeEnddate($objDate);
+        if (!empty($search_changeenddate)) {
+            $endDate = new \DateTime($search_changeenddate);
+            $objSearch->setObjChangeEnddate(Date::fromDateTime($endDate));
         }
 
         if ($search_formfilteruser_id != "") {
