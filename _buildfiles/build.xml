@@ -352,9 +352,8 @@
     </target>
 
     <target name="lint" description="Perform syntax check of sourcecode files">
-        <apply executable="${path.php}" failonerror="true" output="${basedir}${buildPath}/logs/lint.log">
+        <apply executable="${path.php}" failonerror="true" outputproperty="discarded" logError="true">
             <arg value="-l" />
-
             <fileset dir="${basedir}${projectPath}">
                 <include name="**/*.php" />
                 <exclude name="**/vendor/**" />
