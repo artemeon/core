@@ -41,22 +41,22 @@ class SearchApiController implements ApiControllerInterface
      * @QueryParam(name="search_changestartdate", type="string", description="start date filter" , location="body")
      * @QueryParam(name="search_changeenddate", type="string", description="end date filter" , location="body")
      * @QueryParam(name="search_formfilteruser_id", type="string", description="id of the required user" , location="body")
-     * @param array $requestBody
      * @param HttpContext $context
      * @return HttpResponse
      * @throws Exception
+     * @throws \Exception
      * @api
-     * @method POST
+     * @method GET
      * @path /v1/search
      * @authorization usertoken
      */
-    public function getFilteredSearch(array $requestBody, HttpContext $context): HttpResponse
+    public function getFilteredSearch(HttpContext $context): HttpResponse
     {
-        $search_query = $requestBody['search_query'];
-        $filtermodules = $requestBody['filtermodules'];
-        $search_changestartdate = $requestBody['search_changestartdate'];
-        $search_changeenddate = $requestBody['search_changeenddate'];
-        $search_formfilteruser_id = $requestBody['search_formfilteruser_id'];
+        $search_query = $context->getParameter('search_query');
+        $filtermodules = $context->getParameter('filtermodules');
+        $search_changestartdate = $context->getParameter('search_changestartdate');
+        $search_changeenddate = $context->getParameter('search_changeenddate');
+        $search_formfilteruser_id = $context->getParameter('search_formfilteruser_id');
         $objSearch = new SearchSearch();
 
         if ($search_query != "") {
