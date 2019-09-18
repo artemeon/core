@@ -1,6 +1,5 @@
-import axios from 'axios'
-import to from 'await-to-js'
 import { SearchResult, FilterModule, User } from '../Interfaces/SearchInterfaces'
+import SearchServices from '../services/SearchServices'
 
 const SearchModule = {
     namespaced: true,
@@ -88,18 +87,15 @@ const SearchModule = {
         async triggerSearch ({ commit, state }) : Promise<void> {
             commit('SET_SHOW_RESULTS_NUMBER', false)
             commit('START_LOADING')
-            const [err, res] = await to(axios({
-                url: 'api.php/v1/search',
-                method: 'POST',
-                data: {
-                    search_query: state.searchQuery !== '' ? state.searchQuery : undefined,
-                    filtermodules: state.selectedIds.length !== 0 ? state.selectedIds : undefined,
-                    search_changestartdate: state.startDate !== '' ? state.startDate : undefined,
-                    search_changeenddate: state.endDate !== '' ? state.endDate : undefined,
-                    search_formfilteruser_id: state.selectedUser !== '' ? state.selectedUser : undefined
+            const [err, res] = await SearchServices.triggerSearch(
+                {
+                    searchQuery: state.searchQuery !== '' ? state.searchQuery : undefined,
+                    selectedIds: state.selectedIds.length !== 0 ? state.selectedIds : undefined,
+                    startDate: state.startDate !== '' ? state.startDate : undefined,
+                    endDate: state.endDate !== '' ? state.endDate : undefined,
+                    selectedUser: state.selectedUser !== '' ? state.selectedUser : undefined
                 }
-
-            }))
+            )
             if (res) {
                 commit('SET_SEARCH_RESULTS', res.data)
             }
@@ -135,11 +131,7 @@ const SearchModule = {
         },
         async getFilterModules ({ commit }) : Promise<void> {
             commit('START_LOADING')
-            const [err, res] = await to(axios({
-                url: 'api.php/v1/search/modules',
-                method: 'GET'
-            }))
-
+            const [err, res] = await SearchServices.getFilterModules()
             if (res) {
                 commit('SET_FILTER_MODULES', res.data)
             }
@@ -150,18 +142,9 @@ const SearchModule = {
         },
         async getAutocompleteUsers ({ commit }, userQuery :string) : Promise<void> {
             commit('SET_FETCHING_USERS', true)
-            const [err, res] = await to(axios({
-                url: '/xml.php',
-                method: 'POST',
-                params: {
-                    module: 'user',
-                    action: 'getUserByFilter',
-                    user: true,
-                    group: false,
-                    filter: userQuery !== '' ? userQuery : undefined
-                }
-            }))
-
+            const [err, res] = await SearchServices.getAutocompleteUsers({
+                userQuery: userQuery !== '' ? userQuery : undefined
+            })
             if (res) {
                 commit('SET_AUTOCPMPLETE_USERS', res.data)
             }
