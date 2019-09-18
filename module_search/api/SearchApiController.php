@@ -36,11 +36,11 @@ class SearchApiController implements ApiControllerInterface
     /**
      * returns filtered search results
      *
-     * @QueryParam(name="search_query", type="string", description="the search query" , location="body")
-     * @QueryParam(name="filtermodules", type="array", description="array containing the ids of the required modules" , location="body")
-     * @QueryParam(name="search_changestartdate", type="string", description="start date filter" , location="body")
-     * @QueryParam(name="search_changeenddate", type="string", description="end date filter" , location="body")
-     * @QueryParam(name="search_formfilteruser_id", type="string", description="id of the required user" , location="body")
+     * @QueryParam(name="search_query", type="string", description="the search query")
+     * @QueryParam(name="filtermodules", type="array", description="array containing the ids of the required modules")
+     * @QueryParam(name="search_changestartdate", type="string", description="start date filter")
+     * @QueryParam(name="search_changeenddate", type="string", description="end date filter")
+     * @QueryParam(name="search_formfilteruser_id", type="string", description="id of the required user")
      * @param HttpContext $context
      * @return HttpResponse
      * @throws Exception
