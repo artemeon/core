@@ -241,7 +241,6 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     final public function readValues()
     {
         foreach ($this->arrFields as $objOneField) {
-            $objOneField->setFormParams($this->formParams);
             $objOneField->readValue();
         }
     }
@@ -1173,15 +1172,16 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
      * Returns a single entry form the fields, identified by its form-entry-name.
      *
      * @param string $entryName
-     * @return FormentryBase
+     * @return FormentryBase|null
      */
-    public function getFieldByEntryName(string $entryName): FormentryBase
+    public function getFieldByEntryName(string $entryName): ?FormentryBase
     {
         $formEntry = array_filter($this->arrFields, static function(FormentryBase $field) use ($entryName): bool {
             return $field->getStrEntryName() === $entryName;
         });
+        $field = array_shift($formEntry);
 
-        return array_shift($formEntry);
+        return $field instanceof FormentryBase ? $field : null;
     }
 
     /**
