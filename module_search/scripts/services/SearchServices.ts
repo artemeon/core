@@ -41,11 +41,9 @@ class SearchServices {
 
     public static async getAutocompleteUsers (payload) : Promise<any[]> {
         const [err, res] = await to(axios({
-            url: '/xml.php',
-            method: 'POST',
+            url: '/api.php/v1/user/filter',
+            method: 'GET',
             params: {
-                module: 'user',
-                action: 'getUserByFilter',
                 user: true,
                 group: false,
                 filter: payload.userQuery
