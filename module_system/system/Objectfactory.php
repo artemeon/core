@@ -46,6 +46,10 @@ final class Objectfactory
      */
     private $objectCache = [];
 
+    /**
+     * @deprecated use dependency injection instead
+     * @return Objectfactory
+     */
     public static function getInstance(): self
     {
         if (isset(self::$instance)) {
