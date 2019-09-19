@@ -12,8 +12,8 @@ namespace Kajona\System\System\Messagequeue\Command;
 use Kajona\System\System\Messagequeue\CommandInterface;
 
 /**
- * Command to send a message to several receivers in the background, especially useful if you send a messsage to many
- * recipients
+ * Command to set rights recursively in the background. This is useful if you want to change the rights of a large
+ * object hierarchy
  *
  * @author christoph.kappestein@artemeon.de
  * @since 7.2
