@@ -1,8 +1,10 @@
 import $ from 'jquery'
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator'
 import uuid from 'uuid/v1'
+
 @Component class Modal extends Vue {
 @Prop({ type: Boolean, required: true, default: false }) show : boolean
+@Prop({ type: String, required: false }) title : string
 private modalId : string = uuid()
 
 private mounted () : void{
