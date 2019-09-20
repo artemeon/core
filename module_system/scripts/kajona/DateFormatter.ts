@@ -6,12 +6,12 @@ class DateFormatter {
      * Formats a Date into RFC3339 timestamp
      * @param date javascript Date
      */
-    public static rfc3339(date: Date) {
-        function pad(n: number) {
-            return n < 10 ? "0" + n : n
+    public static rfc3339(date: Date): string {
+        function pad(n: number): string {
+            return n < 10 ? "0" + n : n.toString()
         }
 
-        function timezoneOffset(offset: number) {
+        function timezoneOffset(offset: number): string {
             let sign
             if (offset === 0) {
                 return "+00:00"
