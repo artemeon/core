@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <title>{{ "commons_skin_title"|lang("commons") }} [{{ webpathTitle|raw }}]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow" />
-    <meta name="generator" content="Kajona Core, https://github.com/artemeon/core" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="robots" content="noindex, nofollow"/>
+    <meta name="generator" content="Kajona Core, https://github.com/artemeon/core"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
     {{ head|raw }}
     <script src="_webpath_/files/extract/assets/less.min.js?_system_browser_cachebuster_"></script>
@@ -31,7 +31,18 @@
                     {{ login|raw }}
                 </div>
                 <div class="col-md-8 col-sm-9 hidden-xs" style="text-align: right;">
-                    <div id="searchbarContainer"></div>
+                    <form class="navbar-search pull-left ">
+                        <div class="input-group">
+                            <input class="form-control search-query"
+                                   placeholder="{{ "globalSearchPlaceholder"|lang("dashboard") }}"
+                                   id="globalSearchInput"
+                                   onclick="document.body.dispatchEvent(new Event('openSearchbar'))"
+                            />
+                            <span class="input-group-addon">
+                                <i class="fa fa-search" aria-hidden="true"></i>
+                            </span>
+                        </div>
+                    </form>
                     <div class="pull-right header-logo" onclick="document.location='#'">
                         &nbsp;
                     </div>
@@ -50,9 +61,9 @@
             <div class="sidebar-nav" id="moduleNavigation">
             </div>
             <script type="text/javascript">
-                 if (!Util.isStackedDialog()) {
-                        ModuleNavigation.loadNavigation();
-                    }
+                if (!Util.isStackedDialog()) {
+                    ModuleNavigation.loadNavigation();
+                }
             </script>
 
         </div>
@@ -184,11 +195,14 @@
     </div>
 </div>
 
-<div id="jsStatusBox" class="" style="display: none; position: absolute;"><div class="jsStatusBoxHeader">Status-Info</div><div id="jsStatusBoxContent" class="jsStatusBoxContent"></div></div>
+<div id="jsStatusBox" class="" style="display: none; position: absolute;">
+    <div class="jsStatusBoxHeader">Status-Info</div>
+    <div id="jsStatusBoxContent" class="jsStatusBoxContent"></div>
+</div>
 
-   <script type="text/javascript">
-        App.init();
-        App.initVue();
-    </script>
+<script type="text/javascript">
+    App.init();
+    App.initVue();
+</script>
 </body>
 </html>
