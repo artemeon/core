@@ -276,11 +276,12 @@ abstract class AdminSimple extends AdminController
      * @param bool $bitAllowTreeDrop
      * @param string $strPagerAddon
      * @param Closure $objFilter
+     * @param bool $addNewActions
      *
      * @throws Exception
      * @return string
      */
-    final protected function renderList(ArraySectionIterator $objArraySectionIterator, $bitSortable = false, $strListIdentifier = "", $bitAllowTreeDrop = false, $strPagerAddon = "", Closure $objFilter = null)
+    final protected function renderList(ArraySectionIterator $objArraySectionIterator, $bitSortable = false, $strListIdentifier = "", $bitAllowTreeDrop = false, $strPagerAddon = "", Closure $objFilter = null, $addNewActions = true)
     {
         $strReturn = "";
 
@@ -328,7 +329,7 @@ abstract class AdminSimple extends AdminController
             $strReturn .= $this->objToolkit->simpleAdminList($objOneIterable, $strActions, count($arrMassActions) > 0);
         }
 
-        $strNewActions = $this->mergeNewEntryActions($this->getNewEntryAction($strListIdentifier));
+        $strNewActions = $addNewActions ? $this->mergeNewEntryActions($this->getNewEntryAction($strListIdentifier)) : "";
         $strBatchActions = "";
 
         if (count($arrMassActions) > 0) {

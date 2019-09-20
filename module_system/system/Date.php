@@ -24,7 +24,7 @@ use DateTime;
  * @package module_system
  * @author sidler@mulchprod.de
  */
-class Date
+class Date implements \JsonSerializable
 {
 
     const INT_DAY_SUNDAY = 0;
@@ -72,6 +72,12 @@ class Date
             }
         }
     }
+
+    public function jsonSerialize()
+    {
+        return $this->getLongTimestamp();
+    }
+
 
     /**
      * Validates if the passed param is a valid date timestamp
