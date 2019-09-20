@@ -12,12 +12,12 @@ class DateFormatter {
         }
 
         function timezoneOffset(offset: number) {
-            let sign;
+            let sign
             if (offset === 0) {
                 return "+00:00"
             }
-            sign = (offset > 0) ? "-" : "+";
-            offset = Math.abs(offset);
+            sign = (offset > 0) ? "-" : "+"
+            offset = Math.abs(offset)
             return sign + pad(Math.floor(offset / 60)) + ":" + pad(offset % 60)
         }
 
