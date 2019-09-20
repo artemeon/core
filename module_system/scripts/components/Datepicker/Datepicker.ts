@@ -6,20 +6,20 @@ import DateFormatter from "core/module_system/scripts/kajona/DateFormatter"
 
 @Component
 class Datepicker extends Vue {
-    @Prop({type: String, required: true}) label!: string;
-    @Prop({type: String, required: true}) format!: string;
-    @Prop({type: String, required: false}) displayType!: string;
-    @Prop({type: String, required: false}) tooltip!: string;
-    @Prop({type: String, required: false}) value!: string;
+    @Prop({type: String, required: true}) label!: string
+    @Prop({type: String, required: true}) format!: string
+    @Prop({type: String, required: false}) displayType!: string
+    @Prop({type: String, required: false}) tooltip!: string
+    @Prop({type: String, required: false}) value!: string
 
-    private id: string = uuid();
-    private actionBtnId: string = uuid();
+    private id: string = uuid()
+    private actionBtnId: string = uuid()
 
     private mounted(): void {
         if (this.tooltip) {
             Tooltip.addTooltip($('#' + this.actionBtnId), this.tooltip)
         }
-        let input: JQuery<HTMLElement>;
+        let input: JQuery<HTMLElement>
         if (this.displayType === 'years') {
             input = $('#' + this.id).datepicker({
                 format: this.format,
@@ -54,12 +54,12 @@ class Datepicker extends Vue {
     }
 
     private onDateChange(e: DatepickerEventObject): void {
-        const date = DateFormatter.rfc3339($('#' + this.id).datepicker('getDate'));
+        const date = DateFormatter.rfc3339($('#' + this.id).datepicker('getDate'))
         this.$emit('change', date)
     }
 
     private deleteInput(): void {
-        $('#' + this.id).val('');
+        $('#' + this.id).val('')
         this.$emit('change', null)
     }
 }
