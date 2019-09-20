@@ -1,13 +1,13 @@
 interface SearchResult {
-    description : String,
-    icon : String,
-    link : String,
-    module : String,
-    score : String,
-    systemid : String,
-    additionalInfos : String,
-    lastModifiedBy : String,
-    lastModifiedTime : String
+    description : string,
+    icon : string,
+    link : string,
+    module : string,
+    score : string,
+    systemid : string,
+    additionalInfos : string,
+    lastModifiedBy : string,
+    lastModifiedTime : string
 }
 interface FilterModule{
     module : string,
