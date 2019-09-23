@@ -2,89 +2,83 @@ import pell from 'pell'
 import Lang from './Lang'
 
 class Editor {
-
-    public static init(name: string, content) {
+    public static init (name: string, content) {
         // Initialize pell on an HTMLElement
-        let bold: string;
-        let italic: string;
-        let underline:string;
-        let strike_through: string;
-        let heading1: string;
-        let heading2: string;
-        let ordered_list: string;
-        let unordered_list: string;
-        let horizontal_line: string;
+        let bold: string
+        let italic: string
+        let underline:string
+        let strikeThrough: string
+        let heading1: string
+        let heading2: string
+        let orderedList: string
+        let unorderedList: string
+        let horizontalLine: string
 
-        var $objInput = $('#' + name);
-        $objInput.on('kajona.forms.mandatoryAdded', function() {
-            document.getElementById(name + "_pell").getElementsByClassName( 'pell-content' )[0].classList.add("mandatoryFormElement");
-        });
-
-        const queryCommandState = command => document.queryCommandState(command);
+        const queryCommandState = command => document.queryCommandState(command)
 
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_bold',
             function (value: string) {
-                bold  = value
-            });
+                bold = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_italic',
             function (value: string) {
-                italic  = value
-            });
+                italic = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_underline',
             function (value: string) {
-                underline  = value
-            });
+                underline = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_strike_through',
             function (value: string) {
-                strike_through  = value
-            });
+                strikeThrough = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_heading1',
             function (value: string) {
-                heading1  = value
-            });
+                heading1 = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_heading2',
             function (value: string) {
-                italic  = value
-            });
+                italic = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_ordered_list',
             function (value: string) {
-                ordered_list  = value
-            });
+                orderedList = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_unordered_list',
             function (value: string) {
-                unordered_list  = value
-            });
+                unorderedList = value
+            })
         Lang.fetchSingleProperty(
             'system',
             'wysiwyg_horizontal_line',
             function (value: string) {
-                horizontal_line  = value
+                horizontalLine = value
             })
 
         pell.init({
-            element: document.getElementById(name + "_pell"),
+            element: document.getElementById(name + '_pell'),
             onChange: html => {
-                (<HTMLInputElement>document.getElementById(name)).innerHTML = html;
+                (<HTMLInputElement>document.getElementById(name)).innerHTML = html
             },
             defaultParagraphSeparator: 'br',
             actions: [
-               {
+                {
                     icon: '<b>B</b>',
                     title: bold,
                     state: () => queryCommandState('bold'),
@@ -104,7 +98,7 @@ class Editor {
                 },
                 {
                     icon: '<strike>S</strike>',
-                    title: strike_through,
+                    title: strikeThrough,
                     state: () => queryCommandState('strikeThrough'),
                     result: () => pell.exec('strikeThrough')
                 },
@@ -120,22 +114,22 @@ class Editor {
                 },
                 {
                     icon: '&#35;',
-                    title: ordered_list,
+                    title: orderedList,
                     state: () => queryCommandState('insertOrderedList'),
                     result: () => pell.exec('insertOrderedList')
                 },
                 {
                     icon: '&#8226;',
-                    title: unordered_list,
+                    title: unorderedList,
                     state: () => queryCommandState('insertUnorderedList'),
                     result: () => pell.exec('insertUnorderedList')
                 },
                 {
                     icon: '&#8213;',
-                    title: horizontal_line,
+                    title: horizontalLine,
                     state: () => queryCommandState('insertHorizontalRule'),
                     result: () => pell.exec('insertHorizontalRule')
-                },
+                }
             ],
 
             classes: {
@@ -146,17 +140,22 @@ class Editor {
             }
         })
     }
-    public  static setContent(name, content) {
+    public static setContent (name, content) {
         var decodeHTML = function (html) {
-            var txt = document.createElement('textarea');
-            txt.innerHTML = html;
-            return txt.value;
-        };
+            var txt = document.createElement('textarea')
+            txt.innerHTML = html
+            return txt.value
+        }
         var decoded = decodeHTML(content);
-        (<HTMLInputElement>document.getElementById(name + "_pell").getElementsByClassName( 'pell-content' )[0]).innerHTML = decoded;
-        (<HTMLInputElement>document.getElementById(name)).innerHTML = content;
-    }
+        (<HTMLInputElement>document.getElementById(name + '_pell').getElementsByClassName('pell-content')[0]).innerHTML = decoded;
+        (<HTMLInputElement>document.getElementById(name)).innerHTML = content
 
+        document.getElementById(name + '_pell').getElementsByClassName('pell-content')[0].classList.add('form-control')
+        var $objInput = $('#' + name)
+        $objInput.on('kajona.forms.mandatoryAdded', function () {
+            document.getElementById(name + '_pell').getElementsByClassName('pell-content')[0].classList.add('mandatoryFormElement')
+        })
+    }
 }
 ;(<any>window).Editor = Editor
 export default Editor
