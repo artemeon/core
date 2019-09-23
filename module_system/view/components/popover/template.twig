@@ -1,6 +1,10 @@
 
 <div class="core-component-popover">
-    <span href="#" title="{{ title|escape("html_attr") }}" data-toggle="popover" data-html="true" data-placement="{{ placement|escape("html_attr") }}" data-trigger="{{ trigger|escape("html_attr") }}" id="{{ id|escape("html_attr") }}">{{ link|raw }}</span>
+    <a href="#" title="{{ title|escape("html_attr") }}" data-toggle="popover" data-html="true" data-placement="{{ placement|escape("html_attr") }}" data-trigger="{{ trigger|escape("html_attr") }}" id="{{ id|escape("html_attr") }}" onclick="return false;">
+        <span class="popover-tooltip-icon">
+            {{ link|raw }}
+        </span>
+    </a>
 
     {% if contentEndpoint %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}"></div>
