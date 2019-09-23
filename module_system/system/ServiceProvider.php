@@ -5,6 +5,7 @@ namespace Kajona\System\System;
 use Kajona\System\System\Messagequeue\Consumer;
 use Kajona\System\System\Messagequeue\Executor\CallEventExecutor;
 use Kajona\System\System\Messagequeue\Executor\SendMessageExecutor;
+use Kajona\System\System\Messagequeue\Executor\SetRecursiveRightsExecutor;
 use Kajona\System\System\Messagequeue\ExecutorFactory;
 use Kajona\System\System\Messagequeue\Producer;
 use Kajona\System\System\Lifecycle\User\GroupLifecycle;
@@ -175,6 +176,11 @@ class ServiceProvider implements ServiceProviderInterface
      * @see \Kajona\System\System\Messagequeue\Executor\SendMessageExecutor
      */
     const MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE = "system_message_queue_executor_send_message";
+
+    /**
+     * @see SetRecursiveRightsExecutor
+     */
+    const RECURSIVE_RIGHT_EXECUTOR = "system_recursive_right_executor";
 
     public function register(Container $objContainer)
     {
@@ -361,6 +367,12 @@ class ServiceProvider implements ServiceProviderInterface
 
         $objContainer[self::MESSAGE_QUEUE_EXECUTOR_SEND_MESSAGE] = function ($c) {
             return new SendMessageExecutor();
+        };
+
+        $objContainer[self::RECURSIVE_RIGHT_EXECUTOR] = function ($c) {
+            return new SetRecursiveRightsExecutor(
+                $c[self::STR_RIGHTS]
+            );
         };
     }
 }
