@@ -2,7 +2,15 @@
   "env": {
     "node": true
   },
-  "extends": ["plugin:vue/essential", "@vue/standard", "@vue/typescript"],
+  "extends": [
+    "plugin:vue/recommended",
+    // "plugin:vue/essential", 
+    "@vue/standard",
+     "@vue/typescript",
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
     "max-len": ["error", { "code": 240 }],
     "import/newline-after-import": ["error", { "count": 1 }],
@@ -32,6 +40,11 @@
     ]
   },
   "parserOptions": {
-    "parser": "@typescript-eslint/parser"
+    // "parser": "@typescript-eslint/parser"
+    // "parser" : "babel-eslint"
+    // "parser" : "vue-eslint-parser"
+    "parser": "babel-eslint",
+      "ecmaVersion": 2017,
+      "sourceType": "module"
   }
 }
