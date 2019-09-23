@@ -54,7 +54,24 @@ class Consumer
         $this->logger = $logger;
     }
 
-    public function consumeAll(): void
+    /**
+     * Consumes all command from the queue. Note you most likely want to use the consumeCommands method. You should only
+     * use this method if it is required that every pending command is executed, this may take some time
+     *
+     * @internal
+     */
+    public function consumeAllCommands(): void
+    {
+        while ($this->hasPending()) {
+            $this->consumeCommands();
+        }
+    }
+
+    /**
+     * Consumes pending commands from the queue. We consume max MAX_PREFETCH entries and there is also a time limit
+     * after which the method returns
+     */
+    public function consumeCommands(): void
     {
         $startTime = time();
         $result = $this->connection->getPArray('SELECT command_id, command_class, command_payload FROM agp_system_commands', [], 0, self::MAX_PREFETCH, false);
@@ -67,7 +84,7 @@ class Consumer
             $class = $row['command_class'];
             $payload = \json_decode($row['command_payload'], true);
 
-            $this->consume($class, $payload);
+            $this->consumeCommand($class, $payload);
 
             // in case this workflow runs too long break and wait for the next execution
             if (time() - $startTime > self::MAX_EXECUTION) {
@@ -77,10 +94,12 @@ class Consumer
     }
 
     /**
+     * Consumes a single command
+     *
      * @param string $class
      * @param array $payload
      */
-    private function consume(string $class, array $payload): void
+    private function consumeCommand(string $class, array $payload): void
     {
         // check whether the event class exists
         if (!class_exists($class)) {
@@ -102,5 +121,16 @@ class Consumer
         } catch (\Throwable $e) {
             $this->logger->error($e->getMessage());
         }
+    }
+
+    /**
+     * Returns whether there are pending commands in the queue
+     *
+     * @return bool
+     */
+    private function hasPending(): bool
+    {
+        $row = $this->connection->getPRow('SELECT COUNT(*) AS cnt FROM agp_system_commands', [], 0, false);
+        return $row['cnt'] > 0;
     }
 }

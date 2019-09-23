@@ -1,0 +1,29 @@
+<?php
+
+/*"******************************************************************************************************
+*   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
+*       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
+*-------------------------------------------------------------------------------------------------------*
+*	$Id$                                                                                                *
+********************************************************************************************************/
+
+if (\http_response_code() !== false) {
+    die('only command line usage is allowed');
+}
+
+if (\is_dir('./core/module_system/')) {
+    require_once './core/module_system/bootstrap.php';
+} else {
+    require_once 'phar://' . __DIR__ . '/core/module_system.phar/bootstrap.php';
+}
+
+use AGP\Console\Console\CommandLoader;
+use Kajona\System\System\Carrier;
+use Symfony\Component\Console\Application;
+
+$container = Carrier::getInstance()->getContainer();
+$commandLoader = $container[CommandLoader::class];
+
+$application = new Application();
+$application->setCommandLoader($commandLoader);
+$application->run();
