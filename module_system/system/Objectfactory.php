@@ -79,8 +79,12 @@ final class Objectfactory
      * @param bool $ignoreCache
      * @return Root|null
      */
-    public function getObject(string $systemId, bool $ignoreCache = false): ?Root
+    public function getObject(?string $systemId, bool $ignoreCache = false): ?Root
     {
+        if ($systemId === null) {
+            return null;
+        }
+
         if (!$ignoreCache && isset($this->objectCache[$systemId])) {
             return $this->objectCache[$systemId];
         }
