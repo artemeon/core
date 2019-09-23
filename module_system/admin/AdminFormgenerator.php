@@ -196,6 +196,12 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     private $strFormSentAddon = "";
 
     /**
+     * form params for filling formValues from outside
+     * @var array|null
+     */
+    private $formParams;
+
+    /**
      * Creates a new instance of the form-generator.
      *
      * @param string $strFormname
@@ -1147,19 +1153,35 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     }
 
     /**
-     * Returns a single entry form the fields, identified by its form-entry-name.
+     * Returns a single entry form the fields, identified by its name.
      *
      * @param string $strName
      *
-     * @return FormentryBase|FormentryInterface
+     * @return FormentryBase
      */
     public function getField($strName)
     {
         if (isset($this->arrFields[$strName])) {
             return $this->arrFields[$strName];
-        } else {
-            return null;
         }
+
+        return null;
+    }
+
+    /**
+     * Returns a single entry form the fields, identified by its form-entry-name.
+     *
+     * @param string $entryName
+     * @return FormentryBase|null
+     */
+    public function getFieldByEntryName(string $entryName): ?FormentryBase
+    {
+        $formEntry = array_filter($this->arrFields, static function(FormentryBase $field) use ($entryName): bool {
+            return $field->getStrEntryName() === $entryName;
+        });
+        $field = array_shift($formEntry);
+
+        return $field instanceof FormentryBase ? $field : null;
     }
 
     /**
@@ -1523,7 +1545,7 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
      * Returns array of errors for the form.
      *
      * @return array
-     * @throws \Kajona\System\System\Exception
+     * @throws Exception
      */
     protected function getArrValidationFormErrors()
     {
@@ -1589,6 +1611,22 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     public function setStrFormSentAddon(string $strFormSentAddon)
     {
         $this->strFormSentAddon = $strFormSentAddon;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getFormParams(): ?array
+    {
+        return $this->formParams;
+    }
+
+    /**
+     * @param array|null $formParams
+     */
+    public function setFormParams(?array $formParams): void
+    {
+        $this->formParams = $formParams;
     }
 
 }
