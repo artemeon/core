@@ -15,6 +15,11 @@ class Editor {
         let unordered_list: string;
         let horizontal_line: string;
 
+        var $objInput = $('#' + name);
+        $objInput.on('kajona.forms.mandatoryAdded', function() {
+            document.getElementById(name + "_pell").getElementsByClassName( 'pell-content' )[0].classList.add("mandatoryFormElement");
+        });
+
         const queryCommandState = command => document.queryCommandState(command);
 
         Lang.fetchSingleProperty(
