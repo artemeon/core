@@ -2,7 +2,7 @@ import pell from 'pell'
 import Lang from './Lang'
 
 class Editor {
-    public static init (name: string, content) {
+    public static init (name: string) {
         // Initialize pell on an HTMLElement
         let bold: string
         let italic: string
