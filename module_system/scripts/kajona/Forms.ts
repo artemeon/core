@@ -142,12 +142,12 @@ class Forms {
     public static initForm (strFormid: string, onChangeDetection: Function) {
         $(
             '#' +
-                strFormid +
-                ' input , #' +
-                strFormid +
-                ' select , #' +
-                strFormid +
-                ' textarea '
+            strFormid +
+            ' input , #' +
+            strFormid +
+            ' select , #' +
+            strFormid +
+            ' textarea '
         ).each(function () {
             if ($(this).data('kajona-block-initval')) {
                 return
@@ -254,8 +254,8 @@ class Forms {
             .append(
                 $(
                     '<div class="changeHint text-warning"><span class="glyphicon glyphicon-warning-sign"></span> ' +
-                        strHint +
-                        '</div>'
+                    strHint +
+                    '</div>'
                 )
             )
     }
@@ -428,15 +428,13 @@ class Forms {
     // Auto-Grow-TextArea script.
     // Script copyright (C) 2011 www.cryer.co.uk.
     // Script is free to use provided this copyright header is included.
-    public static AutoGrowTextArea (textField) {
-         if (textField.clientHeight < textField.scrollHeight)
-         {
-             textField.style.height = textField.scrollHeight + "px";
-             if (textField.clientHeight < textField.scrollHeight)
-             {
-                 textField.style.height =
-                     (textField.scrollHeight * 2 - textField.clientHeight) + "px";
-             }
+    public static AutoGrowTextArea (textField: HTMLElement): void {
+        if (textField.clientHeight < textField.scrollHeight) {
+            textField.style.height = textField.scrollHeight + 'px'
+            if (textField.clientHeight < textField.scrollHeight) {
+                textField.style.height =
+                    (textField.scrollHeight * 2 - textField.clientHeight) + 'px'
+            }
         }
     }
 }
