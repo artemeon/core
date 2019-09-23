@@ -13,7 +13,6 @@ use Kajona\System\System\Reflection;
 use Kajona\System\System\StringUtil;
 use Kajona\System\System\Validators\DateValidator;
 use Kajona\System\View\Components\Formentry\Datesingle\Datesingle;
-use Kajona\System\View\Components\Formentry\Datetime\Datetime;
 
 
 /**
@@ -23,7 +22,14 @@ use Kajona\System\View\Components\Formentry\Datetime\Datetime;
  */
 class FormentryDate extends FormentryBase implements FormentryPrintableInterface
 {
+    const DISPLAY_DAYS      = 'days';
+    const DISPLAY_MONTHS    = 'months';
+    const DISPLAY_YEARS     = 'years';
 
+    /**
+     * @var string
+     */
+    protected $displayType = self::DISPLAY_DAYS;
 
     public function __construct($strFormName, $strSourceProperty, $objSourceObject = null)
     {
@@ -111,6 +117,22 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         return parent::setValueToObject();
     }
 
+    /**
+     * convert given Date format into agp longTimestamp and set value
+     *
+     * @param string $value
+     * @return FormentryBase
+     * @throws \Exception
+     */
+    public function setValueFromFormattedDate(?string $value): FormentryBase
+    {
+        if ($value !== null) {
+            $time = new \DateTime($value);
+            $value = Date::fromDateTime($time);
+        }
+
+        return $this->setStrValue($value);
+    }
 
     /**
      * Returns a textual representation of the formentries' value.
@@ -123,15 +145,39 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         $objDate = null;
         if ($this->getStrValue() instanceof Date) {
             $objDate = $this->getStrValue();
-        } elseif ($this->getStrValue() != "") {
+        } elseif ($this->getStrValue() !== '') {
             $objDate = new Date($this->getStrValue());
         }
 
-        if ($objDate != null) {
+        if ($objDate !== null) {
             return dateToString($objDate, false);
         }
 
-        return "";
+        return '';
     }
 
+    /**
+     * convert stored Date value of longTimestamp into ISO Date string
+     *
+     * @return string
+     */
+    public function getValueAsFormattedDate(): string
+    {
+        $date = new Date($this->getStrValue());
+
+        return date(\DateTime::RFC3339_EXTENDED, $date->getTimeInOldStyle());
+    }
+
+    /**
+     * @return array
+     */
+    public function jsonSerialize(): array
+    {
+        $fieldParams = parent::jsonSerialize();
+        $fieldParams['value']       = !empty($this->getStrValue()) ? $this->getValueAsFormattedDate() : '';
+        $fieldParams['displayType'] = $this->displayType;
+        $fieldParams['dateFormat']  = Carrier::getInstance()->getObjLang()->getLang('dateStyle_' . $this->displayType, 'system');
+
+        return $fieldParams;
+    }
 }
