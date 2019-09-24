@@ -251,8 +251,11 @@ class ServiceProvider implements ServiceProviderInterface
             return Lang::getInstance();
         };
 
-        $objContainer[self::STR_OBJECT_FACTORY] = function ($c) {
-            return Objectfactory::getInstance();
+        $objContainer[self::STR_OBJECT_FACTORY] = static function (Container $container): Objectfactory {
+            return new Objectfactory(
+                $container[self::STR_DB],
+                BootstrapCache::getInstance()
+            );
         };
 
         $objContainer[self::STR_OBJECT_BUILDER] = function ($c) {
