@@ -318,8 +318,8 @@ class AdminskinImageresolver implements AdminskinImageresolverInterface
         "icon_link" => "<i class='kj-icon fa fa-link'></i>",
         "icon_ra_container"       => "<i class='kj-icon fa fa-folder-o'></i>",
         "icon_ra_bait_container"  => "<span class='kj-icon fa-stack'><i class='fa fa-folder-o'></i><i class='fa fa-cogs fa-stack-1x kj-stack'></i></span>",
-        "icon_cluster"  => "<i class='kj-icon fa fa-cube'></i>",
-        "icon_sub_cluster"  => "<i class='kj-icon fa fa-cubes'></i>",
+        "icon_cluster"  => "<i class='kj-icon fa fa-cloud'></i>",
+        "icon_sub_cluster"  => "<i class='kj-icon fa fa-archive'></i>",
 
         //note: a copy of this markup is placed in agp_util.js and elements_artemeon.tpl::input_dropdown_ampel
         "icon_ampel_gelb" => "<span class='traffic-icon' data-kajona-icon='icon_ampel_gelb'><i class='kj-icon fa fa-circle-thin'></i><i class='kj-icon fa fa-circle orange'></i><i class='kj-icon fa fa-circle-thin'></i></span>",
