@@ -4,16 +4,19 @@
   },
   "extends": [
     "plugin:vue/recommended",
-    // "plugin:vue/essential", 
     "@vue/standard",
-     "@vue/typescript",
+    "@vue/typescript",
     "eslint:recommended",
     "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended", 
+    "airbnb-base"
   ],
   "rules": {
+    "@typescript-eslint/explicit-member-accessibility": "off",
+    "linebreak-style" :"off",
+    "import/no-unresolved" : "off",
     "max-len": ["error", { "code": 240 }],
-    "import/newline-after-import": ["error", { "count": 1 }],
+    "class-methods-use-this" : "off",
     "semi": ["error", "never"],
     "indent": [
       "error",
@@ -39,12 +42,8 @@
       { "avoidEscape": true, "allowTemplateLiterals": true }
     ]
   },
+  "parser": "vue-eslint-parser",
   "parserOptions": {
-    // "parser": "@typescript-eslint/parser"
-    // "parser" : "babel-eslint"
-    // "parser" : "vue-eslint-parser"
-    "parser": "babel-eslint",
-      "ecmaVersion": 2017,
-      "sourceType": "module"
+    "parser": "@typescript-eslint/parser"
   }
 }
