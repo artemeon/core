@@ -34,12 +34,9 @@ class BuildHelper
         }
 
         //trigger the setup script, try to get the matching one
-        foreach (array_reverse($arrCores) as $strOneCore) {
-            if (file_exists(__DIR__."/".$this->strProjectPath."/".$strOneCore."/setupproject.php")) {
-                require(__DIR__."/".$this->strProjectPath."/".$strOneCore."/setupproject.php");
-                break;
-            }
-        }
+        $filename = __DIR__ . DIRECTORY_SEPARATOR . $this->strProjectPath . "/core/setupproject.php";
+        echo "Calling {$filename}".PHP_EOL;
+        require($filename);
 
         echo "calling cleanCore script: php -f '".__DIR__."/cleanCore.php' '".$this->strProjectPath."'\n";
         $arrReturn = array();
