@@ -8,7 +8,7 @@
 const keymaps = [
     {
         keys: 'ctrl+f',
-        eventName: 'agp-search-open' // opens the searchbar
+        eventName: 'agp.search.open' // opens the searchbar
     }
 ]
 

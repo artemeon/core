@@ -28,7 +28,7 @@ class Searchbar extends Mixins(LangMixin(['search', 'dashboard', 'system'])) {
      private mounted () : void {
          var parent = document.getElementById('content')
          parent.appendChild(this.$el)
-         document.body.addEventListener('agp-search-open', this.shortcutHandler)
+         document.body.addEventListener('agp.search.open', this.shortcutHandler)
      }
      private onSubmit (e : Event) : void {
          e.preventDefault()
