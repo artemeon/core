@@ -4,10 +4,34 @@
     text-align: left;
     background-color: @gray-light;
     padding: 0.5em;
-    cursor: pointer;
+
+
+    .result-icon {
+      display: inline-block;
+      border: 2px solid @white;
+      background-color: @white;
+      border-radius: 50px;
+      width: 50px;
+      height: 50px;
+      padding-top: 7px;
+
+      i.kj-icon, span.kj-icon {
+        font-size: 2.5em;
+      }
+
+    }
+
+    .result-clickable {
+      cursor: pointer;
+    }
   }
 
   .searchResultContainer:hover {
     background-color: @white;
+
+    .result-icon {
+      background-color: @gray-light;
+      border-color: @gray-light;
+    }
   }
 }
