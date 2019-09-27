@@ -1,0 +1,31 @@
+
+.core-component-tabbedcontent {
+
+  .tab-content {
+    padding: 14px 4px 4px 4px;
+  }
+
+  .nav-tabs {
+    .error-text {
+      color: @alert-danger-text;
+    }
+
+    li a, li a:focus {
+      border: none;
+      color: @link-color;
+      padding: 7px 15px;
+      border-bottom: 4px solid transparent;
+    }
+
+    li a:hover {
+      border-bottom: 4px solid lighten(@kajona-brand-color, 10%);
+      background-color: transparent;
+    }
+
+    li.active a {
+      border-bottom: 4px solid @kajona-brand-color;
+    }
+  }
+
+
+}
