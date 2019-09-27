@@ -24,7 +24,7 @@ namespace Kajona\System\System;
  * @author sidler@mulchprod.de
  * @since 4.0
  */
-final class Objectfactory
+class Objectfactory
 {
     /**
      * @var Objectfactory
@@ -79,8 +79,12 @@ final class Objectfactory
      * @param bool $ignoreCache
      * @return Root|null
      */
-    public function getObject(string $systemId, bool $ignoreCache = false): ?Root
+    public function getObject(?string $systemId, bool $ignoreCache = false): ?Root
     {
+        if ($systemId === null) {
+            return null;
+        }
+
         if (!$ignoreCache && isset($this->objectCache[$systemId])) {
             return $this->objectCache[$systemId];
         }
@@ -126,7 +130,7 @@ final class Objectfactory
             $row = $this->database->getPRow('SELECT * FROM agp_system WHERE system_id = ?', [$systemId]);
         }
 
-        if (!\is_array($row) || !\is_string($row['system_class'])) {
+        if (!isset($row['system_class']) || !\is_string($row['system_class'])) {
             return '';
         }
 
