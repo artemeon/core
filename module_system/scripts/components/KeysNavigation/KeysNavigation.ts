@@ -10,6 +10,9 @@ private selectedElementPointer : number = -1
 private mounted () : void {
     document.getElementById(this.eventsParent).addEventListener('keydown', this.keyHandler)
     document.getElementById(this.eventsParent).addEventListener('focusout', this.onFocusOut)
+    if (document.getElementById(this.eventsParent).nodeName === 'INPUT') {
+        document.getElementById(this.eventsParent).addEventListener('input', this.resetPointer)
+    }
 }
 private beforeDestroy () : void {
     document.getElementById(this.eventsParent).removeEventListener('keydown', this.keyHandler)
@@ -56,6 +59,10 @@ private addClass () : void {
 }
 private removeClass () : void {
     (this.$slots.default[this.selectedElementPointer].elm as HTMLElement).classList.remove('keysNavigationSelectedElement')
+}
+private resetPointer () : void {
+    this.removeClass()
+    this.selectedElementPointer = -1
 }
 }
 
