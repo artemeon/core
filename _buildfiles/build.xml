@@ -158,14 +158,6 @@
     </target>
 
     <target name="installComposerBuildDependencies">
-        <!--echo>Composer Build Dependencies</echo>
-        <echo>Copy composer.json and composer.lock to ${basedir}${tempPath}</echo-->
-        <!--<copy todir="${basedir}${buildPath}/composerbuild" overwrite="true"  includeEmptyDirs="true" >-->
-            <!--<fileset id="composer.dirs" dir="${basedir}${composerPath}">-->
-                <!--<include name="composer.json"/>-->
-                <!--<include name="composer.lock"/>-->
-            <!--</fileset>-->
-        <!--</copy>-->
 
         <!--echo>Execute composer</echo-->
         <exec dir="${basedir}${composerPath}" executable="${path.composer}" failonerror="on" >
@@ -181,9 +173,6 @@
             <arg line=" install"/>
         </exec>
 
-        <exec dir="${basedir}" executable="${path.npm}" failonerror="on">
-            <arg line=" run build "/>
-        </exec>
     </target>
 
     <target name="postBuildWorkspaceClean" description="Deletes some folders created during the build to preserve diskspace">
@@ -219,7 +208,6 @@
         <copy todir="${targetDir}" overwrite="true"  includeEmptyDirs="true" >
             <fileset id="sources.dirs" dir="${basedir}${sourcesPath}">
                 <exclude name=".git"/>
-                <exclude name="files/extract/**"/>
                 <exclude name="files/cache/**"/>
                 <exclude name="project/log/**"/>
                 <exclude name="project/dbdumps"/>
@@ -251,10 +239,6 @@
             <param name="targetDir" value="${basedir}${tempPath}" />
         </antcall>
 
-        <exec executable="php" dir="${basedir}"  failonerror="on" >
-            <arg line="-f cleanCore.php ${tempPath}"/>
-        </exec>
-
         <antcall target="buildPackageHelper" />
         <antcall target="modulePharHelper" />
 
@@ -271,10 +255,6 @@
             <param name="targetDir" value="${basedir}${tempPath}" />
         </antcall>
 
-        <exec executable="php" dir="${basedir}"  failonerror="on" >
-            <arg line="-f cleanCore.php ${tempPath}"/>
-        </exec>
-
         <antcall target="buildPackageHelper" />
         <antcall target="encryptCodeSourceGuardian">
             <param name="phpversion" value="7"/>
@@ -290,10 +270,6 @@
         <antcall target="copy2project">
             <param name="targetDir" value="${basedir}${tempPath}" />
         </antcall>
-
-        <exec executable="php" dir="${basedir}"  failonerror="on" >
-            <arg line="-f cleanCore.php ${tempPath}"/>
-        </exec>
 
         <antcall target="buildPackageHelper" />
         <antcall target="encryptCodeSourceGuardian">
@@ -401,9 +377,8 @@
 
 
     <target name="lint" description="Perform syntax check of sourcecode files">
-        <apply executable="${path.php}" failonerror="true" output="${basedir}${buildPath}/logs/lint.log">
+        <apply executable="${path.php}" failonerror="true" outputproperty="discarded" logError="true">
             <arg value="-l" />
-
             <fileset dir="${basedir}${projectPath}">
                 <include name="**/*.php" />
                 <exclude name="**/vendor/**" />
@@ -417,7 +392,7 @@
             <arg path="${basedir}${projectPath}" />
             <arg value="xml" />
             <arg value="--exclude" />
-            <arg value="*yui*,*tcpdf*,*fonts*,*pchart*,*vendor*,*phpexcel*,*phpqrcode*" />
+            <arg value="*tcpdf*,*fonts*,*pchart*,*vendor*,*phpexcel*,*phpqrcode*" />
             <arg value="--reportfile" />
             <arg value="${basedir}${buildPath}/logs/pmd.xml" />
             <arg value="${basedir}/phpmd-ruleset.xml" />

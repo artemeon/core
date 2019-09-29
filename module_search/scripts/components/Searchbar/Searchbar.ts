@@ -26,9 +26,9 @@ class Searchbar extends Mixins(LangMixin(['search', 'dashboard', 'system'])) {
      private userInput : string = ''
      private inputTimer : number
      private mounted () : void {
-         var parent = document.getElementById('searchbarContainer')
+         var parent = document.getElementById('content')
          parent.appendChild(this.$el)
-         document.body.addEventListener('openSearchbar', this.shortcutHandler)
+         document.body.addEventListener('agp.search.open', this.shortcutHandler)
      }
      private onSubmit (e : Event) : void {
          e.preventDefault()
@@ -44,13 +44,9 @@ class Searchbar extends Mixins(LangMixin(['search', 'dashboard', 'system'])) {
          }, 500)
      }
      private open () : void {
-         let parent = document.getElementById('moduleOutput')
-         parent.appendChild(this.$el)
          this.openDialog()
      }
      private close () : void {
-         let parent = document.getElementById('searchbarContainer')
-         parent.appendChild(this.$el)
          this.closeDialog()
      }
       @Watch('searchQuery') onSearchQueryChange () {

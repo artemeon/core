@@ -22,7 +22,7 @@ class FormentryTextarea extends FormentryBase implements FormentryPrintableInter
 
     private $strOpener = "";
     private $bitLarge = false;
-    private $intNumberOfRows = 4;
+    private $intNumberOfRows = 1;
     private $strPlaceholder;
 
     public function __construct($strFormName, $strSourceProperty, $objSourceObject = null)
