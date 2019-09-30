@@ -18,8 +18,10 @@ namespace Kajona\System\System;
  */
 trait I18nTrait
 {
+    /** @var array */
     private static $availableLangs = [];
 
+    /** @var bool */
     private $i18NEnabled = false;
 
     /**
