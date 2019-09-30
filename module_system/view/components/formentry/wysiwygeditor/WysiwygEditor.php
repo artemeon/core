@@ -67,7 +67,7 @@ class WysiwygEditor extends FormentryComponentAbstract
     {
         parent::__construct($strName, $strTitle);
 
-        $this->content = $strContent;
+        $this->content = str_replace(array("\r","\n"),'',  $strContent);
         $this->toolbarset = $strToolbarset;
         $this->readOnly = $bitReadonly;
         $this->opener = $strOpener;
