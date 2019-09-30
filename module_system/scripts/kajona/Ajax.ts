@@ -39,76 +39,69 @@ class Ajax {
      * @param {String} strMethod default is GET
      * @param {Function} objCallback - is called if the request was successful
      */
-    public static loadUrlToElement(
+    public static async loadUrlToElement(
         strElementSelector: string | JQuery,
         strUrl: string,
         strData?: any,
         bitBlockLoadingContainer?: boolean,
         strMethod?: string,
         objCallback?: Function,
-    ): void {
-        WorkingIndicator.start()
-
+    ): Promise<void> {
+        // todo opacity change in globalaxios class
         const objElement = Util.getElement(strElementSelector)
         if (!bitBlockLoadingContainer) {
             objElement.html('<div class="loadingContainer"></div>')
         } else {
             objElement.css('opacity', '0.4')
         }
-
-        $.ajax({
-            type: strMethod || 'GET',
-            url:
-                strUrl.indexOf(KAJONA_WEBPATH) > -1
-                    ? strUrl
-                    : KAJONA_WEBPATH + strUrl,
+        // @ts-ignore
+        const [err, res] = await to(axios({
+            method: strMethod || 'GET',
+            url: strUrl.indexOf(KAJONA_WEBPATH) > -1
+                ? strUrl
+                : KAJONA_WEBPATH + strUrl,
             data: strData,
-        })
-            .done((data, status, xhr): void => {
-                // detect file download
-                const disposition = xhr.getResponseHeader('Content-Disposition')
-                if (disposition && disposition.indexOf('filename') !== -1) {
-                    // @TODO workaround to fix old file downloads. In case the ajax request returns a
-                    // Content-Disposition header we redirect the client to the url to trigger the file download
-                    // through the browser. Note you need to update the url of your download to point the user
-                    // directly to the file instead of using a hash route. With this workaround the user downloads
-                    // the file twice, once through the ajax call and then through the redirect.
-                    document.location.href = KAJONA_WEBPATH + strUrl
+        }))
+        if (err) {
+            if (res.status === 500) {
+                if (KAJONA_DEBUG === 1) {
+                    objElement.html(res.statusText)
                 } else {
-                    objElement.html(data)
-                    objElement.css('opacity', '1')
-
-                    Tooltip.initTooltip()
-
-                    if (typeof objCallback === 'function') {
-                        objCallback()
-                    }
+                    objElement.html(
+                        '<div class="alert alert-danger" role="alert">An error occurred. Please contact the system admin.</div>',
+                    )
                 }
-            })
-            .always((): void => {
-                WorkingIndicator.stop()
+            }
+
+            if (res.status === 401) {
+                objElement.html(res.statusText)
                 objElement.css('opacity', '1')
-            })
-            .fail((data): void => {
-                if (data.status === 500) {
-                    if (KAJONA_DEBUG === 1) {
-                        objElement.html(data.responseText)
-                    } else {
-                        objElement.html(
-                            '<div class="alert alert-danger" role="alert">An error occurred. Please contact the system admin.</div>',
-                        )
-                    }
-                }
+                return
+            }
 
-                if (data.status === 401) {
-                    objElement.html(data.responseText)
-                    objElement.css('opacity', '1')
-                    return
-                }
+            // maybe it was xml, so strip
+            StatusDisplay.messageError('<b>Request failed!</b><br />')
+        }
+        if (res) {
+            if (res.headers['content-disposition'] && res.headers['content-disposition'].indexOf('filename') !== -1) {
+                // @TODO workaround to fix old file downloads. In case the ajax request returns a
+                // Content-Disposition header we redirect the client to the url to trigger the file download
+                // through the browser. Note you need to update the url of your download to point the user
+                // directly to the file instead of using a hash route. With this workaround the user downloads
+                // the file twice, once through the ajax call and then through the redirect.
+                document.location.href = KAJONA_WEBPATH + strUrl
+            } else {
+                objElement.html(res.data)
+                objElement.css('opacity', '1')
 
-                // maybe it was xml, so strip
-                StatusDisplay.messageError('<b>Request failed!</b><br />')
-            })
+                Tooltip.initTooltip()
+
+                if (typeof objCallback === 'function') {
+                    objCallback()
+                }
+            }
+        }
+        objElement.css('opacity', '1')
     }
 
     /**
@@ -189,59 +182,22 @@ class Ajax {
         if (systemid) {
             data = this.getDataObjectFromString(systemid, true)
         }
-        // WorkingIndicator.start()
         // @ts-ignore
         const [err, res] = await to(axios({
             method: strMethod || 'POST',
             url: postTarget,
             data,
-
+            responseType: dataType,
         }))
         if (err && objCallback) {
-            objCallback(err)
+            objErrorCallback()
         }
-        if (res) {
-
+        if (res && objCallback) {
+            objCallback(res.data, res.status)
         }
-
-
-        $.ajax({
-            type: strMethod || 'POST',
-            url: postTarget,
-            data,
-            error(
-                xhr: JQuery.jqXHR,
-                textStatus: string,
-                errorThrown: string,
-            ): void {
-                if (objCallback) {
-                    objCallback(xhr, textStatus, errorThrown)
-                }
-            },
-            success(
-                successData: any,
-                textStatus: string,
-                xhr: JQuery.jqXHR,
-            ): void{
-                if (objCallback) {
-                    objCallback(successData, textStatus, xhr)
-                }
-            },
-            dataType: dataType || 'text',
-        })
-            .always((): void => {
-                WorkingIndicator.stop()
-            })
-            .fail((): void => {
-                if (objErrorCallback) {
-                    objErrorCallback()
-                }
-            })
-            .done((): void => {
-                if (objDoneCallback) {
-                    objDoneCallback()
-                }
-            })
+        if (objDoneCallback) {
+            objDoneCallback()
+        }
     }
 
     /**
