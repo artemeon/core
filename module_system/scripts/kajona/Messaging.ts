@@ -76,13 +76,12 @@ class Messaging {
             'messaging',
             'getUnreadMessagesCount',
             '',
-            (data: any, status: string): void => {
-                if (status === 'success') {
-                    const $objResult = $.parseJSON(data)
-                    objCallback($objResult.count)
+            (data: any, status: number): void => {
+                if (status === 200) {
+                    objCallback(data.count)
 
-                    if ($objResult.alert) {
-                        Messaging.renderAlert($objResult.alert)
+                    if (data.alert) {
+                        Messaging.renderAlert(data.alert)
                     }
                 } else if (data.status === 401
                     && $('#loginContainer').length === 0
