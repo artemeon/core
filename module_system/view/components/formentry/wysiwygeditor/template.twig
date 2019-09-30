@@ -1,35 +1,12 @@
 <div class="form-group core-component-wysiwygeditor">
     <label for="{{ name }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6">
-            <textarea name="{{ name }}" id="{{ name }}" class="form-control inputWysiwyg"
-                      data-kajona-editorid="{{ editorid }}" {{ readonly }}>{{ content }}</textarea>
-    </div>
-    <div class="col-sm-2 form-opener">
-        {{ opener|raw }}
+        <div id="{{ name }}_pell" name="{{ name }}_pell"></div>
+        <textarea name="{{ name }}" id="{{ name }}" class="form-control display-none"
+                  data-kajona-editorid="{{ editorid }}" value="{{ content }}" {{ readonly }}></textarea>
     </div>
 
-    <script type="text/javascript" src="{{ modulepath }}"></script>
-    <script type="text/javascript">
-        var ckeditorConfig = {
-            customConfig: '{{ configFile }}',
-            toolbar: '{{ toolbarSet }}',
-            resize_minWidth: 640,
-            filebrowserWindowWidth: 400,
-            filebrowserWindowHeight: 500,
-            filebrowserImageWindowWidth: 400,
-            filebrowserImageWindowWindowHeight: 500,
-            language: '{{ strLanguage }}',
-            filebrowserBrowseUrl: '{{ filebrowserBrowseUrl }}',
-            filebrowserImageBrowseUrl: '{{ filebrowserImageBrowseUrl }}'
-        };
-        var curEditor = CKEDITOR.replace($("textarea[name='{{ name }}'][data-kajona-editorid='{{ editorid }}']")[0], ckeditorConfig);
-        curEditor.on('change', function (event) {
-            $("textarea[name='{{ name }}'][data-kajona-editorid='{{ editorid }}']").val(event.editor.getData());
-        });
-        curEditor.on('instanceReady', function (event) {
-            if ($("textarea[name='{{ name }}'][data-kajona-editorid='{{ editorid }}']").hasClass('mandatoryFormElement')) {
-                event.editor.container.addClass('mandatoryFormElement')
-            }
-        });
-    </script>
+    <script type="text/javascript">window.Editor.init("{{ name }}")</script>
+    <script type="text/javascript">window.Editor.setContent("{{ name }}", "{{ content }}")</script>
+
 </div>

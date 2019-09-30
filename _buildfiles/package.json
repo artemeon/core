@@ -44,6 +44,7 @@
     "jwt-decode": "^2.2.0",
     "mermaid": "github:artemeon/mermaid",
     "moment": "^2.24.0",
+    "pell": "^1.0.6",
     "qs": "^6.7.0",
     "qtip2": "^3.0.3",
     "routie": "github:jgallen23/routie",
