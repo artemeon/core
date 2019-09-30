@@ -5,8 +5,8 @@ import Tooltip from './Tooltip'
 import StatusDisplay from './StatusDisplay'
 
 interface SystemStatusMessages {
-    strInActiveIcon: string
-    strActiveIcon: string
+    strInActiveIcon: string;
+    strActiveIcon: string;
 }
 
 /**
@@ -18,7 +18,7 @@ class Ajax {
      */
     public static setSystemStatusMessages: SystemStatusMessages = {
         strInActiveIcon: '',
-        strActiveIcon: ''
+        strActiveIcon: '',
     }
 
     /**
@@ -37,47 +37,41 @@ class Ajax {
      * @param {String} strMethod default is GET
      * @param {Function} objCallback - is called if the request was successful
      */
-    public static loadUrlToElement (
+    public static loadUrlToElement(
         strElementSelector: string | JQuery,
         strUrl: string,
         strData?: any,
         bitBlockLoadingContainer?: boolean,
         strMethod?: string,
-        objCallback?: Function
-    ) {
+        objCallback?: Function,
+    ): void {
         WorkingIndicator.start()
 
-        var objElement = Util.getElement(strElementSelector)
-
+        const objElement = Util.getElement(strElementSelector)
         if (!bitBlockLoadingContainer) {
             objElement.html('<div class="loadingContainer"></div>')
         } else {
             objElement.css('opacity', '0.4')
         }
 
-        if (!strMethod) {
-            strMethod = 'GET'
-        }
-
-        var target = strElementSelector
         $.ajax({
-            type: strMethod,
+            type: strMethod || 'GET',
             url:
                 strUrl.indexOf(KAJONA_WEBPATH) > -1
                     ? strUrl
                     : KAJONA_WEBPATH + strUrl,
-            data: strData
+            data: strData,
         })
-            .done(function (data, status, xhr) {
+            .done((data, status, xhr): void => {
                 // detect file download
-                var disposition = xhr.getResponseHeader('Content-Disposition')
+                const disposition = xhr.getResponseHeader('Content-Disposition')
                 if (disposition && disposition.indexOf('filename') !== -1) {
                     // @TODO workaround to fix old file downloads. In case the ajax request returns a
                     // Content-Disposition header we redirect the client to the url to trigger the file download
                     // through the browser. Note you need to update the url of your download to point the user
                     // directly to the file instead of using a hash route. With this workaround the user downloads
                     // the file twice, once through the ajax call and then through the redirect.
-                    location.href = KAJONA_WEBPATH + strUrl
+                    document.location.href = KAJONA_WEBPATH + strUrl
                 } else {
                     objElement.html(data)
                     objElement.css('opacity', '1')
@@ -89,17 +83,17 @@ class Ajax {
                     }
                 }
             })
-            .always(function (response) {
+            .always((): void => {
                 WorkingIndicator.stop()
                 objElement.css('opacity', '1')
             })
-            .fail(function (data) {
+            .fail((data): void => {
                 if (data.status === 500) {
                     if (KAJONA_DEBUG === 1) {
                         objElement.html(data.responseText)
                     } else {
                         objElement.html(
-                            '<div class="alert alert-danger" role="alert">An error occurred. Please contact the system admin.</div>'
+                            '<div class="alert alert-danger" role="alert">An error occurred. Please contact the system admin.</div>',
                         )
                     }
                 }
@@ -115,39 +109,46 @@ class Ajax {
             })
     }
 
-    public static getDataObjectFromString (
+    /**
+     *
+     * @param strData
+     * @param bitFirstIsSystemid
+     */
+    public static getDataObjectFromString(
         strData: any,
-        bitFirstIsSystemid: boolean
-    ) {
+        bitFirstIsSystemid: boolean,
+    ): any {
         if (typeof strData === 'string') {
             // strip other params, backwards compatibility
-            let arrElements = strData.split('&')
-            let data: any = {}
+            const arrElements = strData.split('&')
+            let data: {systemid: string}
 
             if (bitFirstIsSystemid) {
-                data['systemid'] = arrElements[0]
+                // eslint-disable-next-line prefer-destructuring
+                data.systemid = arrElements[0]
             }
 
             // first one is the systemid
             if (arrElements.length > 1) {
-                $.each(arrElements, function (index, strValue) {
+                $.each(arrElements, (index, strValue): void => {
                     if (!bitFirstIsSystemid || index > 0) {
-                        var arrSingleParams = strValue.split('=')
+                        const arrSingleParams = strValue.split('=')
+                        // eslint-disable-next-line prefer-destructuring
                         data[arrSingleParams[0]] = arrSingleParams[1]
                     }
                 })
             }
             return data
-        } else {
-            return strData
         }
+        return strData
     }
 
-    public static regularCallback (
-        data: any,
-        status: string,
-        jqXHR: XMLHttpRequest
-    ) {
+    /**
+     *
+     * @param data
+     * @param status
+     */
+    public static regularCallback(data: any, status: string, jqXHR: XMLHttpRequest): void{
         if (status === 'success') {
             StatusDisplay.displayXMLMessage(data)
         } else {
@@ -167,7 +168,7 @@ class Ajax {
      * @param strMethod default is POST
      * @param dataType
      */
-    public static genericAjaxCall (
+    public static genericAjaxCall(
         module: string,
         action: string,
         systemid: any,
@@ -175,15 +176,14 @@ class Ajax {
         objDoneCallback?: Function,
         objErrorCallback?: Function,
         strMethod?: string,
-        dataType?: string
-    ) {
-        var postTarget =
-            KAJONA_WEBPATH +
-            '/xml.php?admin=1&module=' +
-            module +
-            '&action=' +
-            action
-        var data
+        dataType?: string,
+    ): void {
+        const postTarget = `${KAJONA_WEBPATH
+        }/xml.php?admin=1&module=${
+            module
+        }&action=${
+            action}`
+        let data
         if (systemid) {
             data = this.getDataObjectFromString(systemid, true)
         }
@@ -192,95 +192,110 @@ class Ajax {
         $.ajax({
             type: strMethod || 'POST',
             url: postTarget,
-            data: data,
-            error: function (
+            data,
+            error(
                 xhr: JQuery.jqXHR,
                 textStatus: string,
-                errorThrown: string
-            ) {
+                errorThrown: string,
+            ): void {
                 if (objCallback) {
                     objCallback(xhr, textStatus, errorThrown)
                 }
             },
-            success: function (
-                data: any,
+            success(
+                successData: any,
                 textStatus: string,
-                xhr: JQuery.jqXHR
-            ) {
+                xhr: JQuery.jqXHR,
+            ): void{
                 if (objCallback) {
-                    objCallback(data, textStatus, xhr)
+                    objCallback(successData, textStatus, xhr)
                 }
             },
-            dataType: dataType || 'text'
+            dataType: dataType || 'text',
         })
-            .always(function () {
+            .always((): void => {
                 WorkingIndicator.stop()
             })
-            .fail(function () {
+            .fail((): void => {
                 if (objErrorCallback) {
                     objErrorCallback()
                 }
             })
-            .done(function () {
+            .done((): void => {
                 if (objDoneCallback) {
                     objDoneCallback()
                 }
             })
     }
 
-    public static setAbsolutePosition (
+    /**
+ *
+ * @param systemIdToMove
+ * @param intNewPos
+ * @param strIdOfList
+ * @param objCallback
+ * @param strTargetModule
+ */
+    public static setAbsolutePosition(
         systemIdToMove: string,
         intNewPos: number,
         strIdOfList: string,
         objCallback: Function,
-        strTargetModule?: string
-    ) {
-        if (strTargetModule == null || strTargetModule === '') { strTargetModule = 'system' }
+        strTargetModule?: string,
+    ): void {
+        let module = strTargetModule
+        let callback = objCallback
+        if (strTargetModule == null || strTargetModule === '') { module = 'system' }
 
-        if (typeof objCallback === 'undefined' || objCallback == null) { objCallback = this.regularCallback }
+        if (typeof objCallback === 'undefined' || objCallback == null) { callback = this.regularCallback }
 
         this.genericAjaxCall(
-            strTargetModule,
+            module,
             'setAbsolutePosition',
-            systemIdToMove + '&listPos=' + intNewPos,
-            objCallback
+            `${systemIdToMove}&listPos=${intNewPos}`,
+            callback,
         )
     }
 
-    public static setSystemStatus (
+    /**
+     *
+     * @param strSystemIdToSet
+     * @param bitReload
+     */
+    public static setSystemStatus(
         strSystemIdToSet: string,
-        bitReload: boolean
-    ) {
-        var me = this
-        var objCallback = function (
+        bitReload: boolean,
+    ): void {
+        const me = this
+        const objCallback = (
             data: any,
             status: string,
-            jqXHR: JQuery.jqXHR
-        ) {
+            jqXHR: JQuery.jqXHR,
+        ): void => {
             if (status === 'success') {
                 StatusDisplay.displayXMLMessage(data)
 
                 if (bitReload !== null && bitReload === true) {
-                    location.reload()
+                    document.location.reload()
                 }
 
                 if (
-                    data.indexOf('<error>') === -1 &&
-                    data.indexOf('<html>') === -1
+                    data.indexOf('<error>') === -1
+                    && data.indexOf('<html>') === -1
                 ) {
-                    var newStatus = $($.parseXML(data))
+                    const newStatus = $($.parseXML(data))
                         .find('newstatus')
                         .text()
-                    var link = $('#statusLink_' + strSystemIdToSet)
+                    const link = $(`#statusLink_${strSystemIdToSet}`)
 
-                    var adminListRow = link
+                    let adminListRow = link
                         .parents('.admintable > tbody')
                         .first()
                     if (!adminListRow.length) {
                         adminListRow = link.parents('.grid > ul > li').first()
                     }
 
-                    if (parseInt(newStatus) === 0) {
+                    if (Number(newStatus) === 0) {
                         link.html(me.setSystemStatusMessages.strInActiveIcon)
                         adminListRow.addClass('disabled')
                     } else {
@@ -289,9 +304,9 @@ class Ajax {
                     }
 
                     Tooltip.addTooltip(
-                        $('#statusLink_' + strSystemIdToSet).find(
-                            "[rel='tooltip']"
-                        )
+                        $(`#statusLink_${strSystemIdToSet}`).find(
+                            "[rel='tooltip']",
+                        ),
                     )
                 }
             } else {
@@ -302,15 +317,15 @@ class Ajax {
         }
 
         Tooltip.removeTooltip(
-            $('#statusLink_' + strSystemIdToSet).find("[rel='tooltip']")
+            $(`#statusLink_${strSystemIdToSet}`).find("[rel='tooltip']"),
         )
         this.genericAjaxCall(
             'system',
             'setStatus',
             strSystemIdToSet,
-            objCallback
+            objCallback,
         )
     }
 }
-;(<any>window).Ajax = Ajax
+(window as any).Ajax = Ajax
 export default Ajax
