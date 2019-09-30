@@ -1,4 +1,6 @@
 import $ from 'jquery'
+import axios from 'axios'
+import to from 'await-to-js'
 import WorkingIndicator from './WorkingIndicator'
 import Util from './Util'
 import Tooltip from './Tooltip'
@@ -168,7 +170,7 @@ class Ajax {
      * @param strMethod default is POST
      * @param dataType
      */
-    public static genericAjaxCall(
+    public static async genericAjaxCall(
         module: string,
         action: string,
         systemid: any,
@@ -177,7 +179,7 @@ class Ajax {
         objErrorCallback?: Function,
         strMethod?: string,
         dataType?: string,
-    ): void {
+    ): Promise<void> {
         const postTarget = `${KAJONA_WEBPATH
         }/xml.php?admin=1&module=${
             module
@@ -187,8 +189,22 @@ class Ajax {
         if (systemid) {
             data = this.getDataObjectFromString(systemid, true)
         }
+        // WorkingIndicator.start()
+        // @ts-ignore
+        const [err, res] = await to(axios({
+            method: strMethod || 'POST',
+            url: postTarget,
+            data,
 
-        WorkingIndicator.start()
+        }))
+        if (err && objCallback) {
+            objCallback(err)
+        }
+        if (res) {
+
+        }
+
+
         $.ajax({
             type: strMethod || 'POST',
             url: postTarget,
