@@ -107,9 +107,6 @@ $debug['time'] = false; //Calculates the time needed to create the requested pag
 $debug['dbnumber'] = false; //Counts the number of queries passed to the db / retrieved from the cache
 $debug['memory'] = false; //Displays the memory used by Kajona to generate the current page
 
-$debug['dblog'] = false; //Logs all queries sent to the db into a logfile. If set to true, the
-//debuglogging has to be set to 3, since queries are leveled as information
-
 $debug['debuglevel'] = 0; //Current level of debugging. There are several states:
 // 0: fatal errors will be displayed
 // 1: fatal and regular errors will be displayed

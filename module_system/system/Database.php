@@ -74,6 +74,11 @@ class Database
      */
     public static $bitDbSafeStringEnabled = true;
 
+    /**
+     * Simple boolean to cache the info whether logging is enabled or not
+     * @var bool
+     */
+    private $loggingEnabled = false;
 
     /**
      * Constructor
@@ -97,6 +102,8 @@ class Database
             //Do not throw any exception here, otherwise an endless loop will exit with an overloaded stack frame
             //throw new Exception("No db-driver defined!", Exception::$level_FATALERROR);
         }
+
+        $this->loggingEnabled = Logger::getInstance(Logger::QUERIES)->getIntLogLevel() == Logger::$levelInfo;
     }
 
     /**
@@ -313,8 +320,9 @@ class Database
 
         $strQuery = $this->processQuery($strQuery);
 
-        if (_dblog_) {
-            Logger::getInstance(Logger::QUERIES)->info("\r\n".$strQuery."\r\n params: ".implode(", ", $arrParams));
+        if ($this->loggingEnabled) {
+            $queryId = generateSystemid();
+            Logger::getInstance(Logger::QUERIES)->info($queryId." ".$this->prettifyQuery($strQuery, $arrParams));
         }
 
         //Increasing the counter
@@ -326,6 +334,10 @@ class Database
 
         if (!$bitReturn) {
             $this->getError($strQuery, $arrParams);
+        }
+
+        if ($this->loggingEnabled) {
+            Logger::getInstance(Logger::QUERIES)->info($queryId." "."Query finished");
         }
 
         return $bitReturn;
@@ -446,8 +458,9 @@ class Database
 
         $arrReturn = array();
 
-        if (_dblog_) {
-            Logger::getInstance(Logger::QUERIES)->info("\r\n".$strQuery."\r\n params: ".implode(", ", $arrParams));
+        if ($this->loggingEnabled) {
+            $queryId = generateSystemid();
+            Logger::getInstance(Logger::QUERIES)->info($queryId." ".$this->prettifyQuery($strQuery, $arrParams));
         }
 
         if ($this->objDbDriver != null) {
@@ -455,6 +468,10 @@ class Database
                 $arrReturn = $this->objDbDriver->getPArraySection($strQuery, $this->dbsafeParams($arrParams, $arrEscapes), $intStart, $intEnd);
             } else {
                 $arrReturn = $this->objDbDriver->getPArray($strQuery, $this->dbsafeParams($arrParams, $arrEscapes));
+            }
+
+            if ($this->loggingEnabled) {
+                Logger::getInstance(Logger::QUERIES)->info($queryId." "."Query finished");
             }
 
             if ($arrReturn === false) {
@@ -1081,7 +1098,7 @@ class Database
                 $bitDump = $objDump->createExport($strTargetFilename);
             } catch (Exception $objEx) {
                 $bitDump = false;
-                Logger::getInstance()->error("Failed to create dbdump: ".$objEx->getMessage());
+                Logger::getInstance(Logger::DBLOG)->error("Failed to create dbdump: ".$objEx->getMessage());
             }
         } else {
             $bitDump = $this->objDbDriver->dbExport($strTargetFilename, $arrTablesFinal);
@@ -1131,7 +1148,7 @@ class Database
                         $bitImport = $objImport->importFile(_projectpath_ . "/dbdumps/".$strFilename);
                     } catch (Exception $objEx) {
                         $bitImport = false;
-                        Logger::getInstance()->error("Failed to import dbdump: ".$objEx->getMessage());
+                        Logger::getInstance(Logger::DBLOG)->error("Failed to import dbdump: ".$objEx->getMessage());
                     }
                 }
             }
