@@ -24,7 +24,7 @@ namespace Kajona\System\System;
  * @author sidler@mulchprod.de
  * @since 4.0
  */
-final class Objectfactory
+class Objectfactory
 {
     /**
      * @var Objectfactory
