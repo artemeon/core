@@ -170,6 +170,7 @@ class SkinAdminController extends AdminEvensimpler implements AdminInterface
             'KAJONA_LANGUAGE' => Carrier::getInstance()->getObjSession()->getAdminLanguage(),
             'KAJONA_PHARMAP' => array_values(Classloader::getInstance()->getArrPharModules()),
             'KAJONA_ACCESS_TOKEN' => $user instanceof UserUser ? $user->getStrAccessToken() : null,
+            'KAJONA_USER_ITEMS_PAGE' => $user instanceof UserUser ? $user->getIntItemsPerPage() : null,
         ];
 
         $parts = [];
