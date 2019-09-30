@@ -255,6 +255,7 @@ TEXT;
         chdir($workingDirectory);
 
         if ($exitCode !== 0) {
+            var_dump($arrOutput);
             echo "Error exited with a non successful status code";
             exit(1);
         }
@@ -275,6 +276,7 @@ TEXT;
         chdir($workingDirectory);
 
         if ($exitCode !== 0) {
+            var_dump($arrOutput);
             echo "Error exited with a non successful status code";
             exit(1);
         }
