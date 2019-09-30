@@ -418,49 +418,6 @@ class V4skin {
                     .appendTo(ul)
             }
         })
-
-        $('#globalSearchInput').catcomplete({
-            minLength: 2,
-            delay: 500,
-
-            source: function (request: any, response: any) {
-                $.ajax({
-                    url: KAJONA_WEBPATH + '/xml.php?admin=1',
-                    type: 'POST',
-                    dataType: 'json',
-                    data: {
-                        search_query: request.term,
-                        module: 'search',
-                        action: 'searchXml',
-                        asJson: '1'
-                    },
-                    success: response
-                })
-            },
-            select: function (event: any, ui: any) {
-                if (ui.item && ui.item.link) {
-                    document.location = ui.item.link
-                }
-            },
-            messages: {
-                noResults: '',
-                results: function () {}
-            },
-            search: function (event: any, ui: any) {
-                $(this)
-                    .parent()
-                    .find('.input-group-addon')
-                    .html('<i class="fa fa-spinner fa-spin"></i></span>')
-                WorkingIndicator.start()
-            },
-            response: function (event: any, ui: any) {
-                $(this)
-                    .parent()
-                    .find('.input-group-addon')
-                    .html('<i class="fa fa-search"></i></span>')
-                WorkingIndicator.stop()
-            }
-        })
     }
 
     public static initPopover () {
