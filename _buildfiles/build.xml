@@ -219,7 +219,7 @@
                 <include name="core*/_buildfiles/jstests/*/**"/>
                 <include name="core*/*.php"/>
                 <include name="core*/*.htaccess"/>
-                <include name="files/**"/>
+                <include name="files/*/**"/>
                 <include name="project/**"/>
                 <include name=".htaccess"/>
             </fileset>
