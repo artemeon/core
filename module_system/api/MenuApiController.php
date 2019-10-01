@@ -8,13 +8,11 @@ namespace Kajona\System\Api;
 
 use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Api\System\Http\JsonResponse;
-use Kajona\System\Admin\AdminHelper;
-use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Link;
 use Kajona\System\System\SystemAspect;
 use Kajona\System\System\SystemModule;
-use PSX\Http\Environment\HttpContextInterface;
+use Kajona\System\System\MenuItem;
 
 /**
  * MenuApiController
@@ -31,27 +29,15 @@ class MenuApiController implements ApiControllerInterface
      * @api
      * @method GET
      * @path /v1/system/menu
-     * @authorization anonymous
+     * @authorization usertoken
      */
     public function getMenu(): JsonResponse
     {
-
-
-        $strAllModules = "";
-
         $arrToggleEntries = [];
-        $i = 1;
         foreach (SystemAspect::getActiveObjectList() as $objOneAspect) {
             if (!$objOneAspect->rightView()) {
                 continue;
             }
-            $aspectModule = [];
-            echo "testi:".$i;
-            $i++;
-
-//            // Aspecte mit click funktion
-//            $arrToggleEntries[] = ["name" => $objOneAspect->getStrDisplayName(), "onclick" => "ModuleNavigation.switchAspect('{$objOneAspect->getSystemid()}'); return false;"];
-
 
             $arrModules = SystemModule::getModulesInNaviAsArray($objOneAspect->getSystemid());
 
@@ -64,33 +50,16 @@ class MenuApiController implements ApiControllerInterface
                 }
             }
 
-
-            $strCombinedHeader = "";
-            $strCombinedBody = "";
-
+            $arrMenuHeader = [];
+            $arrMenuBody = [];
             $arrCombined = [
                 "messaging" => "fa-envelope",
                 "dashboard" => "fa-home",
                 "tags" => "fa-tags",
             ];
 
-            $strModules = "";
             foreach ($arrNaviInstances as $objOneInstance) {
-                $arrActions = AdminHelper::getModuleActionNaviHelper($objOneInstance);
-//                echo "arrActions";
-//                echo '<pre>'; print_r($arrActions); echo '</pre>';
-
-                $strActions = "";
-//                foreach ($arrActions as $strOneAction) {
-//                    if (trim($strOneAction) != "") {
-//                        $arrActionEntries = [
-//                            "action" => $strOneAction,
-//                        ];
-////                        $strActions .= $this->objTemplate->fillTemplateFile($arrActionEntries, "/admin/skins/kajona_v4/elements.tpl", "sitemap_action_entry");
-//                    } else {
-////                        $strActions .= $this->objTemplate->fillTemplateFile([], "/admin/skins/kajona_v4/elements.tpl", "sitemap_divider_entry");
-//                    }
-//                }
+                $arrActions = self::getModuleActionNaviHelper($objOneInstance);
 
                 $arrModuleLevel = [
                     "module" => Link::getLinkAdmin($objOneInstance->getStrName(), "", "", Carrier::getInstance()->getObjLang()->getLang("modul_titel", $objOneInstance->getStrName())),
@@ -101,52 +70,81 @@ class MenuApiController implements ApiControllerInterface
                     "moduleHref" => Link::getLinkAdminHref($objOneInstance->getStrName(), ""),
                     "aspectId" => $objOneAspect->getSystemid(),
                 ];
-//                echo "arrModuleLevel";
-//                echo '<pre>'; print_r($arrModuleLevel); echo '</pre>';
-//                if (array_key_exists($objOneInstance->getStrName(), $arrCombined)) {
-//                    $arrModuleLevel["faicon"] = $arrCombined[$objOneInstance->getStrName()];
-//                    $strCombinedHeader .= $this->objTemplate->fillTemplateFile($arrModuleLevel, "/admin/skins/kajona_v4/elements.tpl", "sitemap_combined_entry_header");
-//                    $strCombinedBody .= $this->objTemplate->fillTemplateFile($arrModuleLevel, "/admin/skins/kajona_v4/elements.tpl", "sitemap_combined_entry_body");
-//                } else {
-//                    $strModules .= $this->objTemplate->fillTemplateFile($arrModuleLevel, "/admin/skins/kajona_v4/elements.tpl", "sitemap_module_wrapper");
-//                }
+
+                if (array_key_exists($objOneInstance->getStrName(), $arrCombined)) {
+                    $arrModuleLevel["faicon"] = $arrCombined[$objOneInstance->getStrName()];
+                    $arrMenuHeader[] = ["module" => $arrModuleLevel];
+                } else {
+                    $arrMenuBody[] = ["module" => $arrModuleLevel];
+                }
             }
-            // Aspecte mit click funktion
-            $arrToggleEntries[] = ["name" => $objOneAspect->getStrDisplayName(), "module" =>  $arrModuleLevel, "onclick" => "ModuleNavigation.switchAspect('{$objOneAspect->getSystemid()}'); return false;"];
-            echo "aspecte";
-            echo '<pre>'; print_r($arrModuleLevel); echo '</pre>';
 
-//            if ($strCombinedHeader != "") {
-//                $strModules = $this->objTemplate->fillTemplateFile(
-//                        ["combined_header" => $strCombinedHeader, "combined_body" => $strCombinedBody],
-//                        "/admin/skins/kajona_v4/elements.tpl",
-//                        "sitemap_combined_entry_wrapper"
-//                    ) . $strModules;
-//            }
-
-//            $strAllModules .= $this->objTemplate->fillTemplateFile(
-//                array("aspectContent" => $strModules, "aspectId" => $objOneAspect->getSystemid(), "class" => ($strAllModules == "" ? "" : "hidden")),
-//                "/admin/skins/kajona_v4/elements.tpl",
-//                "sitemap_aspect_wrapper"
-//            );
-
+            $arrToggleEntries[] = ["Aspect_name" => $objOneAspect->getStrDisplayName(),"header" => $arrMenuHeader, "body" => $arrMenuBody, "onclick" => "ModuleNavigation.switchAspect('{$objOneAspect->getSystemid()}'); return false;"];
         }
-//        echo 'arrToggleEntries';
-//        echo '<pre>'; print_r($arrToggleEntries); echo '</pre>';
 
-//        $strToggleDD = "";
-//        if (!empty($arrToggleEntries)) {
-//            $strToggle = $this->registerMenu("mainNav", $arrToggleEntries);
-//            $strToggleDD =
-//                "<span class='dropdown pull-left'><a href='#' data-toggle='dropdown' role='button'>" . AdminskinHelper::getAdminImage("icon_submenu") . "</a>{$strToggle}</span>"
-//            ;
-//        }
-
-//         return $this->objTemplate->fillTemplateFile(array("level" => $strAllModules, "aspectToggle" => $strToggleDD), "/admin/skins/kajona_v4/elements.tpl", "sitemap_wrapper");
         return new JsonResponse([
+            "aspects" => $arrToggleEntries
         ]);
     }
 
+    /**
+     * Fetches the list of actions for a single module, saved to the session for performance reasons
+     *
+     * @param SystemModule $objModule
+     *
+     * @return array
+     * @throws \Kajona\System\System\Exception
+     *
+     */
+    private function getModuleActionNaviHelper(SystemModule $objModule)
+    {
+        if (Carrier::getInstance()->getObjSession()->isLoggedin()) {
+            $strKey = __CLASS__."adminNaviEntries".$objModule->getSystemid().SystemAspect::getCurrentAspectId();
 
+            $arrFinalItems = Carrier::getInstance()->getObjSession()->getSession($strKey);
+            if ($arrFinalItems !== false) {
+                return $arrFinalItems;
+            }
+
+            $objAdminInstance = $objModule->getAdminInstanceOfConcreteModule();
+            if ($objAdminInstance == null) {
+                return array();
+            }
+
+            $arrItems = $objAdminInstance->getOutputModuleNavi();
+            $arrItems = array_merge($arrItems, $objAdminInstance->getModuleRightNaviEntry());
+            $arrFinalItems = array();
+
+            //build array of final items
+            $intI = 0;
+            foreach ($arrItems as $arrOneItem) {
+                if ($arrOneItem[0] == "") {
+                    $bitAdd = true;
+                } else {
+                    $bitAdd = Carrier::getInstance()->getObjRights()->validatePermissionString($arrOneItem[0], $objModule);
+                }
+
+                if ($bitAdd || $arrOneItem[1] == "") {
+                    if ($arrOneItem[1] != "" || (!isset($arrFinalItems[$intI - 1]) || $arrFinalItems[$intI - 1] != "")) {
+                        if (is_array($arrOneItem)) {
+                            $arrSplitOneItem = splitUpLink($arrOneItem[1]);
+                            $arrFinalItems[] = $arrSplitOneItem;
+                        } else {
+                            $arrFinalItems[] = $arrOneItem[1];
+                        }
+                        $intI++;
+                    }
+                }
+            }
+
+            //if the last one is a divider, remove it
+            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] != "" && $arrFinalItems[count($arrFinalItems) - 1]["link"] != "") {
+                unset($arrFinalItems[count($arrFinalItems) - 1]);
+            }
+
+            Carrier::getInstance()->getObjSession()->setSession($strKey, $arrFinalItems);
+            return $arrFinalItems;
+        }
+        return array();
+    }
 }
-
