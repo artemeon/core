@@ -70,7 +70,7 @@ class MenuItem
      */
     public function toArray()
     {
-        $menuItemArr = ["right" => $this->right, "name" => $this->name, "link" => $this->link];
+        $menuItemArr = ["right" => $this->right, "name" => $this->name, "href" => $this->link];
         return $menuItemArr;
     }
 }
