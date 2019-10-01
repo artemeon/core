@@ -129,8 +129,8 @@ class MenuApiController implements ApiControllerInterface
                         if (is_array($arrOneItem)) {
                             $arrSplitOneItem = splitUpLink($arrOneItem[1]);
                             $arrFinalItems[] = $arrSplitOneItem;
-                        } else {
-                            $arrFinalItems[] = $arrOneItem[1];
+                        } else if ($arrOneItem instanceof MenuItem) {
+                            $arrFinalItems[] = $arrOneItem->toArray();
                         }
                         $intI++;
                     }
@@ -138,7 +138,7 @@ class MenuApiController implements ApiControllerInterface
             }
 
             //if the last one is a divider, remove it
-            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] != "" && $arrFinalItems[count($arrFinalItems) - 1]["link"] != "") {
+            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] != "" && $arrFinalItems[count($arrFinalItems) - 1]["href"] != "") {
                 unset($arrFinalItems[count($arrFinalItems) - 1]);
             }
 
