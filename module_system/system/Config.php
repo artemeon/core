@@ -85,7 +85,6 @@ class Config
         define("_langpath_", $this->getConfig("dirlang"));
         define("_indexpath_", _webpath_."/index.php");
         define("_xmlpath_", _webpath_."/xml.php");
-        define("_dblog_", $this->getDebug("dblog"));
         define("_timedebug_", $this->getDebug("time"));
         define("_dbnumber_", $this->getDebug("dbnumber"));
         define("_templatenr_", $this->getDebug("templatenr"));
