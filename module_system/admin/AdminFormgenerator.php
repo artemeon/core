@@ -1165,6 +1165,13 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
             return $this->arrFields[$strName];
         }
 
+        // do a lower case compare additionally
+        foreach ($this->arrFields as $key => $val) {
+            if (StringUtil::toLowerCase($key) === StringUtil::toLowerCase($strName)) {
+                return $val;
+            }
+        }
+
         return null;
     }
 
@@ -1334,6 +1341,7 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     public function hasGroups()
     {
         return !empty($this->arrGroups);
+        return $this->intGroupStyle == self::GROUP_TYPE_TABS && !empty($this->arrGroups);
     }
 
     /**
