@@ -27,6 +27,7 @@ use Kajona\System\View\Components\Dropdownmenu\Dropdownmenu;
 use Kajona\System\View\Components\Menu\Item\Text;
 use Kajona\System\View\Components\Menu\Menu;
 use Kajona\System\View\Components\Menu\MenuItem;
+use Kajona\V4skin\Admin\Skins\Kajona_V4\AdminskinImageresolver;
 
 
 /**
@@ -324,11 +325,7 @@ abstract class AdminSimple extends AdminController
                     continue;
                 }
             } elseif (!$objOneIterable->rightView()) {
-                if ($bitSortable) {
-                    //inject hidden dummy row for a proper sorting
-                    $strReturn .= $this->objToolkit->genericAdminList($objOneIterable->getSystemid(), "", "", "", "", "", false, "hidden");
-                }
-                $intTotalNrOfElements--;
+                $strReturn .= $this->objToolkit->genericAdminList($objOneIterable->getSystemid(), "", AdminskinHelper::getAdminImage("icon_lockerClosed"), "");
                 continue;
             }
 
