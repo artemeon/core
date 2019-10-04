@@ -13,6 +13,7 @@ use Kajona\Search\System\SearchCommons;
 use Kajona\Search\System\SearchResult;
 use Kajona\Search\System\SearchSearch;
 use Kajona\System\Admin\AdminEvensimpler;
+use Kajona\System\Admin\AdminSimple;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Carrier;
@@ -20,6 +21,7 @@ use Kajona\System\System\Date;
 use Kajona\System\System\HttpResponsetypes;
 use Kajona\System\System\Link;
 use Kajona\System\System\ResponseObject;
+use Kajona\System\System\SystemModule;
 
 /**
  * Portal-class of the search.
@@ -139,8 +141,13 @@ class SearchAdmin extends AdminEvensimpler
             $arrItem["score"] = $objOneResult->getStrSystemid();
             $arrItem["description"] = $objOneResult->getObjObject()->getStrDisplayName();
             if ($objOneResult->getObjObject() instanceof AdminListableInterface) {
-
                 $arrItem["additionalInfos"] = $objOneResult->getObjObject()->getStrAdditionalInfo();
+
+                //call the original module to render the action-icons
+                $objAdminInstance = SystemModule::getModuleByName($objOneResult->getObjObject()->getArrModule("modul"))->getAdminInstanceOfConcreteModule();
+                if ($objAdminInstance != null && $objAdminInstance instanceof AdminSimple) {
+                    $arrItem["actions"] = $objAdminInstance->getActionIcons($objOneResult->getObjObject());
+                }
             }
             $arrItem["lastModifiedBy"] = $objOneResult->getObjObject()->getLastEditUser($this->getSystemid());
             $arrItem["lastModifiedTime"] = dateToString(new Date($objOneResult->getObjObject()->getIntLmTime()));
