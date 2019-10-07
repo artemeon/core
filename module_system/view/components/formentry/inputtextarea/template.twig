@@ -1,7 +1,7 @@
 <div class="form-group core-component-formentry-inputtextarea">
     <label for="{{ name|e('html_attr') }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6 {{ class|e('html_attr') }}">
-        <textarea name="{{ name|e('html_attr') }}" id="{{ name|e('html_attr') }}" class="form-control test" rows="{{ numberOfRows|e('html_attr') }}" {% if readOnly %}readonly{% endif %} {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %} placeholder="{{ placeholder|e('html_attr') }}" onkeyup=window.Forms.AutoGrowTextArea(this)>{{ value|raw }}</textarea>
+        <textarea name="{{ name|e('html_attr') }}" id="{{ name|e('html_attr') }}" class="form-control" rows="{{ numberOfRows|e('html_attr') }}" {% if readOnly %}readonly{% endif %} {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %} placeholder="{{ placeholder|e('html_attr') }}" onkeyup=Forms.AutoGrowTextArea(this)>{{ value|raw }}</textarea>
     </div>
     {% if opener %}
     <div class="col-sm-2 form-opener">
