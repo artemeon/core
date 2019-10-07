@@ -7,6 +7,7 @@
 namespace Kajona\System\Admin\Formentries;
 
 use Kajona\System\Admin\FormentryPrintableInterface;
+use Kajona\System\Admin\FormentryPrintablePdfInterface;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
@@ -17,6 +18,9 @@ use Kajona\System\System\Objectfactory;
 use Kajona\System\System\Reflection;
 use Kajona\System\System\Root;
 use Kajona\System\System\SystemModule;
+use Kajona\System\View\Components\Dtable\DTableComponent;
+use Kajona\System\View\Components\Dtable\Model\DTable;
+use Kajona\System\View\Components\Dtable\PDFTable;
 use Kajona\System\View\Components\Formentry\Objectlist\Objectlist;
 use ReflectionClass;
 use Traversable;
@@ -28,7 +32,7 @@ use Traversable;
  * @since 4.7
  * @package module_formgenerator
  */
-class FormentryObjectlist extends FormentryBase implements FormentryPrintableInterface
+class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdfInterface
 {
     const OPTION_SKIP_RIGHT_CHECK = 1;
 
@@ -300,6 +304,36 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
             return '-';
         }
 
+        $data = $this->getSummaryTableRows();
+
+        $dtable = new DTable([], $data);
+        $cmp = new DTableComponent($dtable);
+        return $cmp->renderComponent();
+//        return implode('<br>', $htmlResponse);
+    }
+
+    /**
+     * @inheritDoc
+     * @throws Exception
+     */
+    public function getValueForPdf(): string
+    {
+        if (empty($this->arrKeyValues)) {
+            return '-';
+        }
+
+        $data = $this->getSummaryTableRows();
+        $data = array_map(function(array $entry) { return [strip_tags($entry[0])]; }, $data);
+
+        $dtable = new DTable([], $data);
+        $cmp = new PDFTable($dtable);
+        $cmp->setDefaultStripingEnabled();
+
+        return $cmp->renderComponent();
+    }
+
+    private function getSummaryTableRows(): array
+    {
         $htmlResponse = [];
 
         //Collect object and sort them by create date
@@ -316,23 +350,26 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
         }
         $this->orderObject($objects);
 
+        $data = [];
+
         //Render content
         foreach ($objects as $object) {
             $htmlResponse[] =  $this->createDisplayLinkTextForObject($object);
+            $data[] = $this->createDisplayLinkTextForObject($object);
         }
 
-        return implode('<br>', $htmlResponse);
+        return $data;
     }
-
 
     /**
      * @param ModelInterface $modelObject
      * @return string
      * @throws \ReflectionException
      */
-    private function createDisplayLinkTextForObject(ModelInterface $modelObject): string
+    private function createDisplayLinkTextForObject(ModelInterface $modelObject): array
     {
         $displayLinkText = $modelObject->getStrDisplayName();
+        $additionalInfo = '';
 
         // TODO: get rid of deprecated function usage once it is gone
         if ($this->showLinkObjectType && method_exists($this, 'getDisplayName')) {
@@ -351,10 +388,11 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
             }
         }
         if ($this->showAdditionalLinkData && $modelObject instanceof AdminListableInterface && $modelObject->rightView()) {
-            $displayLinkText .= ' '.$modelObject->getStrAdditionalInfo();
+//            $displayLinkText .= ' '.$modelObject->getStrAdditionalInfo();
+            $additionalInfo = $modelObject->getStrAdditionalInfo();
         }
 
-        return $displayLinkText;
+        return [$displayLinkText, $additionalInfo];
     }
 
     /**
