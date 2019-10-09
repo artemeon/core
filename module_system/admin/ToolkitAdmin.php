@@ -1486,13 +1486,16 @@ HTML;
      *
      * @param string $strContent
      * @param string $strClass
-     *
+     * @param bool $dismissible
      * @return string
+     * @throws \Twig\Error\Error
      */
-    public function warningBox($strContent, $strClass = "alert-warning")
+    public function warningBox($strContent, $strClass = Warningbox::CSS_CLASS_WARNING, $dismissible = true): string
     {
-        $cmp = new Warningbox($strContent, $strClass);
-        return $cmp->renderComponent();
+        $warningBox = new Warningbox($strContent, $strClass);
+        $warningBox->setDismissible($dismissible);
+
+        return $warningBox->renderComponent();
     }
 
     /**

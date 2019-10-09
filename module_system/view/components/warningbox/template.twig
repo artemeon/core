@@ -1,4 +1,6 @@
 <div class="alert {{ class }} core-component-warningbox">
-    <a class="close" data-dismiss="alert" href="#">&times;</a>
+    {% if dismissible %}
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
+    {% endif %}
     {{ content|raw }}
 </div>

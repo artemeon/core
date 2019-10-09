@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Kajona\System\View\Components\Warningbox;
 
 use Kajona\System\View\Components\AbstractComponent;
+use Twig\Error\Error as TwigError;
 
 /**
  * Returns a warning box, e.g. shown before deleting a record
@@ -19,39 +20,61 @@ use Kajona\System\View\Components\AbstractComponent;
  */
 class Warningbox extends AbstractComponent
 {
-    
-    /**
-     * @var string
-     */
-    protected $strContent;
+    public const CSS_CLASS_DANGER = 'alert-danger';
+
+    public const CSS_CLASS_WARNING = 'alert-warning';
+
+    public const CSS_CLASS_INFO = 'alert-info';
 
     /**
      * @var string
      */
-    protected $strClass;
+    protected $content;
 
     /**
-     * @param string $strContent
-     * @param string $strClass one of alert-warning, alert-info, alert-danger
+     * @var string
      */
-    public function __construct(string $strContent, string $strClass = "alert-warning")
+    protected $cssClass;
+
+    /**
+     * @var bool
+     */
+    protected $dismissible = true;
+
+    /**
+     * @param string $content
+     * @param string $cssClass one of the CSS_CLASS_* constants
+     */
+    public function __construct(string $content, string $cssClass = self::CSS_CLASS_WARNING)
     {
-        parent::__construct($strContent, $strClass);
+        parent::__construct();
 
-        $this->strContent = $strContent;
-        $this->strClass = $strClass;
+        $this->content = $content;
+        $this->cssClass = $cssClass;
     }
 
     /**
-     * @inheritdoc
+     * @return string
+     * @throws TwigError
      */
     public function renderComponent(): string
     {
         $data = [
-            "content" => $this->strContent,
-            "class" => $this->strClass
+            'content' => $this->content,
+            'class' => $this->cssClass,
+            'dismissible' => $this->dismissible,
         ];
 
         return $this->renderTemplate($data);
+    }
+
+    public function isDismissible(): bool
+    {
+        return $this->dismissible;
+    }
+
+    public function setDismissible(bool $dismissible): void
+    {
+        $this->dismissible = $dismissible;
     }
 }
