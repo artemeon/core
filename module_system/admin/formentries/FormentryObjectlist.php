@@ -6,7 +6,6 @@
 
 namespace Kajona\System\Admin\Formentries;
 
-use Kajona\System\Admin\FormentryPrintableInterface;
 use Kajona\System\Admin\FormentryPrintablePdfInterface;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\Carrier;
@@ -157,7 +156,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         $arrParams = Carrier::getAllParams();
 
         $strEntryName = $this->getStrEntryName();
-        $strEntryNameEmpty = $strEntryName."_empty";
+        $strEntryNameEmpty = $strEntryName . "_empty";
 
         if (isset($arrParams[$strEntryName])) {
             $this->setStrValue($arrParams[$strEntryName]);
@@ -247,7 +246,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         // get database object which we can not change
         $strGetter = $objReflection->getGetter($this->getStrSourceProperty());
         if ($strGetter === null) {
-            throw new Exception("unable to find getter for value-property ".$this->getStrSourceProperty()."@".get_class($objSourceObject), Exception::$level_ERROR);
+            throw new Exception("unable to find getter for value-property " . $this->getStrSourceProperty() . "@" . get_class($objSourceObject), Exception::$level_ERROR);
         }
 
 
@@ -272,7 +271,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         // set value
         $strSetter = $objReflection->getSetter($this->getStrSourceProperty());
         if ($strSetter === null) {
-            throw new Exception("unable to find setter for value-property ".$this->getStrSourceProperty()."@".get_class($objSourceObject), Exception::$level_ERROR);
+            throw new Exception("unable to find setter for value-property " . $this->getStrSourceProperty() . "@" . get_class($objSourceObject), Exception::$level_ERROR);
         }
 
         return $objSourceObject->{$strSetter}($arrObjects);
@@ -309,7 +308,6 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         $dtable = new DTable([], $data);
         $cmp = new DTableComponent($dtable);
         return $cmp->renderComponent();
-//        return implode('<br>', $htmlResponse);
     }
 
     /**
@@ -323,7 +321,9 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         }
 
         $data = $this->getSummaryTableRows();
-        $data = array_map(function(array $entry) { return [strip_tags($entry[0])]; }, $data);
+        $data = array_map(function (array $entry) {
+            return [strip_tags($entry[0])];
+        }, $data);
 
         $dtable = new DTable([], $data);
         $cmp = new PDFTable($dtable);
@@ -332,10 +332,13 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         return $cmp->renderComponent();
     }
 
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \ReflectionException
+     */
     private function getSummaryTableRows(): array
     {
-        $htmlResponse = [];
-
         //Collect object and sort them by create date
         $skipRightCheck = $this->options & self::OPTION_SKIP_RIGHT_CHECK;
         $objects = [];
@@ -351,10 +354,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         $this->orderObject($objects);
 
         $data = [];
-
-        //Render content
         foreach ($objects as $object) {
-            $htmlResponse[] =  $this->createDisplayLinkTextForObject($object);
             $data[] = $this->createDisplayLinkTextForObject($object);
         }
 
@@ -383,12 +383,12 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
                 $moduleAdmin = $moduleByName->getAdminInstanceOfConcreteModule($modelObject->getSystemid());
 
                 if ($moduleAdmin !== null && method_exists($moduleAdmin, 'actionShowSummary')) {
-                    $displayLinkText = Link::getLinkAdminDialog($modelObject->getArrModule('modul'), 'showSummary', '&systemid='.$modelObject->getSystemid().'&folderview='.Carrier::getInstance()->getParam('folderview'), $displayLinkText);
+                    $displayLinkText = Link::getLinkAdminDialog($modelObject->getArrModule('modul'), 'showSummary', '&systemid=' . $modelObject->getSystemid() . '&folderview=' . Carrier::getInstance()->getParam('folderview'), $displayLinkText);
                 }
             }
         }
+
         if ($this->showAdditionalLinkData && $modelObject instanceof AdminListableInterface && $modelObject->rightView()) {
-//            $displayLinkText .= ' '.$modelObject->getStrAdditionalInfo();
             $additionalInfo = $modelObject->getStrAdditionalInfo();
         }
 
@@ -398,8 +398,8 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
     /**
      * @param array $arrObjects
      */
-    private function orderObject(array &$arrObjects) {
-        //Name
+    private function orderObject(array &$arrObjects)
+    {
         uasort($arrObjects, function (ModelInterface $a, ModelInterface $b) {
             return strcmp($a->getStrDisplayName(), $b->getStrDisplayName());
         });
@@ -433,14 +433,14 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
 
         $objClass = new ReflectionClass(get_class($objObject)); //TODO remove hardcoded cross-module dependencies
         if (SystemModule::getModuleByName("aufgaben") !== null && $objClass->implementsInterface('AGP\Aufgaben\System\AufgabenTaskableInterface')) {
-            $strObjectName .= "[".$objObject->getStrTaskCategory()."] ";
+            $strObjectName .= "[" . $objObject->getStrTaskCategory() . "] ";
         } elseif ($objClass->implementsInterface('Kajona\System\System\VersionableInterface')) {
-            $strObjectName .= "[".$objObject->getVersionRecordName()."] ";
+            $strObjectName .= "[" . $objObject->getVersionRecordName() . "] ";
         }
 
         $strObjectName .= strip_tags($objObject->getStrDisplayName());
 
-        $strObjectName .= ($objObject->getIntRecordDeleted() === 1 ? ' (' .Carrier::getInstance()->getObjLang()->getLang('commons_deleted', 'system'). ')' : '');
+        $strObjectName .= ($objObject->getIntRecordDeleted() === 1 ? ' (' . Carrier::getInstance()->getObjLang()->getLang('commons_deleted', 'system') . ')' : '');
 
         return $strObjectName;
     }
