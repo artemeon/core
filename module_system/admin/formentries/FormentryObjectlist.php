@@ -313,6 +313,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
     /**
      * @inheritDoc
      * @throws Exception
+     * @throws \ReflectionException
      */
     public function getValueForPdf(): string
     {
@@ -321,7 +322,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
         }
 
         $data = $this->getSummaryTableRows();
-        $data = array_map(function (array $entry) {
+        $data = array_map(static function (array $entry): array {
             return [strip_tags($entry[0])];
         }, $data);
 
@@ -363,7 +364,7 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintablePdf
 
     /**
      * @param ModelInterface $modelObject
-     * @return string
+     * @return string[]
      * @throws \ReflectionException
      */
     private function createDisplayLinkTextForObject(ModelInterface $modelObject): array

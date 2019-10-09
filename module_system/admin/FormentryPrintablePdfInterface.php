@@ -1,4 +1,5 @@
 <?php
+
 /*"******************************************************************************************************
  *   (c) ARTEMEON Management Partner GmbH
  *       Published under the GNU LGPL v2.1
@@ -13,7 +14,8 @@ namespace Kajona\System\Admin;
  * @author sidler@mulchprod.de
  * @since 7.1
  */
-interface FormentryPrintablePdfInterface extends FormentryPrintableInterface {
+interface FormentryPrintablePdfInterface extends FormentryPrintableInterface
+{
 
     /**
      * Returns a textual representation of the formentries' value.
@@ -22,5 +24,4 @@ interface FormentryPrintablePdfInterface extends FormentryPrintableInterface {
      * @return string
      */
     public function getValueForPdf(): string;
-
 }

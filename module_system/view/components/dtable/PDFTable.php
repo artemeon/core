@@ -68,7 +68,7 @@ class PDFTable extends AbstractComponent
         $this->dataTable = $dataTable;
     }
 
-    public function setDefaultStripingEnabled()
+    public function setDefaultStripingEnabled(): void
     {
         $this->setCellSpacing(0);
         $this->setBorderWidth('0');
