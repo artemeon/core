@@ -15,6 +15,8 @@ import i18n from './VueMainComponent/VueLang'
 import GlobalAxiosConfig from './GlobalAxiosConfig'
 import VueI18n from 'vue-i18n'
 import KeymapsController from './KeymapsController'
+import StringPolyfill from './polyfills/StringPolyfill'
+import EventDispatcher from './EventDispatcher'
 
 declare global {
     interface Window {
@@ -54,6 +56,9 @@ class App {
                 }
             }
         }
+
+        // load polyfills
+        StringPolyfill.init()
 
         Folderview.dialog = KAJONA.admin.folderview.dialog
 
@@ -108,6 +113,8 @@ class App {
 ;(<any>window).App = App
 ;(<any>window).$ = (<any>window).jQuery = require('jquery')
 ;
+
+(<any>window).kajonaCreateEvent = EventDispatcher.kajonaCreateEvent
 
 // (<any>window).moment = moment
 export default App
