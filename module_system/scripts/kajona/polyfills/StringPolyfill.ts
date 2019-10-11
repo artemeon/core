@@ -1,7 +1,7 @@
 /* eslint-disable no-extend-native */
 export default class StringPolyfill {
     /**
-     * Polyfill for the String.prototype.includes
+     * Polyfills for the String.prototype.includes
      */
     public static init (): void {
         if (!String.prototype.includes) {
