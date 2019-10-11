@@ -3,7 +3,7 @@ export default class StringPolyfill {
     /**
      * Polyfill for the String.prototype.includes
      */
-    public static init () {
+    public static init (): void {
         if (!String.prototype.includes) {
             String.prototype.includes = function (search, start) {
                 'use strict'
