@@ -10,9 +10,9 @@
         <div :id="'menu_' + module.module.systemid + module.module.aspectId" class="panel-collapse collapse" :data-kajona-module="module.module.moduleTitle">
             <div class="panel-body">
                 <ul>
-                    <li v-for="(action, i) in module.module.actions" :key="i + action.link" :class="[action.link == '' ? 'divider' : '']">
-                        <a v-if="action.name != '' && action.link != ''" :title="action.name" :href="action.href" class="adminnavi">{{ action.name }}</a>
-                        <div v-if="action.name == '' && action.link != ''">{{ action.link }}</div>
+                    <li v-for="(action, i) in module.module.actions" :key="i + action.link" :class="[action.link === '' ? 'divider' : '']">
+                        <a v-if="action.name !== '' && action.link !== ''" :title="action.name" :href="action.href" class="adminnavi">{{ action.name }}</a>
+                        <div v-if="action.name === '' && action.link !== ''">{{ action.link }}</div>
                     </li>
                 </ul>
             </div>
