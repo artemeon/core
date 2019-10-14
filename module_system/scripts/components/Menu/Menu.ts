@@ -1,27 +1,18 @@
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Mixins } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import ModuleNavigation from 'core/module_system/scripts/kajona/ModuleNavigation'
-import Lang from 'core/module_system/scripts/kajona/Lang'
+import { LangMixin } from 'core/module_system/scripts/kajona/VueMixings'
 import MenuAspect from '../MenuAspect/MenuAspect.vue'
 
 @Component({ components: { MenuAspect } })
-class Menu extends Vue {
+class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons'])) {
     @namespace('MenuModule').Action getMenu: any
 
     @namespace('MenuModule').State aspects: Array<any>
 
     @namespace('MenuModule').State isLoaded: boolean
 
-    private version: string
-
     private async mounted(): Promise<void> {
-        Lang.fetchSingleProperty(
-            'commons',
-            'commons_product_title',
-            (value: string) => {
-                this.version = value
-            },
-        )
         await this.getMenu()
         this.switchAspect(this.aspects[0].onclick)
     }
