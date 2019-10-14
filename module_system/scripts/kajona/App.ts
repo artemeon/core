@@ -15,6 +15,7 @@ import i18n from './VueMainComponent/VueLang'
 import GlobalAxiosConfig from './GlobalAxiosConfig'
 import VueI18n from 'vue-i18n'
 import KeymapsController from './KeymapsController'
+import StringPolyfill from './Polyfills/StringPolyfill'
 
 declare global {
     interface Window {
@@ -54,6 +55,9 @@ class App {
                 }
             }
         }
+
+        // load polyfills
+        StringPolyfill.init()
 
         Folderview.dialog = KAJONA.admin.folderview.dialog
 

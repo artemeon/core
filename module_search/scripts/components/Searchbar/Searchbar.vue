@@ -22,10 +22,7 @@
                 :title="$t('search.form_additionalheader')"
                 rel="tooltip"
               >
-                <i
-                  class="fa fa-caret-down"
-                  v-bind:class="{'fa fa-caret-up' : !filterIsOpen , 'fa fa-caret-up' : filterIsOpen}"
-                ></i>
+                <i :class="filterIsOpen? 'fa fa-caret-up' : 'fa fa-caret-down'"></i>
               </span>
             </div>
           </form>

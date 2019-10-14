@@ -79,7 +79,7 @@ module.exports = {
                             coreEntry +
                             '/' +
                             packageConfig[coreEntry][i] +
-                            '/scripts/components/**/*.less'
+                            '/**/components/**/*.less'
                     )
                 }
             }
