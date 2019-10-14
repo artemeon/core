@@ -7,45 +7,53 @@
 namespace Kajona\System\System;
 
 /**
- * Abstract class which represents an item/entry of a module from the menu
+ * Class which represents a Link of a module item from the menu
  *
  * @package module_system
  * @author laura.albersmann@artemeon.de
  * @since 7.2
  */
-abstract class MenuItem
+class MenuSeparator extends MenuItem
 {
+    private $right = "";
+
+    /**
+     *
+     * Constructor
+     * @param string $right Right to view menu item
+     */
+    public function __construct(string $right)
+    {
+        $this->right = $right;
+    }
 
     /**
      * Return right
      *
      * @return Right|string
      */
-    abstract protected function getMenuItemRight();
+    public function getMenuItemRight()
+    {
+        return $this->right;
+    }
 
     /**
      *  Returns name
      *
      * @return Name|string
      */
-    abstract protected function getMenuItemName();
+    public function getMenuItemName()
+    {
+        return "";
+    }
 
     /**
      * Returns href
      *
      * @return href|string
      */
-    abstract protected function getMenuItemHref();
-
-    /**
-     * Returns an array containing right, name and link
-     *
-     * @return array
-     */
-    public function toArray()
+    public function getMenuItemHref()
     {
-        $menuItemArr = ["link" => $this->getMenuItemHref(), "name" => $this->getMenuItemName(), "href" => $this->getMenuItemHref(), ];
-        return $menuItemArr;
+        return "";
     }
-
 }
