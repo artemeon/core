@@ -126,11 +126,11 @@ class MenuApiController implements ApiControllerInterface
 
                 if ($bitAdd || $arrOneItem[1] == "") {
                     if ($arrOneItem[1] != "" || (!isset($arrFinalItems[$intI - 1]) || $arrFinalItems[$intI - 1] != "")) {
-                        if (is_array($arrOneItem)) {
+                        if ($arrOneItem[1] instanceof MenuItem) {
+                            $arrFinalItems[] = $arrOneItem[1]->toArray();
+                        } else {
                             $arrSplitOneItem = splitUpLink($arrOneItem[1]);
                             $arrFinalItems[] = $arrSplitOneItem;
-                        } else if ($arrOneItem instanceof MenuItem) {
-                            $arrFinalItems[] = $arrOneItem->toArray();
                         }
                         $intI++;
                     }

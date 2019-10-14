@@ -44,7 +44,7 @@ abstract class MenuItem
      */
     public function toArray()
     {
-        $menuItemArr = ["right" => $this->getMenuItemRight(), "name" => $this->getMenuItemName(), "href" => $this->getMenuItemHref(), "link" => $this->getMenuItemHref()];
+        $menuItemArr = ["link" => $this->getMenuItemHref(), "name" => $this->getMenuItemName(), "href" => $this->getMenuItemHref(), ];
         return $menuItemArr;
     }
 
