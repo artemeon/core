@@ -138,7 +138,7 @@ class MenuApiController implements ApiControllerInterface
             }
 
             //if the last one is a divider, remove it
-            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] != "" && $arrFinalItems[count($arrFinalItems) - 1]["href"] != "") {
+            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] == "" && $arrFinalItems[count($arrFinalItems) - 1]["href"] == "") {
                 unset($arrFinalItems[count($arrFinalItems) - 1]);
             }
 
