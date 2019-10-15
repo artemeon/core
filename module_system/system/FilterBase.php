@@ -228,7 +228,7 @@ abstract class FilterBase
         //get params
         $arrParams = Carrier::getAllParams();
 
-        //set param vlaues to filter object
+        //set param values to filter object
         foreach ($arrProperties as $strPropertyName => $strColumnName) {
             $strSetter = $objReflection->getSetter($strPropertyName);
             if ($strSetter === null) {
@@ -240,7 +240,7 @@ abstract class FilterBase
             $strPropertyWithoutPrefix = $this->getFullParamName($strPropertyWithoutPrefix);
 
             //set values to filter object
-            if (array_key_exists($strPropertyWithoutPrefix, $arrParams)) {
+            if (array_key_exists($strPropertyWithoutPrefix, $arrParams) || array_key_exists($strPropertyWithoutPrefix."_prescheck", $arrParams)) {
                 $strValueToSet = $this->convertParamValue($strPropertyWithoutPrefix, $arrParams);
                 $this->$strSetter($strValueToSet);
             }

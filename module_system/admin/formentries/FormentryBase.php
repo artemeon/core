@@ -253,6 +253,15 @@ abstract class FormentryBase implements \JsonSerializable
     }
 
     /**
+     * Creates a pres-check key to detect de-selected entries
+     * @return string
+     */
+    final protected function getPresCheckKey()
+    {
+        return StringUtil::replace(["[", "]"], "", $this->getStrEntryName()."_prescheck");
+    }
+
+    /**
      * @param bool $bitMandatory
      *
      * @return FormentryBase
