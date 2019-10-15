@@ -76,6 +76,7 @@ $lang["commons_page_success"]            = "Seite im Erfolgsfall (optional)";
 $lang["commons_path"]                    = "Pfad";
 $lang["commons_reset"]                   = "Zurücksetzen";
 $lang["commons_result_page"]             = "Treffer-Seite";
+$lang["commons_recalculate_permissions"] = "Neu berechnen";
 $lang["commons_save"]                    = "Speichern";
 $lang["commons_cancel"]                  = "Abbrechen";
 $lang["commons_back"]                    = "Zurück";

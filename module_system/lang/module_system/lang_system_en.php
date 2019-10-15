@@ -173,6 +173,10 @@ $lang["quickhelp_system_tasks"]          = "Systemtasks are small programms hand
 $lang["quickhelp_systemlog"]             = "The system-log shows the entries of the global logfile.<br />The granularity of the logging-engine could be set in the config-file (/project/system/config/config.php).";
 $lang["quickhelp_title"]                 = "Quickhelp";
 $lang["quickhelp_updateCheck"]           = "By using the update-check, the version of the modules installed locally and the versions of the modules available online are compared. If there's a new version available, Kajona displays a hint at the concerning module.";
+
+$lang["recalculate_rights_success"]      = "Permissions recalculated successfully";
+$lang["recalculate_rights_error"]        = "Error on recalculation permissions";
+
 $lang["send"]                            = "Send";
 
 $lang["session_activity"]                = "Activity";

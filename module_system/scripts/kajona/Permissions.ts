@@ -23,7 +23,7 @@ class Permissions {
                 objResponse.arrConfigs.push($(this).attr('id'))
             })
 
-        var submitBtn = $(".savechanges");
+        var submitBtn = $(".save-permissions");
         // disable submit button
         submitBtn.addClass("processing").prop("disabled", true);
 
@@ -159,6 +159,29 @@ class Permissions {
                 Permissions.toggleInherit()
             }
         )
+    }
+
+    public static recalculatePermission() {
+        const submitBtn = $('.recalc-permissions')
+        // disable submit button
+        submitBtn.addClass('processing').prop('disabled', true)
+
+        $.ajax({
+            url:
+                KAJONA_WEBPATH + '/xml.php?admin=1&module=right&action=recalculatePermissions&systemid='
+                + $('#systemid').val(),
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json',
+        }).done(function (data) {
+            // enable submit button
+            submitBtn.removeClass('processing').prop('disabled', false)
+
+            // load rights
+            Permissions.loadRights()
+            // needs change after implementing type definition for toast
+            toastr[data.type](data.message)
+        })
     }
 }
 ;(<any>window).Permissions = Permissions

@@ -9,9 +9,11 @@
 
 namespace Kajona\System\Admin;
 
+use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Link;
 use Kajona\System\System\Objectfactory;
+use Kajona\System\System\Permissions\PermissionHandlerFactory;
 use Kajona\System\System\Rights;
 use Kajona\System\System\Root;
 use Kajona\System\System\SystemCommon;
@@ -101,7 +103,8 @@ class RightAdmin extends AdminController implements AdminInterface
             $strReturn .= $this->objToolkit->formInputHidden("systemid", $strSystemID);
 
             //Close the form
-            $strReturn .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"));
+            $strReturn .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"), "", "", "save-permissions");
+            $strReturn .= $this->objToolkit->formInputSubmit($this->getLang("commons_recalculate_permissions"), "Submit", 'Permissions.recalculatePermission();return false;', "recalc-permissions");
             $strReturn .= $this->objToolkit->formClose();
 
             $strReturn .= "<script type=\"text/javascript\">
@@ -233,6 +236,33 @@ class RightAdmin extends AdminController implements AdminInterface
         } else {
             $strReturn = ["message" => $this->getLang("save_rights_error"), "type" => "error"];
         }
+
+        return $strReturn;
+    }
+
+    /**
+     * Recalculates Rights from form
+     *
+     * @throws Exception
+     * @return array
+     * @permissions right
+     * @responseType json
+     */
+    protected function actionRecalculatePermissions()
+    {
+
+        $record = "";
+        /** @var PermissionHandlerFactory $permissionFactory */
+        $permissionFactory = Carrier::getInstance()->getContainer()->offsetGet(\Kajona\System\System\ServiceProvider::STR_PERMISSION_HANDLER_FACTORY);
+        $permissionHandler = $permissionFactory->factory(get_class($record));
+        $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
+        if ($permissionHandler) {
+            $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "error"];
+        }
+//        $permissionHandler->calculatePermissions($record);
+
+//        $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
+//        $strReturn = ["message" => $this->getLang("recalculate_rights_error"), "type" => "error"];
 
         return $strReturn;
     }
