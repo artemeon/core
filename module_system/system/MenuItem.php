@@ -19,21 +19,21 @@ abstract class MenuItem
     /**
      * Return right
      *
-     * @return Right|string
+     * @return string
      */
     abstract protected function getMenuItemRight();
 
     /**
      *  Returns name
      *
-     * @return Name|string
+     * @return string
      */
     abstract protected function getMenuItemName();
 
     /**
      * Returns href
      *
-     * @return href|string
+     * @return string
      */
     abstract protected function getMenuItemHref();
 
