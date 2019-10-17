@@ -22,7 +22,7 @@ use Kajona\System\System\Lifecycle\ServiceLifeCycleModelException;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionsProviderFactory;
+use Kajona\System\System\Modelaction\ModelActionsRenderer;
 use Kajona\System\System\ModelInterface;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\StringUtil;
@@ -49,9 +49,9 @@ abstract class AdminSimple extends AdminController
     private $strPeAddon = "";
 
     /**
-     * @var ModelActionsProviderFactory
+     * @var ModelActionsRenderer
      */
-    private $modelActionsProviderFactory;
+    private $modelActionsRenderer;
 
     /**
      * @param string $strSystemid
@@ -60,7 +60,7 @@ abstract class AdminSimple extends AdminController
     public function __construct($strSystemid = "")
     {
         parent::__construct($strSystemid);
-        $this->modelActionsProviderFactory = Carrier::getInstance()->getContainer()[ModelActionsProviderFactory::class];
+        $this->modelActionsRenderer = Carrier::getInstance()->getContainer()[ModelActionsRenderer::class];
 
         if ($this->getParam("unlockid") != "") {
             $objUnlock = Objectfactory::getInstance()->getObject($this->getParam("unlockid"));
@@ -371,9 +371,7 @@ abstract class AdminSimple extends AdminController
         $context = new ModelActionContext($listIdentifier);
 
         try {
-            return $this->modelActionsProviderFactory->find($model, $context)
-                ->getActions($model, $context)
-                ->renderAll($model, $context);
+            return $this->modelActionsRenderer->render($model, $context);
         } catch (Exception $exception) {
             return '';
         }

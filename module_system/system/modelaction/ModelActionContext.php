@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction;
 
-final class ModelActionContext
+use JsonSerializable;
+
+final class ModelActionContext implements JsonSerializable
 {
     /**
      * @var string|null
@@ -23,5 +25,17 @@ final class ModelActionContext
     public function getListIdentifier(): ?string
     {
         return $this->listIdentifier;
+    }
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'listIdentifier' => $this->listIdentifier,
+        ];
+    }
+
+    public function __toString(): string
+    {
+        return (string) \json_encode($this->jsonSerialize(), \JSON_UNESCAPED_SLASHES | \JSON_UNESCAPED_UNICODE);
     }
 }

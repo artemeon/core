@@ -20,6 +20,7 @@ use Kajona\System\System\Modelaction\CachedModelAction;
 use Kajona\System\System\Modelaction\ChangeHistoryModelAction;
 use Kajona\System\System\Modelaction\ClassInheritanceModelActionsProvider;
 use Kajona\System\System\Modelaction\CopyModelAction;
+use Kajona\System\System\Modelaction\DefaultModelActionsRenderer;
 use Kajona\System\System\Modelaction\DeleteModelAction;
 use Kajona\System\System\Modelaction\EditModelAction;
 use Kajona\System\System\Modelaction\ExtendableModelActionsProviderFactory;
@@ -36,6 +37,7 @@ use Kajona\System\System\Modelaction\Legacy\LegacyUnlockModelAction;
 use Kajona\System\System\Modelaction\ModelAction;
 use Kajona\System\System\Modelaction\ModelActionsProvider;
 use Kajona\System\System\Modelaction\ModelActionsProviderFactory;
+use Kajona\System\System\Modelaction\ModelActionsRenderer;
 use Kajona\System\System\Modelaction\PermissionsModelAction;
 use Kajona\System\System\Modelaction\StatusModelAction;
 use Kajona\System\System\Modelaction\TagModelAction;
@@ -615,6 +617,11 @@ class ServiceProvider implements ServiceProviderInterface
 
         $objContainer[ModelActionsProviderFactory::class] = static function (): ModelActionsProviderFactory {
             return new ExtendableModelActionsProviderFactory();
+        };
+        $objContainer[ModelActionsRenderer::class] = static function (Container $container): ModelActionsRenderer {
+            return new DefaultModelActionsRenderer(
+                $container[ModelActionsProviderFactory::class]
+            );
         };
 
         $this->registerModelActions($objContainer);
