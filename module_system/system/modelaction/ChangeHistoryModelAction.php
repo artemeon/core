@@ -41,7 +41,7 @@ final class ChangeHistoryModelAction implements ModelAction
         $this->lang = $lang;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return $this->featureDetector->isChangeHistoryFeatureEnabled()
@@ -59,7 +59,7 @@ final class ChangeHistoryModelAction implements ModelAction
                 'system',
                 'genericChangelog',
                 [
-                    'systemid' => $model->getSystemid(),
+                    'systemid' => $model->getStrSystemid(),
                     'folderview' => '1',
                 ],
                 $this->lang->getLang('commons_edit_history', 'commons'),
@@ -72,8 +72,8 @@ final class ChangeHistoryModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('changeHistory', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         return $this->renderChangeHistoryAction($model);

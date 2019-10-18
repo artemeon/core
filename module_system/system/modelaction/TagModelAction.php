@@ -51,7 +51,7 @@ JS;
         $this->lang = $lang;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return $this->featureDetector->isTagsFeatureEnabled()
@@ -70,7 +70,7 @@ JS;
                 'tags',
                 'genericTagForm',
                 [
-                    'systemid' => $model->getSystemid(),
+                    'systemid' => $model->getStrSystemid(),
                 ]
             ),
             StringUtil::jsSafeString($model->getStrDisplayName())
@@ -90,7 +90,7 @@ JS;
                 '<a href="#" onclick="%s" title="%s" rel="tagtooltip" data-systemid="%s">%s</a>',
                 $this->createJavascriptClickHandler($model),
                 $this->lang->getLang('commons_edit_tags', 'commons'),
-                $model->getSystemid(),
+                $model->getStrSystemid(),
                 AdminskinHelper::getAdminImage(
                     'icon_tag',
                     $this->lang->getLang('commons_edit_tags', 'commons'),
@@ -102,14 +102,14 @@ JS;
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('tag', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         try {
             return $this->renderTagAction($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('tag', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

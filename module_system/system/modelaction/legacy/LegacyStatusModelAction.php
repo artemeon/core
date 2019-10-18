@@ -8,12 +8,26 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction\Legacy;
 
-use Kajona\System\System\ModelControllerProvider;
+use Kajona\System\Admin\AdminSimple;
+use Kajona\System\System\Model;
 
 final class LegacyStatusModelAction extends LegacyModelAction
 {
-    public function __construct(ModelControllerProvider $modelControllerProvider)
+    private function getStatusActionMethodName(AdminSimple $modelController): string
     {
-        parent::__construct($modelControllerProvider, 'renderStatusAction');
+        if (\method_exists($modelController, 'renderFlowStatusAction')) {
+            return 'renderFlowStatusAction';
+        }
+
+        return 'renderStatusAction';
+    }
+
+    protected function invokeControllerAction(AdminSimple $modelController, Model $model)
+    {
+        return $this->invokeProtectedMethod(
+            $modelController,
+            $this->getStatusActionMethodName($modelController),
+            $model
+        );
     }
 }

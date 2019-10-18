@@ -45,7 +45,7 @@ class DeleteModelAction implements ModelAction
         $this->lang = $lang;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return !$model->getIntRecordDeleted()
@@ -53,6 +53,25 @@ class DeleteModelAction implements ModelAction
         } catch (Exception $exception) {
             return false;
         }
+    }
+
+    private function isModelAccessibleForCurrentUser(Model $model): bool
+    {
+        try {
+            return $model->getLockManager()->isAccessibleForCurrentUser();
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+
+    private function renderDeleteActionLocked(): string
+    {
+        return $this->toolkit->listButton(
+            AdminskinHelper::getAdminImage(
+                'icon_deleteLocked',
+                $this->lang->getLang('commons_locked', 'commons')
+            )
+        );
     }
 
     /**
@@ -82,22 +101,6 @@ class DeleteModelAction implements ModelAction
      * @throws UnableToRetrieveControllerForModelException
      * @throws UnableToRetrieveControllerActionNameForModelException
      */
-    private function renderDeleteActionLocked(): string
-    {
-        return $this->toolkit->listButton(
-            AdminskinHelper::getAdminImage(
-                'icon_deleteLocked',
-                $this->lang->getLang('commons_locked', 'commons')
-            )
-        );
-    }
-
-    /**
-     * @param Model $model
-     * @return string
-     * @throws UnableToRetrieveControllerForModelException
-     * @throws UnableToRetrieveControllerActionNameForModelException
-     */
     private function renderDeleteAction(Model $model): string
     {
         $moduleName = $model->getArrModule('module');
@@ -113,7 +116,7 @@ class DeleteModelAction implements ModelAction
                 $moduleName,
                 $deleteActionName,
                 [
-                    'systemid' => $model->getSystemid(),
+                    'systemid' => $model->getStrSystemid(),
                 ]
             )
         );
@@ -121,24 +124,18 @@ class DeleteModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('permissions', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
-        $isAccessibleForCurrentUser = false;
-        try {
-            $isAccessibleForCurrentUser = $model->getLockManager()->isAccessibleForCurrentUser();
-        } catch (Exception $exception) {
+        if (!$this->isModelAccessibleForCurrentUser($model)) {
+            return $this->renderDeleteActionLocked();
         }
 
         try {
-            if (!$isAccessibleForCurrentUser) {
-                return $this->renderDeleteActionLocked();
-            }
-
             return $this->renderDeleteAction($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('copy', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

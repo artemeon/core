@@ -8,21 +8,18 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction\Legacy;
 
-use Kajona\System\System\ModelControllerProvider;
+use Kajona\System\Admin\AdminSimple;
+use Kajona\System\System\Model;
 
 final class LegacyAdditionalModelAction extends LegacyModelAction
 {
-    public function __construct(ModelControllerProvider $modelControllerProvider)
+    protected function invokeControllerAction(AdminSimple $modelController, Model $model)
     {
-        parent::__construct($modelControllerProvider, 'renderAdditionalActions');
+        return $this->invokeProtectedMethod($modelController, 'renderAdditionalActions', $model);
     }
 
     protected function normalizeControllerActionResult($result): string
     {
-        if (\is_array($result)) {
-            $result = \implode('', $result);
-        }
-
-        return parent::normalizeControllerActionResult($result);
+        return \implode('', $result);
     }
 }

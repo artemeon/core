@@ -45,7 +45,7 @@ class PermissionsModelAction implements ModelAction
         $this->lang = $lang;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return !$model->getIntRecordDeleted()
@@ -89,11 +89,11 @@ class PermissionsModelAction implements ModelAction
                 'right',
                 $this->getActionNameForClass($model, 'change'),
                 [
-                    'systemid' => $model->getSystemid(),
+                    'systemid' => $model->getStrSystemid(),
                 ],
                 '',
                 $this->lang->getLang('commons_edit_permissions', 'commons'),
-                getRightsImageAdminName($model->getSystemid()),
+                getRightsImageAdminName($model->getStrSystemid()),
                 \strip_tags($model->getStrDisplayName()),
                 true,
                 true
@@ -103,14 +103,14 @@ class PermissionsModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('permissions', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         try {
             return $this->renderPermissionsAction($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('copy', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

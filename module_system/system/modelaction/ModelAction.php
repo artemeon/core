@@ -13,7 +13,7 @@ use Kajona\System\System\Model;
 
 interface ModelAction
 {
-    public function isAvailable(Model $model, ModelActionContext $context): bool;
+    public function supports(Model $model, ModelActionContext $context): bool;
 
     /**
      * @param Model $model

@@ -10,10 +10,10 @@ use Throwable;
 
 final class UnableToRenderActionForModelException extends Exception
 {
-    public function __construct(string $actionName, Root $model, Throwable $previousException = null)
+    public function __construct(Root $model, Throwable $previousException = null)
     {
         parent::__construct(
-            \sprintf('unable to render %s action for model of class "%s"', $actionName, \get_class($model)),
+            \sprintf('unable to render action for model of class "%s"', \get_class($model)),
             self::$level_FATALERROR,
             $previousException
         );

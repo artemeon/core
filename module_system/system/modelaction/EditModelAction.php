@@ -38,11 +38,6 @@ final class EditModelAction implements ModelAction
      */
     private $lang;
 
-    /**
-     * @var bool
-     */
-    private $showDialog = false;
-
     public function __construct(ModelControllerProvider $modelControllerProvider, ToolkitAdmin $toolkit, Lang $lang)
     {
         $this->modelControllerProvider = $modelControllerProvider;
@@ -50,17 +45,7 @@ final class EditModelAction implements ModelAction
         $this->lang = $lang;
     }
 
-    public function isShowDialog(): bool
-    {
-        return $this->showDialog;
-    }
-
-    public function setShowDialog(bool $showDialog): void
-    {
-        $this->showDialog = $showDialog;
-    }
-
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return !$model->getIntRecordDeleted()
@@ -107,30 +92,6 @@ final class EditModelAction implements ModelAction
      * @throws UnableToRetrieveControllerActionNameForModelException
      * @throws UnableToRetrieveControllerForModelException
      */
-    private function renderEditActionDialog(Model $model): string
-    {
-        return $this->toolkit->listButton(
-            Link::getLinkAdminDialog(
-                $model->getArrModule('module'),
-                $this->getActionNameForClass($model, 'edit'),
-                [
-                    'systemid' => $model->getStrSystemid(),
-                    'folderview' => 1,
-                ],
-                $this->lang->getLang('commons_list_edit', 'commons'),
-                $this->lang->getLang('commons_list_edit', 'commons'),
-                'icon_edit',
-                $model->getStrDisplayName()
-            )
-        );
-    }
-
-    /**
-     * @param Model $model
-     * @return string
-     * @throws UnableToRetrieveControllerActionNameForModelException
-     * @throws UnableToRetrieveControllerForModelException
-     */
     private function renderEditAction(Model $model): string
     {
         return $this->toolkit->listButton(
@@ -149,21 +110,18 @@ final class EditModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('edit', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         try {
             if (!$model->getLockManager()->isAccessibleForCurrentUser()) {
                 return $this->renderEditActionLocked();
             }
-            if ($this->showDialog) {
-                return $this->renderEditActionDialog($model);
-            }
 
             return $this->renderEditAction($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('edit', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

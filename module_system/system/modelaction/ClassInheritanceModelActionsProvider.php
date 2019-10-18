@@ -8,6 +8,7 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction;
 
+use Kajona\System\System\Exceptions\InvalidInheritanceClassNameGivenException;
 use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 
@@ -23,15 +24,25 @@ class ClassInheritanceModelActionsProvider implements ModelActionsProvider
      */
     private $modelActions;
 
-    public function __construct(string $inheritanceClassName, ModelAction ...$modelActions)
+    /**
+     * @param string $inheritanceClassName
+     * @param ModelActionList $modelActions
+     * @throws InvalidInheritanceClassNameGivenException
+     */
+    public function __construct(string $inheritanceClassName, ModelActionList $modelActions)
     {
+        if (!\is_a($inheritanceClassName, Model::class, true)) {
+            throw new InvalidInheritanceClassNameGivenException($inheritanceClassName);
+        }
+
         $this->inheritanceClassName = $inheritanceClassName;
-        $this->modelActions = new StaticModelActionList(...$modelActions);
+        $this->modelActions = $modelActions;
     }
 
     public function supports(Model $model, ModelActionContext $context): bool
     {
-        return $model instanceof $this->inheritanceClassName;
+        return $model instanceof $this->inheritanceClassName
+            && $this->modelActions->supports($model, $context);
     }
 
     public function getActions(Model $model, ModelActionContext $context): ModelActionList

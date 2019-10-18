@@ -8,12 +8,13 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction\Legacy;
 
-use Kajona\System\System\ModelControllerProvider;
+use Kajona\System\Admin\AdminSimple;
+use Kajona\System\System\Model;
 
 final class LegacyPermissionsModelAction extends LegacyModelAction
 {
-    public function __construct(ModelControllerProvider $modelControllerProvider)
+    protected function invokeControllerAction(AdminSimple $modelController, Model $model)
     {
-        parent::__construct($modelControllerProvider, 'renderPermissionsAction');
+        return $this->invokeProtectedMethod($modelController, 'renderPermissionsAction', $model);
     }
 }

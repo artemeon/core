@@ -25,7 +25,7 @@ final class StatusModelAction implements ModelAction
         $this->toolkit = $toolkit;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return !$model->getIntRecordDeleted()
@@ -37,14 +37,14 @@ final class StatusModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('status', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         try {
             return $this->toolkit->listStatusButton($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('status', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

@@ -15,16 +15,16 @@ class StaticModelActionsProvider implements ModelActionsProvider
     /**
      * @var ModelActionList
      */
-    private $modelActions;
+    protected $modelActions;
 
-    public function __construct(ModelAction ...$modelActions)
+    public function __construct(ModelActionList $modelActions)
     {
-        $this->modelActions = new StaticModelActionList(...$modelActions);
+        $this->modelActions = $modelActions;
     }
 
     public function supports(Model $model, ModelActionContext $context): bool
     {
-        return $this->modelActions->isAnyAvailable($model, $context);
+        return $this->modelActions->supports($model, $context);
     }
 
     public function getActions(Model $model, ModelActionContext $context): ModelActionList

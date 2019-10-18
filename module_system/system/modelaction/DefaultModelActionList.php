@@ -6,10 +6,8 @@
 
 declare(strict_types=1);
 
-namespace Kajona\System\System\Modelaction\Legacy;
+namespace Kajona\System\System\Modelaction;
 
-use Kajona\System\System\Modelaction\StaticModelActionsProvider;
-
-final class LegacyModelActionsProvider extends StaticModelActionsProvider
+final class DefaultModelActionList extends StaticModelActionList
 {
 }

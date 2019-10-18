@@ -45,7 +45,7 @@ final class CopyModelAction implements ModelAction
         $this->lang = $lang;
     }
 
-    public function isAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
             return !$model->getIntRecordDeleted()
@@ -92,7 +92,7 @@ final class CopyModelAction implements ModelAction
                 $model->getArrModule('module'),
                 $this->getActionNameForClass($model, 'copyObject'),
                 [
-                    'systemid' => $model->getSystemid(),
+                    'systemid' => $model->getStrSystemid(),
                 ]
             ),
             'icon_copy',
@@ -104,14 +104,14 @@ final class CopyModelAction implements ModelAction
 
     public function render(Model $model, ModelActionContext $context): string
     {
-        if (!$this->isAvailable($model, $context)) {
-            throw new UnableToRenderActionForModelException('copy', $model);
+        if (!$this->supports($model, $context)) {
+            throw new UnableToRenderActionForModelException($model);
         }
 
         try {
             return $this->renderCopyAction($model);
         } catch (Exception $exception) {
-            throw new UnableToRenderActionForModelException('copy', $model, $exception);
+            throw new UnableToRenderActionForModelException($model, $exception);
         }
     }
 }

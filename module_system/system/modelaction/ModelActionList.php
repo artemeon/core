@@ -13,7 +13,7 @@ use Kajona\System\System\Model;
 
 interface ModelActionList
 {
-    public function isAnyAvailable(Model $model, ModelActionContext $context): bool;
+    public function supports(Model $model, ModelActionContext $context): bool;
 
     /**
      * @param Model $model
@@ -22,4 +22,14 @@ interface ModelActionList
      * @throws UnableToRenderActionForModelException
      */
     public function renderAll(Model $model, ModelActionContext $context): string;
+
+    public function withAdditionalModelActions(
+        ModelAction $modelActionToBeAdded,
+        ModelAction ...$furtherModelActionsToBeAdded
+    ): self;
+
+    public function withoutModelActionsOfType(
+        string $modelActionClassNameToBeRemoved,
+        string ...$furtherModelActionClassNamesToBeRemoved
+    ): self;
 }

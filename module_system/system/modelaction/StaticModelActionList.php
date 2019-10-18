@@ -15,17 +15,17 @@ class StaticModelActionList implements ModelActionList
     /**
      * @var ModelAction[]
      */
-    private $modelActions;
+    protected $modelActions;
 
     public function __construct(ModelAction ...$modelActions)
     {
         $this->modelActions = $modelActions;
     }
 
-    public function isAnyAvailable(Model $model, ModelActionContext $context): bool
+    public function supports(Model $model, ModelActionContext $context): bool
     {
         foreach ($this->modelActions as $modelAction) {
-            if ($modelAction->isAvailable($model, $context)) {
+            if ($modelAction->supports($model, $context)) {
                 return true;
             }
         }
@@ -38,11 +38,59 @@ class StaticModelActionList implements ModelActionList
         $renderedActions = [];
 
         foreach ($this->modelActions as $modelAction) {
-            if ($modelAction->isAvailable($model, $context)) {
+            if ($modelAction->supports($model, $context)) {
                 $renderedActions[] = $modelAction->render($model, $context);
             }
         }
 
         return \implode('', $renderedActions);
+    }
+
+    public function withAdditionalModelActions(
+        ModelAction $modelActionToBeAdded,
+        ModelAction ...$furtherModelActionsToBeAdded
+    ): ModelActionList {
+        $insertIndex = 0;
+        foreach ($this->modelActions as $index => $existingModelAction) {
+            if ($existingModelAction instanceof EditModelAction) {
+                $insertIndex = $index + 1;
+                break;
+            }
+        }
+
+        $newModelActions = $this->modelActions;
+        \array_splice(
+            $newModelActions,
+            $insertIndex,
+            0,
+            \array_merge([$modelActionToBeAdded], $furtherModelActionsToBeAdded)
+        );
+
+        return new self(...$newModelActions);
+    }
+
+    public function withoutModelActionsOfType(
+        string $modelActionClassNameToBeRemoved,
+        string ...$furtherModelActionClassNamesToBeRemoved
+    ): ModelActionList {
+        $modelActionClassNamesToBeRemoved = \array_merge(
+            [$modelActionClassNameToBeRemoved],
+            $furtherModelActionClassNamesToBeRemoved
+        );
+
+        return new self(
+            ...\array_filter(
+                $this->modelActions,
+                static function (ModelAction $modelAction) use ($modelActionClassNamesToBeRemoved): bool {
+                    foreach ($modelActionClassNamesToBeRemoved as $modelActionClassNameToBeRemoved) {
+                        if ($modelAction instanceof $modelActionClassNameToBeRemoved) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                }
+            )
+        );
     }
 }
