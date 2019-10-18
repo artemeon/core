@@ -5,8 +5,9 @@
  *       Published under the GNU LGPL v2.1
  ********************************************************************************************************/
 
-namespace Kajona\Search\Api;
+declare(strict_types=1);
 
+namespace Kajona\Search\Api;
 
 use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Search\System\SearchCommons;
@@ -33,7 +34,7 @@ use Kajona\Api\System\Http\JsonResponse;
  */
 class SearchApiController implements ApiControllerInterface
 {
-    const INT_MAX_NR_OF_RESULTS_FULLSEARCH = 100;
+    const MAX_NR_OF_RESULTS_FULLSEARCH = 100;
 
     /**
      * returns filtered search results
@@ -59,31 +60,31 @@ class SearchApiController implements ApiControllerInterface
         $search_changestartdate = $context->getParameter('search_changestartdate');
         $search_changeenddate = $context->getParameter('search_changeenddate');
         $search_formfilteruser_id = $context->getParameter('search_formfilteruser_id');
-        $objSearch = new SearchSearch();
+        $search = new SearchSearch();
 
         if ($search_query != '') {
-            $objSearch->setStrQuery($search_query);
+            $search->setStrQuery($search_query);
         }
         if ($filtermodules != '') {
-            $objSearch->setFilterModules($filtermodules);
+            $search->setFilterModules($filtermodules);
         }
 
         if (!empty($search_changestartdate)) {
             $startDate = new \DateTime($search_changestartdate);
-            $objSearch->setObjChangeStartdate(Date::fromDateTime($startDate));
+            $search->setObjChangeStartdate(Date::fromDateTime($startDate));
         }
 
         if (!empty($search_changeenddate)) {
             $endDate = new \DateTime($search_changeenddate);
-            $objSearch->setObjChangeEnddate(Date::fromDateTime($endDate));
+            $search->setObjChangeEnddate(Date::fromDateTime($endDate));
         }
 
         if ($search_formfilteruser_id != '') {
-            $objSearch->setStrFormFilterUser($search_formfilteruser_id);
+            $search->setStrFormFilterUser($search_formfilteruser_id);
         }
 
         $objSearchCommons = new SearchCommons();
-        $arrResult = $objSearchCommons->doIndexedSearch($objSearch, 0, self::INT_MAX_NR_OF_RESULTS_FULLSEARCH);
+        $arrResult = $objSearchCommons->doIndexedSearch($search, 0, self::MAX_NR_OF_RESULTS_FULLSEARCH);
 
         return new JsonResponse($this->createSearchJson($arrResult, $context));
     }
@@ -100,70 +101,68 @@ class SearchApiController implements ApiControllerInterface
      */
     public function getModulesForFilter(): HttpResponse
     {
-        $objSearch = new SearchSearch();
-        $arrModules = $objSearch->getPossibleModulesForFilter();
-        $arrReturn = [];
-        foreach ($arrModules as $key => $value) {
-            $arrReturn[] = array('module' => $value, 'id' => $key);
+        $search = new SearchSearch();
+        $modules = $search->getPossibleModulesForFilter();
+        $return = [];
+        foreach ($modules as $key => $value) {
+            $return[] = array('module' => $value, 'id' => $key);
         }
-        return new JsonResponse($arrReturn);
+        return new JsonResponse($return);
     }
 
     /**
      * Parses SearchResult objects into json
-     * @param array $arrResults
+     * @param array $results
      * @param HttpContext $context
      * @return array
      * @throws Exception
      */
-    private function createSearchJson(array $arrResults, HttpContext $context): array
+    private function createSearchJson(array $results, HttpContext $context): array
     {
 
-        $arrItems = array();
-        /** @var  SearchResult $objOneResult */
-        foreach ($arrResults as $objOneResult) {
-            $arrItem = array();
+        $items = array();
+        /** @var  SearchResult $oneResult */
+        foreach ($results as $oneResult) {
+            $item = array();
             //create a correct link
-            if ($objOneResult->getObjObject() === null || !$objOneResult->getObjObject()->rightView()) {
+            if ($oneResult->getObjObject() === null || !$oneResult->getObjObject()->rightView()) {
                 continue;
             }
 
-            $strIcon = '';
-            if ($objOneResult->getObjObject() instanceof AdminListableInterface) {
-                $strIcon = $objOneResult->getObjObject()->getStrIcon();
-                if (is_array($strIcon)) {
-                    $strIcon = $strIcon[0];
+            $icon = '';
+            if ($oneResult->getObjObject() instanceof AdminListableInterface) {
+                $icon = $oneResult->getObjObject()->getStrIcon();
+                if (is_array($icon)) {
+                    $icon = $icon[0];
                 }
             }
 
-            $strLink = $objOneResult->getStrPagelink();
-            if (empty($strLink)) {
-                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule('modul'), 'edit', '&systemid=' . $objOneResult->getStrSystemid());
+            $link = $oneResult->getStrPagelink();
+            if (empty($link)) {
+                $link = Link::getLinkAdminHref($oneResult->getObjObject()->getArrModule('modul'), 'edit', '&systemid=' . $oneResult->getStrSystemid());
             }
 
-            $arrItem['module'] = Carrier::getInstance()->getObjLang()->getLang('modul_titel', $objOneResult->getObjObject()->getArrModule('modul'));
-            $arrItem['systemid'] = $objOneResult->getStrSystemid();
-            $arrItem['icon'] = AdminskinHelper::getAdminImage($strIcon, '', true);
-            $arrItem['score'] = $objOneResult->getStrSystemid();
-            $arrItem['description'] = $objOneResult->getObjObject()->getStrDisplayName();
-            if ($objOneResult->getObjObject() instanceof AdminListableInterface) {
-                $arrItem['additionalInfos'] = $objOneResult->getObjObject()->getStrAdditionalInfo();
+            $item['module'] = Carrier::getInstance()->getObjLang()->getLang('modul_titel', $oneResult->getObjObject()->getArrModule('modul'));
+            $item['systemid'] = $oneResult->getStrSystemid();
+            $item['icon'] = AdminskinHelper::getAdminImage($icon, '', true);
+            $item['score'] = $oneResult->getStrSystemid();
+            $item['description'] = $oneResult->getObjObject()->getStrDisplayName();
+            if ($oneResult->getObjObject() instanceof AdminListableInterface) {
+                $item['additionalInfos'] = $oneResult->getObjObject()->getStrAdditionalInfo();
 
                 //call the original module to render the action-icons
-                $objAdminInstance = SystemModule::getModuleByName($objOneResult->getObjObject()->getArrModule('modul'))->getAdminInstanceOfConcreteModule();
+                $objAdminInstance = SystemModule::getModuleByName($oneResult->getObjObject()->getArrModule('modul'))->getAdminInstanceOfConcreteModule();
                 if ($objAdminInstance instanceof AdminSimple) {
-                    $arrItem['actions'] = $objAdminInstance->getActionIcons($objOneResult->getObjObject());
+                    $item['actions'] = $objAdminInstance->getActionIcons($oneResult->getObjObject());
                 }
             }
-            $arrItem['lastModifiedBy'] = $objOneResult->getObjObject()->getLastEditUser($context->getHeader(Session::getInstance()->getUserID()));
-            $arrItem['lastModifiedTime'] = dateToString(new Date($objOneResult->getObjObject()->getIntLmTime()));
-            $arrItem['link'] = html_entity_decode($strLink);
+            $item['lastModifiedBy'] = $oneResult->getObjObject()->getLastEditUser($context->getHeader(Session::getInstance()->getUserID()));
+            $item['lastModifiedTime'] = dateToString(new Date($oneResult->getObjObject()->getIntLmTime()));
+            $item['link'] = html_entity_decode($link);
 
-            $arrItems[] = $arrItem;
+            $items[] = $item;
         }
 
-        return $arrItems;
+        return $items;
     }
-
-
 }
