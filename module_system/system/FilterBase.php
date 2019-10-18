@@ -261,7 +261,10 @@ abstract class FilterBase
      */
     protected function convertParamValue($strParamName, $arrParams)
     {
-        $strValue = $arrParams[$strParamName] == "" ? null : (is_string($arrParams[$strParamName]) ? urldecode($arrParams[$strParamName]) : $arrParams[$strParamName]);
+        $strValue = null;
+        if (array_key_exists($strParamName, $arrParams)) {
+            $strValue = $arrParams[$strParamName] == "" ? null : (is_string($arrParams[$strParamName]) ? urldecode($arrParams[$strParamName]) : $arrParams[$strParamName]);
+        }
 
         //check if _id param exists, if yes take that one
         if (array_key_exists($strParamName."_id", $arrParams)) {
