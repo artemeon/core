@@ -101,6 +101,9 @@ $lang["change_export_excel"]             = "Daten nach Excel exportieren";
 $lang["change_diff"]                     = "Vergleich";
 $lang["dateStyleLong"]                   = "d.m.Y H:i:s";
 $lang["dateStyleShort"]                  = "d.m.Y";
+$lang["dateStyle_days"]                  = 'd.m.Y';
+$lang["dateStyle_months"]                = 'M yyyy';
+$lang["dateStyle_years"]                 = 'yyyy';
 $lang["desc"]                            = "Rechte ändern an";
 $lang["dialog_cancelButton"]             = "Abbrechen";
 $lang["dialog_copyButton"]             = "Ja, kopieren";
@@ -289,6 +292,15 @@ $lang["workflow_messagequeue_title"]  = "Message-Queue Abarbeitung";
 $lang["workflow_queue_sender_val1"]  = "Stunden";
 $lang["workflow_queue_sender_val2"]  = "Minuten";
 
+$lang["wysiwyg_bold"]                    = "Fett";
+$lang["wysiwyg_italic"]                  = "Kursiv";
+$lang["wysiwyg_underline"]               = "Unterstrichen";
+$lang["wysiwyg_strike_through"]          = "Durchgestrichen";
+$lang["wysiwyg_heading1"]                = "Überschrift 1";
+$lang["wysiwyg_heading2"]                = "Überschrift 2";
+$lang["wysiwyg_ordered_list"]            = "Sortierte Liste";
+$lang["wysiwyg_unordered_list"]          = "Unsortierte Liste";
+$lang["wysiwyg_horizontal_line"]         = "Horizontale Linie";
 
 $lang["update_in_progress"] = "Das System wird gerade aktualisiert. Bitte warten Sie...";
 $lang["form_objectlist_add_search"]  = "{0} hinzufügen ...";

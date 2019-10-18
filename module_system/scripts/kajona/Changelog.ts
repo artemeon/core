@@ -3,10 +3,7 @@ import Ajax from './Ajax'
 import 'calendar-heatmap/dist/calendar-heatmap.css'
 
 declare global {
-    // the d3 type definition does not contains the time API
-    interface d3 {
-        time: any
-    }
+
 }
 
 interface Lang {
@@ -185,7 +182,7 @@ class Changelog {
                         let data = JSON.parse(body)
 
 
-                        let chartData = d3.time.days(Changelog.yearAgo, Changelog.now)
+                        let chartData = d3['time'].days(Changelog.yearAgo, Changelog.now)
                             .map(function (dateElement) {
                                 let count = 0
                                 if (

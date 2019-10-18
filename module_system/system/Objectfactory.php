@@ -1,4 +1,5 @@
 <?php
+
 /*"******************************************************************************************************
 *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
 *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
@@ -6,8 +7,9 @@
 *   $Id$                                        *
 ********************************************************************************************************/
 
-namespace Kajona\System\System;
+declare(strict_types=1);
 
+namespace Kajona\System\System;
 
 /**
  * The objectfactory is a central place to create instances of common objects.
@@ -24,141 +26,145 @@ namespace Kajona\System\System;
  */
 class Objectfactory
 {
+    /**
+     * @var Objectfactory
+     */
+    private static $instance;
+
+    /**
+     * @var Database
+     */
+    private $database;
+
+    /**
+     * @var BootstrapCache
+     */
+    private $bootstrapCache;
 
     /**
      * @var Model[]
      */
-    private $arrObjectCache = array();
+    private $objectCache = [];
 
     /**
-     * @var Objectfactory
-     */
-    private static $objInstance = null;
-
-    /**
-     * Returns an instance of the objectfactory.
-     *
-     * @static
+     * @deprecated use dependency injection instead
      * @return Objectfactory
      */
-    public static function getInstance()
+    public static function getInstance(): self
     {
-        if (self::$objInstance == null) {
-            self::$objInstance = new Objectfactory();
+        if (isset(self::$instance)) {
+            return self::$instance;
         }
 
-        return self::$objInstance;
+        self::$instance = new self(
+            Carrier::getInstance()->getObjDB(),
+            BootstrapCache::getInstance()
+        );
+
+        return self::$instance;
     }
 
+    public function __construct(Database $database, BootstrapCache $bootstrapCache)
+    {
+        $this->database = $database;
+        $this->bootstrapCache = $bootstrapCache;
+    }
 
     /**
      * Creates a new object-instance. Therefore, the passed system-id
      * is searched in the cache, afterwards the instance is created - as long
      * as the matching class could be found, otherwise null
      *
-     * @param string $strSystemid
-     * @param bool $bitIgnoreCache
-     *
-     * @return null|Model|ModelInterface
+     * @param string $systemId
+     * @param bool $ignoreCache
+     * @return Root|null
      */
-    public function getObject($strSystemid, $bitIgnoreCache = false)
+    public function getObject(?string $systemId, bool $ignoreCache = false): ?Root
     {
-
-        if (!$bitIgnoreCache && isset($this->arrObjectCache[$strSystemid])) {
-            return $this->arrObjectCache[$strSystemid];
+        if ($systemId === null) {
+            return null;
         }
 
-        $strClass = $this->getClassNameForId($strSystemid);
+        if (!$ignoreCache && isset($this->objectCache[$systemId])) {
+            return $this->objectCache[$systemId];
+        }
+
+        $className = $this->getClassNameForId($systemId);
 
         //load the object itself
-        if ($strClass != "") {
-            $objObject = new $strClass($strSystemid);
-            $this->arrObjectCache[$strSystemid] = $objObject;
-            return $objObject;
+        if ($className !== '') {
+            $object = new $className($systemId);
+            $this->objectCache[$systemId] = $object;
+            return $object;
         }
 
         return null;
     }
 
     /**
-     * Returns an object from the cache if given, otherwise null
+     * Returns an object from the cache if previously set, otherwise null
      *
-     * @param string $strSystemid
-     *
-     * @return null|Model|ModelInterface
+     * @param string $systemId
+     * @return Root|null
      */
-    public function getObjectFromCache($strSystemid)
+    public function getObjectFromCache(string $systemId): ?Root
     {
-
-        if (isset($this->arrObjectCache[$strSystemid])) {
-            return $this->arrObjectCache[$strSystemid];
-        }
-
-        return null;
+        return $this->objectCache[$systemId] ?? null;
     }
-
 
     /**
      * Get the class name for a system-id.
      *
-     * @param string $strSystemid
-     *
+     * @param string $systemId
      * @return string
      */
-    public function getClassNameForId($strSystemid)
+    public function getClassNameForId(string $systemId): string
     {
-        $strClass = "";
-        if (BootstrapCache::getInstance()->getCacheRow(BootstrapCache::CACHE_OBJECTS, $strSystemid)) {
-            return BootstrapCache::getInstance()->getCacheRow(BootstrapCache::CACHE_OBJECTS, $strSystemid);
+        $cachedClassName = $this->bootstrapCache->getCacheRow(BootstrapCache::CACHE_OBJECTS, $systemId);
+        if (\is_string($cachedClassName)) {
+            return $cachedClassName;
         }
 
-        //maybe the orm handler has already fetched this row
-        $arrCacheRow = OrmRowcache::getCachedInitRow($strSystemid);
-        if ($arrCacheRow != null && isset($arrCacheRow["system_class"])) {
-            $strClass = $arrCacheRow["system_class"];
-        } else {
-            $strQuery = "SELECT * FROM agp_system WHERE system_id = ?";
-            $arrRow = Carrier::getInstance()->getObjDB()->getPRow($strQuery, array($strSystemid));
-            if (isset($arrRow["system_class"])) {
-                $strClass = $arrRow["system_class"];
-            }
+        $row = OrmRowcache::getCachedInitRow($systemId);
+        if (!\is_array($row)) {
+            $row = $this->database->getPRow('SELECT * FROM agp_system WHERE system_id = ?', [$systemId]);
         }
 
-        if ($strClass != "") {
-            BootstrapCache::getInstance()->addCacheRow(BootstrapCache::CACHE_OBJECTS, $strSystemid, $strClass);
+        if (!isset($row['system_class']) || !\is_string($row['system_class'])) {
+            return '';
         }
 
-        return $strClass;
+        $this->bootstrapCache->addCacheRow(BootstrapCache::CACHE_OBJECTS, $systemId, $row['system_class']);
+
+        return $row['system_class'];
     }
-
 
     /**
      * Flushes the internal instance cache
      */
-    public function flushCache()
+    public function flushCache(): void
     {
-        $this->arrObjectCache = array();
+        $this->objectCache = [];
     }
 
     /**
      * Removes a single entry from the instance cache
      *
-     * @param $strSystemid
+     * @param string $systemId
      */
-    public function removeFromCache($strSystemid)
+    public function removeFromCache(string $systemId): void
     {
-        unset($this->arrObjectCache[$strSystemid]);
-        BootstrapCache::getInstance()->removeCacheRow(BootstrapCache::CACHE_OBJECTS, $strSystemid);
+        unset($this->objectCache[$systemId]);
+        $this->bootstrapCache->removeCacheRow(BootstrapCache::CACHE_OBJECTS, $systemId);
     }
 
     /**
      * Adds a single object to the cache
      *
-     * @param Model $objObject
+     * @param Root $object
      */
-    public function addObjectToCache(Model $objObject)
+    public function addObjectToCache(Root $object): void
     {
-        $this->arrObjectCache[$objObject->getSystemid()] = $objObject;
+        $this->objectCache[$object->getSystemid()] = $object;
     }
 }
-

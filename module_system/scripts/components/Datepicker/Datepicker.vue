@@ -6,7 +6,7 @@
         <div class="input-group-addon">
           <i class="fa fa-calendar-o"></i>
         </div>
-        <input type="text" :id="id" class="form-control" :value="value" />
+        <input type="text" :id="id" class="form-control" />
       </div>
     </div>
     <div class="col-sm-2 form-opener">

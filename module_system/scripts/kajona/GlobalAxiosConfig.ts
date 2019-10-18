@@ -63,12 +63,12 @@ class GlobalAxiosConfig {
             onRequestError (error : any) {
                 StatusDisplay.messageError('<b>Request failed!</b>')
                 WorkingIndicator.stop()
-                return error
+                throw error
             },
             onResponseError (error :any) {
                 StatusDisplay.messageError('<b>Response failed!</b>')
                 WorkingIndicator.stop()
-                return error
+                throw error
             }
         })
     }

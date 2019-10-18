@@ -108,6 +108,9 @@ $lang["change_export_excel"]             = "Excel export";
 $lang["change_diff"]                     = "Compare";
 $lang["dateStyleLong"]                   = "m/d/Y H:i:s";
 $lang["dateStyleShort"]                  = "m/d/Y";
+$lang["dateStyle_days"]                  = 'm/d/Y';
+$lang["dateStyle_months"]                = 'M yyyy';
+$lang["dateStyle_years"]                 = 'yyyy';
 $lang["desc"]                            = "Edit permissions of";
 $lang["dialog_cancelButton"]             = "Cancel";
 $lang["dialog_copyButton"]             = "Yes, copy";
@@ -296,6 +299,15 @@ $lang["workflow_messagequeue_title"]  = "Message-Queue sender";
 $lang["workflow_queue_sender_val1"]  = "Hours";
 $lang["workflow_queue_sender_val2"]  = "Minutes";
 
+$lang["wysiwyg_bold"]                    = "Bold";
+$lang["wysiwyg_italic"]                  = "Italic";
+$lang["wysiwyg_underline"]               = "Underline";
+$lang["wysiwyg_strike_through"]          = "Strike through";
+$lang["wysiwyg_heading1"]                = "Heading 1";
+$lang["wysiwyg_heading2"]                = "Heading 2";
+$lang["wysiwyg_ordered_list"]            = "Ordered list";
+$lang["wysiwyg_unordered_list"]          = "Unordered list";
+$lang["wysiwyg_horizontal_line"]         = "horizontal line";
 
 $lang["update_in_progress"] = "System update in progress, please wait...";
 

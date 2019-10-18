@@ -38,8 +38,6 @@ class PharCreator
 
             }
         }
-
-        $this->generateVendorZip();
     }
 
     public function generatePhar($strFile, $strOneCore)
