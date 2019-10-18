@@ -12,6 +12,7 @@ use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Search\System\SearchCommons;
 use Kajona\Search\System\SearchResult;
 use Kajona\Search\System\SearchSearch;
+use Kajona\System\Admin\AdminSimple;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Carrier;
@@ -19,6 +20,7 @@ use Kajona\System\System\Date;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Link;
 use Kajona\System\System\Session;
+use Kajona\System\System\SystemModule;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
 use Kajona\Api\System\Http\JsonResponse;
@@ -59,10 +61,10 @@ class SearchApiController implements ApiControllerInterface
         $search_formfilteruser_id = $context->getParameter('search_formfilteruser_id');
         $objSearch = new SearchSearch();
 
-        if ($search_query != "") {
+        if ($search_query != '') {
             $objSearch->setStrQuery($search_query);
         }
-        if ($filtermodules != "") {
+        if ($filtermodules != '') {
             $objSearch->setFilterModules($filtermodules);
         }
 
@@ -76,7 +78,7 @@ class SearchApiController implements ApiControllerInterface
             $objSearch->setObjChangeEnddate(Date::fromDateTime($endDate));
         }
 
-        if ($search_formfilteruser_id != "") {
+        if ($search_formfilteruser_id != '') {
             $objSearch->setStrFormFilterUser($search_formfilteruser_id);
         }
 
@@ -102,7 +104,7 @@ class SearchApiController implements ApiControllerInterface
         $arrModules = $objSearch->getPossibleModulesForFilter();
         $arrReturn = [];
         foreach ($arrModules as $key => $value) {
-            $arrReturn[] = array("module" => $value, "id" => $key);
+            $arrReturn[] = array('module' => $value, 'id' => $key);
         }
         return new JsonResponse($arrReturn);
     }
@@ -114,7 +116,7 @@ class SearchApiController implements ApiControllerInterface
      * @return array
      * @throws Exception
      */
-    private function createSearchJson(array $arrResults, HttpContext $context)
+    private function createSearchJson(array $arrResults, HttpContext $context): array
     {
 
         $arrItems = array();
@@ -122,11 +124,11 @@ class SearchApiController implements ApiControllerInterface
         foreach ($arrResults as $objOneResult) {
             $arrItem = array();
             //create a correct link
-            if ($objOneResult->getObjObject() == null || !$objOneResult->getObjObject()->rightView()) {
+            if ($objOneResult->getObjObject() === null || !$objOneResult->getObjObject()->rightView()) {
                 continue;
             }
 
-            $strIcon = "";
+            $strIcon = '';
             if ($objOneResult->getObjObject() instanceof AdminListableInterface) {
                 $strIcon = $objOneResult->getObjObject()->getStrIcon();
                 if (is_array($strIcon)) {
@@ -135,28 +137,32 @@ class SearchApiController implements ApiControllerInterface
             }
 
             $strLink = $objOneResult->getStrPagelink();
-            if ($strLink == "") {
-                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule("modul"), "edit", "&systemid=" . $objOneResult->getStrSystemid(), true, true);
+            if (empty($strLink)) {
+                $strLink = Link::getLinkAdminHref($objOneResult->getObjObject()->getArrModule('modul'), 'edit', '&systemid=' . $objOneResult->getStrSystemid());
             }
 
-            $arrItem["module"] = Carrier::getInstance()->getObjLang()->getLang("modul_titel", $objOneResult->getObjObject()->getArrModule("modul"));
-            $arrItem["systemid"] = $objOneResult->getStrSystemid();
-            $arrItem["icon"] = AdminskinHelper::getAdminImage($strIcon, "", true);
-            $arrItem["score"] = $objOneResult->getStrSystemid();
-            $arrItem["description"] = $objOneResult->getObjObject()->getStrDisplayName();
+            $arrItem['module'] = Carrier::getInstance()->getObjLang()->getLang('modul_titel', $objOneResult->getObjObject()->getArrModule('modul'));
+            $arrItem['systemid'] = $objOneResult->getStrSystemid();
+            $arrItem['icon'] = AdminskinHelper::getAdminImage($strIcon, '', true);
+            $arrItem['score'] = $objOneResult->getStrSystemid();
+            $arrItem['description'] = $objOneResult->getObjObject()->getStrDisplayName();
             if ($objOneResult->getObjObject() instanceof AdminListableInterface) {
+                $arrItem['additionalInfos'] = $objOneResult->getObjObject()->getStrAdditionalInfo();
 
-                $arrItem["additionalInfos"] = $objOneResult->getObjObject()->getStrAdditionalInfo();
+                //call the original module to render the action-icons
+                $objAdminInstance = SystemModule::getModuleByName($objOneResult->getObjObject()->getArrModule('modul'))->getAdminInstanceOfConcreteModule();
+                if ($objAdminInstance instanceof AdminSimple) {
+                    $arrItem['actions'] = $objAdminInstance->getActionIcons($objOneResult->getObjObject());
+                }
             }
-            $arrItem["lastModifiedBy"] = $objOneResult->getObjObject()->getLastEditUser($context->getHeader(Session::getInstance()->getUserID()));
-            $arrItem["lastModifiedTime"] = dateToString(new Date($objOneResult->getObjObject()->getIntLmTime()));
-            $arrItem["link"] = html_entity_decode($strLink);
+            $arrItem['lastModifiedBy'] = $objOneResult->getObjObject()->getLastEditUser($context->getHeader(Session::getInstance()->getUserID()));
+            $arrItem['lastModifiedTime'] = dateToString(new Date($objOneResult->getObjObject()->getIntLmTime()));
+            $arrItem['link'] = html_entity_decode($strLink);
 
             $arrItems[] = $arrItem;
         }
 
-        $objResult = $arrItems;
-        return $objResult;
+        return $arrItems;
     }
 
 
