@@ -9,7 +9,6 @@
 
 namespace Kajona\Search\Installer;
 
-use Kajona\Search\Admin\SearchAdmin;
 use Kajona\Search\System\SearchIndexwriter;
 use Kajona\Search\System\SearchSearch;
 use Kajona\System\System\Carrier;
@@ -215,7 +214,6 @@ class InstallerSearch extends InstallerBase implements InstallerRemovableInterfa
         $strReturn .= 'Hiding search from backend navi' . PHP_EOL;
 
         $module = SystemModule::getModuleByName('search');
-        $module->setStrNameAdmin(SearchAdmin::class);
         $module->setIntNavigation(0);
         ServiceLifeCycleFactory::getLifeCycle($module)->update($module);
 
