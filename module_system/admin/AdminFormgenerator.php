@@ -68,6 +68,7 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     const BIT_BUTTON_CONTINUE = 128;
     const BIT_BUTTON_BACK = 256;
     const BIT_BUTTON_SAVENEXT = 512;
+    const BIT_BUTTON_CREATE = 1024;
 
     const FORM_ENCTYPE_MULTIPART = "multipart/form-data";
     const FORM_ENCTYPE_TEXTPLAIN = "text/plain";
@@ -582,6 +583,10 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
 
         if ($intButtonConfig & self::BIT_BUTTON_SAVENEXT) {
             $strButtons .= $this->objToolkit->formInputSubmit(Lang::getInstance()->getLang("commons_savenext", "system"), "savenextbtn", null, "", true, false);
+        }
+
+        if ($intButtonConfig & self::BIT_BUTTON_CREATE) {
+            $strButtons .= $this->objToolkit->formInputSubmit(Lang::getInstance()->getLang("commons_create", "system"), "savenextbtn", null, "", true, false);
         }
 
         $strReturn .= $this->objToolkit->formInputButtonWrapper($strButtons);
@@ -1165,6 +1170,13 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
             return $this->arrFields[$strName];
         }
 
+        // do a lower case compare additionally
+        foreach ($this->arrFields as $key => $val) {
+            if (StringUtil::toLowerCase($key) === StringUtil::toLowerCase($strName)) {
+                return $val;
+            }
+        }
+
         return null;
     }
 
@@ -1334,6 +1346,7 @@ class AdminFormgenerator implements AdminFormgeneratorContainerInterface, \Count
     public function hasGroups()
     {
         return !empty($this->arrGroups);
+        return $this->intGroupStyle == self::GROUP_TYPE_TABS && !empty($this->arrGroups);
     }
 
     /**
