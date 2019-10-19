@@ -10,6 +10,7 @@ interface SystemStatusMessages {
 }
 
 /**
+ * @deprecated use HttpClient class instead
  * AJAX functions for connecting to the server
  */
 class Ajax {
