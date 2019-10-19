@@ -1,57 +1,61 @@
 import $ from 'jquery'
+import DialogHelper from 'core/module_v4skin/scripts/kajona/DialogHelper'
+import Dialog from 'core/module_v4skin/scripts/kajona/Dialog'
+import * as toastr from 'toastr'
 import Ajax from './Ajax'
 import Util from './Util'
-import DialogHelper from 'core/module_v4skin/scripts/kajona/DialogHelper'
 import Router from './Router'
-import Dialog from 'core/module_v4skin/scripts/kajona/Dialog'
 
-const toastr = require('toastr')
+
 interface Accept {
-    type: string
+    type: string;
 }
 
 interface RedirectAction extends Accept {
-    target: string
+    target: string;
 }
 
 interface AjaxAction extends Accept {
-    module: string
-    action: string
-    systemid: string
+    module: string;
+    action: string;
+    systemid: string;
 }
 
 interface UpdateStatusAction extends Accept {
-    systemid: string
-    icon: string
+    systemid: string;
+    icon: string;
 }
 
 interface Alert {
-    type: string
-    systemid: string
-    title: string
-    body: string
-    onAccept: Accept
-    confirmLabel?: string
+    type: string;
+    systemid: string;
+    title: string;
+    body: string;
+    onAccept: Accept;
+    confirmLabel?: string;
 }
 
 /**
  * Subsystem for all messaging related tasks. Queries the backend for the number of unread messages, ...
  */
 class Messaging {
-    private static pollInterval: number = 30000
+    private static pollInterval = 30000
+
     private static timeout: number = null
 
-    private static intCount: number = 0
+    private static intCount = 0
+
     private static dialog: Dialog
 
     private static properties: boolean = null
-    private static bitFirstLoad: boolean = true
+
+    private static bitFirstLoad = true
 
     /**
      * Forces a polling of unread messages and alert, but only once
      */
-    public static pollMessages () {
-        Messaging.getUnreadCount(function (intCount: number) {
+    public static pollMessages(): void {
+        Messaging.getUnreadCount((intCount: number) => {
             Messaging.updateCountInfo(intCount)
         })
     }
@@ -62,7 +66,7 @@ class Messaging {
      *
      * @param objCallback
      */
-    public static getUnreadCount (objCallback: Function) {
+    public static getUnreadCount(objCallback: Function): void {
         // in case we are on the login page dont poll
         if ($('#loginContainer').length > 0) {
             return
@@ -72,25 +76,21 @@ class Messaging {
             'messaging',
             'getUnreadMessagesCount',
             '',
-            function (data: any, status: string, jqXHR: any) {
+            (data: any, status: string, jqXHR: any) => {
                 if (status === 'success') {
-                    var $objResult = $.parseJSON(data)
+                    const $objResult = $.parseJSON(data)
                     objCallback($objResult.count)
 
                     if ($objResult.alert) {
                         Messaging.renderAlert($objResult.alert)
                     }
-                } else {
+                } else if (data.status === 401
+                    && $('#loginContainer').length === 0
+                    && !$('body').hasClass('anonymous')) {
                     // in case the API returns a 401 the user has logged out so reload the page to show the login page
-                    if (
-                        data.status === 401 &&
-                        $('#loginContainer').length === 0 &&
-                        !$('body').hasClass('anonymous')
-                    ) {
-                        location.reload()
-                    }
+                    document.location.reload()
                 }
-            }
+            },
         )
     }
 
@@ -99,14 +99,14 @@ class Messaging {
      * The callback is passed the json-object as a param.
      * @param objCallback
      */
-    public static getRecentMessages (objCallback: Function) {
-        Ajax.genericAjaxCall('messaging', 'getRecentMessages', '', function (
+    public static getRecentMessages(objCallback: Function): void {
+        Ajax.genericAjaxCall('messaging', 'getRecentMessages', '', (
             data: any,
             status: string,
-            jqXHR: any
-        ) {
+            jqXHR: any,
+        ) => {
             if (status === 'success') {
-                var objResponse = $.parseJSON(data)
+                const objResponse = $.parseJSON(data)
                 objCallback(objResponse)
             }
         })
@@ -116,7 +116,7 @@ class Messaging {
      * Enables or disables the polling of message counts / alerts
      * @param bitEnabled
      */
-    public static setPollingEnabled (bitEnabled: boolean) {
+    public static setPollingEnabled(bitEnabled: boolean): void {
         if (Util.isStackedDialog() || $('body').hasClass('anonymous')) {
             bitEnabled = false
         }
@@ -139,9 +139,9 @@ class Messaging {
      * Updates the count info of the current unread messages
      * @param intCount
      */
-    public static updateCountInfo (intCount: number) {
-        var $userNotificationsCount = $('#userNotificationsCount')
-        var oldCount = parseInt($userNotificationsCount.text())
+    public static updateCountInfo(intCount: number): void {
+        const $userNotificationsCount = $('#userNotificationsCount')
+        const oldCount = parseInt($userNotificationsCount.text())
         $userNotificationsCount.text(intCount)
         if (intCount > 0) {
             $userNotificationsCount.show()
@@ -149,10 +149,10 @@ class Messaging {
                 if (document.title.match(/\(\d+\)/)) {
                     document.title = document.title.replace(
                         /\(\d+\)/,
-                        '(' + intCount + ')'
+                        `(${intCount})`,
                     )
                 } else {
-                    document.title = '(' + intCount + ') ' + document.title
+                    document.title = `(${intCount}) ${document.title}`
                 }
             }
         } else {
@@ -160,13 +160,13 @@ class Messaging {
         }
     }
 
-    private static registerListener () {
+    private static registerListener(): void {
         // listen to browser events to enable/disable notification polling if window is not active
-        $(window).focus(function () {
+        $(window).focus(() => {
             Messaging.setPollingEnabled(true)
         })
 
-        $(window).blur(function () {
+        $(window).blur(() => {
             Messaging.setPollingEnabled(false)
         })
     }
@@ -174,14 +174,14 @@ class Messaging {
     /**
      * Triggers the polling of unread messages from the backend
      */
-    private static pollMessageCount () {
-        Messaging.getUnreadCount(function (intCount: number) {
+    private static pollMessageCount(): void {
+        Messaging.getUnreadCount((intCount: number) => {
             Messaging.updateCountInfo(intCount)
         })
 
         Messaging.timeout = window.setTimeout(
             Messaging.pollMessageCount,
-            Messaging.pollInterval
+            Messaging.pollInterval,
         )
     }
 
@@ -189,32 +189,30 @@ class Messaging {
      * Renders an alert generated on the backend
      * @param $objAlert
      */
-    private static renderAlert ($objAlert: Alert) {
+    private static renderAlert($objAlert: Alert): void {
         if (
             $objAlert.type === 'Kajona\\System\\System\\MessagingNotification'
         ) {
-            var options = {
-                onclick: function () {
-                    let callback = Messaging.getActionCallback(
-                        $objAlert.onAccept
+            const options = {
+                onclick(): void {
+                    const callback = Messaging.getActionCallback(
+                        $objAlert.onAccept,
                     )
                     callback()
-                }
+                },
             }
 
             toastr.info($objAlert.title, $objAlert.body, options)
-        } else {
-            if (
-                !Messaging.dialog ||
-                (Messaging.dialog && !Messaging.dialog.isVisible())
-            ) {
-                Messaging.dialog = DialogHelper.showConfirmationDialog(
-                    $objAlert.title,
-                    $objAlert.body,
-                    $objAlert.confirmLabel,
-                    Messaging.getActionCallback($objAlert.onAccept)
-                )
-            }
+        } else if (
+            !Messaging.dialog
+                || (Messaging.dialog && !Messaging.dialog.isVisible())
+        ) {
+            Messaging.dialog = DialogHelper.showConfirmationDialog(
+                $objAlert.title,
+                $objAlert.body,
+                $objAlert.confirmLabel,
+                Messaging.getActionCallback($objAlert.onAccept),
+            )
         }
         Ajax.genericAjaxCall('messaging', 'deleteAlert', $objAlert.systemid)
     }
@@ -224,11 +222,11 @@ class Messaging {
      * @param $onAccept
      * @returns {Function}
      */
-    private static getActionCallback ($onAccept: Accept): Function {
+    private static getActionCallback($onAccept: Accept): Function {
         if ($onAccept && $onAccept.type === 'redirect') {
-            let data = <RedirectAction>$onAccept
-            return function () {
-                Router.registerLoadCallback('alert_redirect', function () {
+            const data = $onAccept as RedirectAction
+            return (): void => {
+                Router.registerLoadCallback('alert_redirect', () => {
                     $('.modal-backdrop.fade.in').remove()
                     Messaging.pollMessages()
                 })
@@ -238,36 +236,36 @@ class Messaging {
                 }
                 Router.loadUrl(data.target)
             }
-        } else if ($onAccept && $onAccept.type === 'ajax') {
-            let data = <AjaxAction>$onAccept
-            return function () {
+        } if ($onAccept && $onAccept.type === 'ajax') {
+            const data = $onAccept as AjaxAction
+            return (): void => {
                 Ajax.genericAjaxCall(
                     data.module,
                     data.action,
                     data.systemid,
-                    function (resp: any) {
+                    (resp: any): void => {
                         // on ok we trigger the getUnreadCount again since the ajax call could have created
                         // other alert messages
                         Messaging.pollMessages() // check whether the ajax call returns actions which we should execute
-                        let data = JSON.parse(resp)
+                        const data = JSON.parse(resp)
                         if (data.actions) {
-                            data.actions.forEach(function (action: Accept) {
-                                let callback = Messaging.getActionCallback(
-                                    action
+                            data.actions.forEach((action: Accept) => {
+                                const callback = Messaging.getActionCallback(
+                                    action,
                                 )
                                 callback()
                             })
                         }
-                    }
+                    },
                 )
             }
-        } else if ($onAccept && $onAccept.type === 'update_status') {
-            let data = <UpdateStatusAction>$onAccept
+        } if ($onAccept && $onAccept.type === 'update_status') {
+            const data = $onAccept as UpdateStatusAction
 
-            return function () {
+            return (): void => {
                 // search for the specific status flag and update
-                $('.flow-status-icon').each(function () {
-                    let el = $(this).find('.navbar-link')
+                $('.flow-status-icon').each((): void => {
+                    const el = $(this).find('.navbar-link')
                     if ($(this).data('systemid') === data.systemid) {
                         el.html(data.icon)
                     }
@@ -275,8 +273,8 @@ class Messaging {
             }
         }
 
-        return function () {}
+        return (): void => {}
     }
 }
-;(<any>window).Messaging = Messaging
+(window as any).Messaging = Messaging
 export default Messaging
