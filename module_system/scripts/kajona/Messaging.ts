@@ -5,7 +5,7 @@ import * as toastr from 'toastr'
 import Ajax from './Ajax'
 import Util from './Util'
 import Router from './Router'
-
+import HttpClient from './HttpClient'
 
 interface Accept {
     type: string;
@@ -66,32 +66,29 @@ class Messaging {
      *
      * @param objCallback
      */
-    public static getUnreadCount(objCallback: Function): void {
+    public static async getUnreadCount(objCallback: Function): Promise<void> {
         // in case we are on the login page dont poll
         if ($('#loginContainer').length > 0) {
             return
         }
+        const res = await HttpClient.asyncGet('/xml.php?admin=1&module', {
+            admin: 1,
+            module: 'messaging',
+            action: 'getUnreadMessagesCount',
+        })
+        if (res) {
+            if (res.status === 401 && $('#loginContainer').length === 0
+            && !$('body').hasClass('anonymous')) {
+                // in case the API returns a 401 the user has logged out so reload the page to show the login page
+                document.location.reload()
+            } else {
+                objCallback(res.data.count)
 
-        Ajax.genericAjaxCall(
-            'messaging',
-            'getUnreadMessagesCount',
-            '',
-            (data: any, status: string, jqXHR: any) => {
-                if (status === 'success') {
-                    const $objResult = $.parseJSON(data)
-                    objCallback($objResult.count)
-
-                    if ($objResult.alert) {
-                        Messaging.renderAlert($objResult.alert)
-                    }
-                } else if (data.status === 401
-                    && $('#loginContainer').length === 0
-                    && !$('body').hasClass('anonymous')) {
-                    // in case the API returns a 401 the user has logged out so reload the page to show the login page
-                    document.location.reload()
+                if (res.data.alert) {
+                    Messaging.renderAlert(res.data.alert)
                 }
-            },
-        )
+            }
+        }
     }
 
     /**
