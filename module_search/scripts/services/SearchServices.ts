@@ -7,11 +7,11 @@ import HttpClient from 'core/module_system/scripts/kajona/HttpClient'
 class SearchServices {
     public static async triggerSearch(payload): Promise<[Error, AxiosResponse]> {
         const [err, res] = await HttpClient.get('/api.php/v1/search', {
-            search_query: payload.searchQuery,
-            filtermodules: payload.selectedIds,
-            search_changestartdate: payload.startDate,
-            search_changeenddate: payload.endDate,
-            search_formfilteruser_id: payload.selectedUser,
+            searchQuery: payload.searchQuery,
+            filterModules: payload.selectedIds,
+            searchChangeStartDate: payload.startDate,
+            searchChangeEndDate: payload.endDate,
+            searchFormFilterUserId: payload.selectedUser,
         })
         return [err, res]
     }

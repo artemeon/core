@@ -39,11 +39,11 @@ class SearchApiController implements ApiControllerInterface
     /**
      * returns filtered search results
      *
-     * @QueryParam(name="search_query", type="string", description="the search query")
-     * @QueryParam(name="filtermodules", type="array", description="array containing the ids of the required modules")
-     * @QueryParam(name="search_changestartdate", type="string", description="start date filter")
-     * @QueryParam(name="search_changeenddate", type="string", description="end date filter")
-     * @QueryParam(name="search_formfilteruser_id", type="string", description="id of the required user")
+     * @QueryParam(name="searchQuery", type="string", description="the search query")
+     * @QueryParam(name="filterModules", type="array", description="array containing the ids of the required modules")
+     * @QueryParam(name="searchChangeStartDate", type="string", description="start date filter")
+     * @QueryParam(name="searchChangeEndDate", type="string", description="end date filter")
+     * @QueryParam(name="searchFormFilterUserId", type="string", description="id of the required user")
      * @param HttpContext $context
      * @return HttpResponse
      * @throws Exception
@@ -55,32 +55,32 @@ class SearchApiController implements ApiControllerInterface
      */
     public function getFilteredSearch(HttpContext $context): HttpResponse
     {
-        $search_query = $context->getParameter('search_query');
-        $filtermodules = $context->getParameter('filtermodules');
-        $search_changestartdate = $context->getParameter('search_changestartdate');
-        $search_changeenddate = $context->getParameter('search_changeenddate');
-        $search_formfilteruser_id = $context->getParameter('search_formfilteruser_id');
+        $searchQuery = $context->getParameter('searchQuery');
+        $filterModules = $context->getParameter('filterModules');
+        $searchChangeStartDate = $context->getParameter('searchChangeStartDate');
+        $searchChangeEndDate = $context->getParameter('searchChangeEndDate');
+        $searchFormFilterUserId = $context->getParameter('searchFormFilterUserId');
         $search = new SearchSearch();
 
-        if ($search_query != '') {
-            $search->setStrQuery($search_query);
+        if ($searchQuery != '') {
+            $search->setStrQuery($searchQuery);
         }
-        if ($filtermodules != '') {
-            $search->setFilterModules($filtermodules);
+        if ($filterModules != '') {
+            $search->setFilterModules($filterModules);
         }
 
-        if (!empty($search_changestartdate)) {
-            $startDate = new \DateTime($search_changestartdate);
+        if (!empty($searchChangeStartDate)) {
+            $startDate = new \DateTime($searchChangeStartDate);
             $search->setObjChangeStartdate(Date::fromDateTime($startDate));
         }
 
-        if (!empty($search_changeenddate)) {
-            $endDate = new \DateTime($search_changeenddate);
+        if (!empty($searchChangeEndDate)) {
+            $endDate = new \DateTime($searchChangeEndDate);
             $search->setObjChangeEnddate(Date::fromDateTime($endDate));
         }
 
-        if ($search_formfilteruser_id != '') {
-            $search->setStrFormFilterUser($search_formfilteruser_id);
+        if ($searchFormFilterUserId != '') {
+            $search->setStrFormFilterUser($searchFormFilterUserId);
         }
 
         $objSearchCommons = new SearchCommons();
