@@ -71,21 +71,21 @@ class Messaging {
         if ($('#loginContainer').length > 0) {
             return
         }
-        const res = await HttpClient.asyncGet('/xml.php?admin=1&module', {
+        const [error, response] = await HttpClient.get('/xml.php?admin=1&module', {
             admin: 1,
             module: 'messaging',
             action: 'getUnreadMessagesCount',
         })
-        if (res) {
-            if (res.status === 401 && $('#loginContainer').length === 0
+        if (response) {
+            if (response.status === 401 && $('#loginContainer').length === 0
             && !$('body').hasClass('anonymous')) {
                 // in case the API returns a 401 the user has logged out so reload the page to show the login page
                 document.location.reload()
             } else {
-                objCallback(res.data.count)
+                objCallback(response.data.count)
 
-                if (res.data.alert) {
-                    Messaging.renderAlert(res.data.alert)
+                if (response.data.alert) {
+                    Messaging.renderAlert(response.data.alert)
                 }
             }
         }
