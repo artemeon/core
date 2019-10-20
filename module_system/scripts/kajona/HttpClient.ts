@@ -11,7 +11,7 @@ class HttpClient {
   * @param url url of the ajax call
   * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
   */
-    public static async get(url: string, params: object): Promise<[ Error, AxiosResponse ]> {
+    public static async get(url: string, params?: object): Promise<[ Error, AxiosResponse ]> {
         const [error, response] = await to(axios({
             method: 'GET',
             url,
@@ -21,31 +21,52 @@ class HttpClient {
     }
 
     /**
-  * POST function : returns a promise containing the response object + error if occurs
-  * can be used as an async function with async/await or with .then
-  * @param url url of the ajax call
-  * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
-  */
-    public static async post(url: string, params: object): Promise<[Error, AxiosResponse ]> {
+     * POST function : returns a promise containing the response object + error if occurs
+     * can be used as an async function with async/await or with .then
+     * @param url url of the ajax call
+     * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
+     * @param data body's data
+     */
+    public static async post(url: string, params?: object, data?: object): Promise<[Error, AxiosResponse ]> {
         const [error, response] = await to(axios({
             method: 'POST',
             url,
             params,
+            data,
         }))
         return [error, response]
     }
 
     /**
-  * DELETE function : returns a promise containing the response object + error if occurs
-  * can be used as an async function with async/await or with .then
-  * @param url url of the ajax call
-  * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
-  */
-    public static async delete(url: string, params: any): Promise<[Error, AxiosResponse ]> {
+     * DELETE function : returns a promise containing the response object + error if occurs
+     * can be used as an async function with async/await or with .then
+     * @param url url of the ajax call
+     * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
+     * @param data body's data
+     */
+    public static async delete(url: string, params?: object, data?: object): Promise<[Error, AxiosResponse ]> {
         const [error, response] = await to(axios({
             method: 'DELETE',
             url,
             params,
+            data,
+        }))
+        return [error, response]
+    }
+
+    /**
+     * PUT function : returns a promise containing the response object + error if occurs
+     * can be used as an async function with async/await or with .then
+     * @param url url of the ajax call
+     * @param params params is an object example {action: 'getUnreadMessagesCount' , module: 'messaging'  }. The params will be automatically serialized
+     * @param data body's data
+     */
+    public static async put(url: string, params?: object, data?: object): Promise<[Error, AxiosResponse ]> {
+        const [error, response] = await to(axios({
+            method: 'PUT',
+            url,
+            params,
+            data,
         }))
         return [error, response]
     }
