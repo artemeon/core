@@ -14,12 +14,11 @@ class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons
 
     private async mounted(): Promise<void> {
         await this.getMenu()
-        this.switchAspect(this.aspects[0].onclick)
+        this.switchAspect(this.aspects[0].Aspect_id)
     }
 
-    private switchAspect(href: string): string {
-        const splitted = href.split(/'|return /)
-        ModuleNavigation.switchAspect(splitted[1]); return splitted[3]
+    private switchAspect(aspectId: string): boolean {
+        ModuleNavigation.switchAspect(aspectId); return false
     }
 }
 

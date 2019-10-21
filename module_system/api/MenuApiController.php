@@ -79,7 +79,7 @@ class MenuApiController implements ApiControllerInterface
                 }
             }
 
-            $toggleEntries[] = ["Aspect_name" => $oneAspect->getStrDisplayName(),"header" => $menuHeader, "body" => $menuBody, "onclick" => "ModuleNavigation.switchAspect('{$oneAspect->getSystemid()}'); return false;"];
+            $toggleEntries[] = ["Aspect_name" => $oneAspect->getStrDisplayName(), "Aspect_id" => $oneAspect->getSystemid(), "header" => $menuHeader, "body" => $menuBody, "onclick" => "ModuleNavigation.switchAspect('{$oneAspect->getSystemid()}'); return false;"];
         }
 
         return new JsonResponse([

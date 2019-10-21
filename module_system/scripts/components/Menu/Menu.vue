@@ -11,7 +11,7 @@
                         <div class="dropdown-menu generalContextMenu" role="menu">
                             <ul>
                                 <li v-for="item in aspects" :key="item.Aspect_id">
-                                    <a @click="switchAspect(item.onclick)">{{ item.Aspect_name }}</a>
+                                    <a @click="switchAspect(item.Aspect_id)">{{ item.Aspect_name }}</a>
                                 </li>
                             </ul>
                         </div>
