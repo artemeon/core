@@ -99,12 +99,6 @@ class MenuApiController implements ApiControllerInterface
     private function getModuleActionNaviHelper(SystemModule $module)
     {
         if (Carrier::getInstance()->getObjSession()->isLoggedin()) {
-            $key = __CLASS__."adminNaviEntries".$module->getSystemid().SystemAspect::getCurrentAspectId();
-
-            $finalItems = Carrier::getInstance()->getObjSession()->getSession($key);
-            if ($finalItems !== false) {
-                return $finalItems;
-            }
 
             $adminInstance = $module->getAdminInstanceOfConcreteModule();
             if ($adminInstance == null) {
@@ -141,6 +135,10 @@ class MenuApiController implements ApiControllerInterface
                     if ($add || $oneItem[1] == "") {
                         if ($oneItem[1] != "" || (!isset($finalItems[$i - 1]) || $finalItems[$i - 1] != "")) {
                             $splitOneItem = splitUpLink($oneItem[1]);
+                            if($splitOneItem["name"] == "" && $splitOneItem["link"] != "") {
+                                $splitOneItem["name"] = $splitOneItem["link"];
+                                $splitOneItem["link"] = "";
+                            }
                             $finalItems[] = $splitOneItem;
                             $i++;
                         }
@@ -149,11 +147,10 @@ class MenuApiController implements ApiControllerInterface
             }
 
             //if the last one is a divider, remove it
-            if ($finalItems[count($finalItems) - 1]["name"] == "" && $finalItems[count($finalItems) - 1]["href"] == "") {
+            if ($finalItems[count($finalItems) - 1]["name"] == "") {
                 unset($finalItems[count($finalItems) - 1]);
             }
 
-            Carrier::getInstance()->getObjSession()->setSession($key, $finalItems);
             return $finalItems;
         }
         return array();

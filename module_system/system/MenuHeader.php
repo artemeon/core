@@ -16,18 +16,18 @@ namespace Kajona\System\System;
 class MenuHeader extends MenuItem
 {
     private $right = "";
-    private $href = "";
+    private $name = "";
 
     /**
      *
      * Constructor
      * @param string $right Right to view menu item
-     * @param string $href href link of the menu item
+     * @param string $name href link of the menu item
      */
-    public function __construct(string $right, string $href)
+    public function __construct(string $right, string $name)
     {
         $this->right = $right;
-        $this->href = $href;
+        $this->name = $name;
     }
 
     /**
@@ -47,7 +47,7 @@ class MenuHeader extends MenuItem
      */
     public function getName()
     {
-        return "";
+        return $this->name;
     }
 
     /**
@@ -57,6 +57,6 @@ class MenuHeader extends MenuItem
      */
     public function getHref()
     {
-        return $this->href;
+        return "";
     }
 }
