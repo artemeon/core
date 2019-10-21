@@ -1,8 +1,9 @@
 <template>
     <!-- MODULE NAVIGATION -->
     <div v-if="langFetched" class="row-offcanvas row-offcanvas-left">
-        <div v-if="isLoaded" class="col-md-2 hidden-print mainnavi-container sidebar-offcanvas" id="sidebar">
-            <div class="sidebar-nav" id="moduleNavigation">
+        <div class="col-md-2 hidden-print mainnavi-container sidebar-offcanvas" id="sidebar">
+            <Loader :loading="!isLoaded"></Loader>
+            <div v-if="isLoaded" class="sidebar-nav" id="moduleNavigation">
                 <div class="nav-header">
                     <span class='dropdown pull-left'>
                         <a href='#' data-toggle='dropdown' role='button'>
