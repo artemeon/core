@@ -1,5 +1,6 @@
 <template>
   <div>
+    <Menu></Menu>
     <Searchbar></Searchbar>
     <router-view/>
   </div>
