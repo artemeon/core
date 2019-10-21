@@ -32,7 +32,7 @@ class MenuSeparator extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemRight()
+    public function getRight()
     {
         return $this->right;
     }
@@ -42,7 +42,7 @@ class MenuSeparator extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemName()
+    public function getName()
     {
         return "";
     }
@@ -52,7 +52,7 @@ class MenuSeparator extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemHref()
+    public function getHref()
     {
         return "";
     }

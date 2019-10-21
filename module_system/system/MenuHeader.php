@@ -35,7 +35,7 @@ class MenuHeader extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemRight()
+    public function getRight()
     {
         return $this->right;
     }
@@ -45,7 +45,7 @@ class MenuHeader extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemName()
+    public function getName()
     {
         return "";
     }
@@ -55,7 +55,7 @@ class MenuHeader extends MenuItem
      *
      * @return string
      */
-    public function getMenuItemHref()
+    public function getHref()
     {
         return $this->href;
     }

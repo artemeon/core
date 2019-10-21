@@ -21,30 +21,30 @@ abstract class MenuItem
      *
      * @return string
      */
-    abstract protected function getMenuItemRight();
+    abstract public function getRight();
 
     /**
      *  Returns name
      *
      * @return string
      */
-    abstract protected function getMenuItemName();
+    abstract public function getName();
 
     /**
      * Returns href
      *
      * @return string
      */
-    abstract protected function getMenuItemHref();
+    abstract public function getHref();
 
     /**
      * Returns an array containing right, name and link
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        $menuItemArr = ["link" => $this->getMenuItemHref(), "name" => $this->getMenuItemName(), "href" => $this->getMenuItemHref(), ];
+        $menuItemArr = ["link" => $this->getHref(), "name" => $this->getName(), "href" => $this->getHref(), ];
         return $menuItemArr;
     }
 
