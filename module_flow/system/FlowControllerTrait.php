@@ -173,8 +173,6 @@ trait FlowControllerTrait
      */
     protected function actionShowStatusMenu()
     {
-        Xml::setBitSuppressXmlHeader(true);
-
         $objObject = Objectfactory::getInstance()->getObject($this->getSystemid());
 
         if ($objObject->getIntRecordDeleted() == 1) {

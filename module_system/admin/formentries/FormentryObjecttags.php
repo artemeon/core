@@ -82,15 +82,6 @@ class FormentryObjecttags extends FormentryTageditor
     }
 
     /**
-     * Creates a pres-check key to detect de-selected entries
-     * @return string
-     */
-    private function getPresCheckKey()
-    {
-        return StringUtil::replace(["[", "]"], "", $this->getStrEntryName()."_prescheck");
-    }
-
-    /**
      * The normal field contains the actual display names which are shown in each tag. The _id field contains an array
      * of corresponding systemids
      *

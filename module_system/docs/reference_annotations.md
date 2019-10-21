@@ -82,3 +82,73 @@ Annotation         |Context    |Introduced in     |Description
 |@authorization    |Method	   |7.2	  |Defines the authorization type. By default your method should use `usertoken` but it is also possible to use `anonymous` if you want that your method can be accessed without user authentication.
 |@method           |Method	   |7.2	  |Defines the required HTTP method i.e. GET or POST.
 |@path             |Method	   |7.2	  |Defines the route which invokes this method. More details at the [Slim Router](http://www.slimframework.com/docs/v3/objects/router.html) documentation.
+
+### Meta
+
+At the API layer it is possible to describe an endpoint through different annotations. These annotations
+can describe the data provided in the path, query and body parameters. The following example shows 
+how to describe an API action:
+
+```php
+<?php
+
+namespace AGP\Acme\Api;
+
+use Kajona\Api\System\ApiControllerInterface;
+use Kajona\Api\System\Http\JsonResponse;
+
+class AcmeApiController implements ApiControllerInterface
+{
+    /**
+     * @api
+     * @method POST
+     * @path /v1/acme/my/{foo}
+     * @authorization usertoken
+     *
+     * @QueryParam(name="foo", type="integer", description="Test")
+     * @QueryParam(name="bar", type="string", format="date-time")
+     * @QueryParam(name="bar", type="string", required=true)
+     * @QueryParam(name="baz", type="string", enum={"foo", "bar"})
+     * @QueryParam(name="boz", type="string", pattern="[A-z]+")
+     * @PathParam(name="foo", type="string", description="Test")
+     * @BodyParam(name="foo", type="string", description="Test")
+     */
+    public function myAction(): JsonResponse
+    {
+        return new JsonResponse([
+            'hello' => 'world!'
+        ]);
+    }
+}
+```
+
+The path and query param describe that data from the request [URI](https://tools.ietf.org/html/rfc3986#section-3).
+Through the body param annotation we can describe a simple JSON object. I.e. if your endpoint
+receives a payload like:
+
+```
+{
+  "foo": "bar"
+}
+```
+
+You could describe the payload with:
+
+```
+@BodyParam(name="foo", type="string")
+```
+
+The body param annotation refers always to the request body. If you have more complex nested data you
+can use a JsonSchema to describe the data. Therefor you can use the incoming and outgoing annotation i.e.:
+
+```
+@Incoming(schema="../schema/request-schema.json")
+@Outgoing(code=200, schema="../schema/response-schema.json")
+```
+
+The path is relative to your API controller and points to a JSONSchema file describing the JSON structure.
+More information about JSONSchema at: https://json-schema.org
+
+In the future we can generate based on those meta information an [OpenAPI](https://www.openapis.org/)
+specification to describe our API. Through this other clients can easily consume our internal API and
+it is also possible to automatically [generate clients](https://openapi-generator.tech/).

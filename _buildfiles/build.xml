@@ -212,18 +212,21 @@
                 <exclude name="project/log/**"/>
                 <exclude name="project/dbdumps"/>
                 <exclude name="project/temp/**"/>
+                <exclude name="core*/_buildfiles/temp/**"/>
+                <exclude name="core*/_buildfiles/node_modules/**"/>
                 <include name="core*/module_*/*/**"/>
                 <include name="core*/_debugging/*/**"/>
                 <include name="core*/_buildfiles/bin/*/**"/>
-                <include name="core*/_buildfiles/*.xml"/>
+                <include name="core*/_buildfiles/*/**"/>
                 <include name="core*/_buildfiles/jstests/*/**"/>
                 <include name="core*/*.php"/>
                 <include name="core*/*.htaccess"/>
-                <include name="files/**"/>
+                <include name="files/*/**"/>
                 <include name="project/**"/>
                 <include name=".htaccess"/>
             </fileset>
         </copy>
+
     </target>
 
     <!-- builds the project, aka creates a project out of the sources -->

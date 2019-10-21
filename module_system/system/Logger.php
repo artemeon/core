@@ -27,7 +27,6 @@ final class Logger implements LoggerInterface
     const QUERIES = "dbqueries.log";
     const EVENTS = "events.log";
     const PACKAGEMANAGEMENT = "packagemanagement.log";
-    const PAGES = "pages.log";
     const REMOTELOADER = "remoteloader.log";
     const ADMINTASKS = "admintasks.log";
 
@@ -234,7 +233,7 @@ final class Logger implements LoggerInterface
             $strLevel = "WARNING";
         }
 
-        $strSessid = Carrier::getInstance()->getObjSession()->getUserID();
+        $strSessid = Carrier::getInstance()->getObjSession()->isInitialized() ? Carrier::getInstance()->getObjSession()->getUserID() : '        n.a.        ';
         $strMessage = StringUtil::replace(array("\r", "\n"), array(" ", " "), $strMessage);
 
         $strFileInfo = "";

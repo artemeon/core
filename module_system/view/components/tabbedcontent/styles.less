@@ -12,7 +12,7 @@
 
     li a, li a:focus {
       border: none;
-      color: @link-color;
+      color: inherit;
       padding: 7px 15px;
       border-bottom: 4px solid transparent;
     }
@@ -22,7 +22,9 @@
       background-color: transparent;
     }
 
-    li.active a {
+    li.active a, li.active a:hover {
+      border: none;
+      color: inherit;
       border-bottom: 4px solid @kajona-brand-color;
     }
   }
