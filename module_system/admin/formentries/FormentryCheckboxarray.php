@@ -96,14 +96,7 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
         return $strReturn;
     }
 
-    /**
-     * Creates a pres-check key to detect de-selected entries
-     * @return string
-     */
-    final protected function getPresCheckKey()
-    {
-        return StringUtil::replace(["[", "]"], "", $this->getStrEntryName()."_prescheck");
-    }
+
 
     /**
      * @param $strValue

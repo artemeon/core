@@ -3,7 +3,7 @@
         {% for val in data %}
             <div class="progress-bar" id="{{ val.id }}" data-width="{{ val.proc }}" data-handler="{{ val.dataPointHandler }}"
                  style="background-color:{{ val.color }};">
-                {{ val.value }}
+                {{ val.value|number_format(0) }}
             </div>
         {% endfor %}
     </div>
@@ -18,7 +18,7 @@
             };
 
             {% for val in data %}
-            Tooltip.addTooltip($('#{{ val.id }}'), "<div>{{ title }}<br>{{ val.label }}: <b>{{ val.value }}</b></div>");
+            Tooltip.addTooltip($('#{{ val.id }}'), "<div>{{ title }}<br>{{ val.label }}: <b>{{ val.value|number_format(0) }}</b></div>");
             $("#{{ val.id }}").click(onClickURLHandler);
             {% endfor %}
 

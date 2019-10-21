@@ -4,6 +4,11 @@ import Util from 'core/module_system/scripts/kajona/Util'
 import Folderview from 'core/module_system/scripts/kajona/Folderview'
 
 class Dialog {
+    public static ID_DIALOG_0 = 'jsDialog_0'
+    public static ID_DIALOG_1 = 'jsDialog_1'
+    public static ID_DIALOG_2 = 'jsDialog_2'
+    public static ID_DIALOG_3 = 'jsDialog_3'
+
     private intDialogType: number
     private bitDragging: boolean
     private bitResizing: boolean

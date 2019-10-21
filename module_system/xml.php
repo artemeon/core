@@ -106,8 +106,8 @@ class Xml
     /**
      * If set to true, the output will be sent without the mandatory xml-head-element
      *
+     * @deprecated
      * @param bool $bitSuppressXmlHeader
-     *
      * @return void
      */
     public static function setBitSuppressXmlHeader($bitSuppressXmlHeader)
