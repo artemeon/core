@@ -241,37 +241,35 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     /**
      * @return array
      */
-    public function getArrFilterModules()
+    public function getArrInternalFilterModules(): array
     {
-        if ($this->strInternalFilterModules != "" && $this->strInternalFilterModules != "-1") {
-            return explode(",", $this->strInternalFilterModules);
-        } else {
-            return $this->getModuleNumbers();
-        }
+        return $this->arrInternalFilterModules;
     }
 
     /**
-     * @param array $arrFormFilterModules
+     * @param array $arrInternalFilterModules
      */
-    public function setArrFormFilterModules($arrFormFilterModules)
+    public function setArrInternalFilterModules(array $arrInternalFilterModules): void
     {
-        if (is_array($arrFormFilterModules)) {
-            $arrFormFilterModules = implode(",", $arrFormFilterModules);
-        }
-        $this->strInternalFilterModules = $arrFormFilterModules;
+        $this->arrInternalFilterModules = $arrInternalFilterModules;
     }
 
     /**
      * @return array
      */
-    public function getArrFormFilterModules()
+    public function getArrFormFilterModules(): array
     {
-        if ($this->strInternalFilterModules != "" && $this->strInternalFilterModules != "-1") {
-            return explode(",", $this->strInternalFilterModules);
-        } else {
-            return array();
-        }
+        return $this->arrFormFilterModules;
     }
+
+    /**
+     * @param array $arrFormFilterModules
+     */
+    public function setArrFormFilterModules(array $arrFormFilterModules): void
+    {
+        $this->arrFormFilterModules = $arrFormFilterModules;
+    }
+
 
     /**
      * @param string $arrFormFilterModules
