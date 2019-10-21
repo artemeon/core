@@ -16,17 +16,17 @@ use Kajona\System\System\Exceptions\UnableToRetrieveControllerForModelException;
 use Kajona\System\System\Lang;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
-use Kajona\System\System\ModelControllerProvider;
+use Kajona\System\System\ModelControllerLocatorInterface;
 use Kajona\System\System\StringUtil;
 use ReflectionMethod;
 use Throwable;
 
-final class CopyModelAction implements ModelAction
+final class CopyModelAction implements ModelActionInterface
 {
     /**
-     * @var ModelControllerProvider
+     * @var ModelControllerLocatorInterface
      */
-    private $modelControllerProvider;
+    private $modelControllerLocator;
 
     /**
      * @var ToolkitAdmin
@@ -38,9 +38,9 @@ final class CopyModelAction implements ModelAction
      */
     private $lang;
 
-    public function __construct(ModelControllerProvider $modelControllerProvider, ToolkitAdmin $toolkit, Lang $lang)
+    public function __construct(ModelControllerLocatorInterface $modelControllerProvider, ToolkitAdmin $toolkit, Lang $lang)
     {
-        $this->modelControllerProvider = $modelControllerProvider;
+        $this->modelControllerLocator = $modelControllerProvider;
         $this->toolkit = $toolkit;
         $this->lang = $lang;
     }
@@ -64,7 +64,7 @@ final class CopyModelAction implements ModelAction
      */
     private function getActionNameForClass(Model $model, string $actionName): string
     {
-        $controller = $this->modelControllerProvider->getControllerForModel($model);
+        $controller = $this->modelControllerLocator->getControllerForModel($model);
 
         try {
             $reflectionMethod = new ReflectionMethod($controller, 'getActionNameForClass');

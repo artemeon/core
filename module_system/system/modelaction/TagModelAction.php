@@ -14,13 +14,13 @@ use Kajona\System\System\Exception;
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\Exceptions\UnableToRetrieveControllerActionNameForModelException;
 use Kajona\System\System\Exceptions\UnableToRetrieveControllerForModelException;
-use Kajona\System\System\FeatureDetector;
+use Kajona\System\System\FeatureDetectorInterface;
 use Kajona\System\System\Lang;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
 use Kajona\System\System\StringUtil;
 
-final class TagModelAction implements ModelAction
+final class TagModelAction implements ModelActionInterface
 {
     private const JAVASCRIPT_CLICK_HANDLER_TEMPLATE = <<<'JS'
         Folderview.dialog.setContentIFrame('%s');
@@ -30,7 +30,7 @@ final class TagModelAction implements ModelAction
 JS;
 
     /**
-     * @var FeatureDetector
+     * @var FeatureDetectorInterface
      */
     private $featureDetector;
 
@@ -44,7 +44,7 @@ JS;
      */
     private $lang;
 
-    public function __construct(FeatureDetector $featureDetector, ToolkitAdmin $toolkit, Lang $lang)
+    public function __construct(FeatureDetectorInterface $featureDetector, ToolkitAdmin $toolkit, Lang $lang)
     {
         $this->featureDetector = $featureDetector;
         $this->toolkit = $toolkit;

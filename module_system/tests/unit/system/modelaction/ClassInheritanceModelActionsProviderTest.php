@@ -13,8 +13,8 @@ use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\ClassInheritanceModelActionsProvider;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionList;
-use Kajona\System\System\Modelaction\ModelActionsProvider;
+use Kajona\System\System\Modelaction\ModelActionListInterface;
+use Kajona\System\System\Modelaction\ModelActionsProviderInterface;
 use Kajona\System\System\Root;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\UserGroup;
@@ -44,7 +44,7 @@ final class ClassInheritanceModelActionsProviderTest extends TestCase
             $validInheritanceClassName,
             $this->createModelActionListThatSupportsEverything()
         );
-        $this->assertInstanceOf(ModelActionsProvider::class, $modelActionsProvider);
+        $this->assertInstanceOf(ModelActionsProviderInterface::class, $modelActionsProvider);
     }
 
     public function provideInvalidInheritanceClassNames(): iterable

@@ -11,13 +11,13 @@ namespace Kajona\System\System\Modelaction;
 use Kajona\System\System\Exceptions\UnableToFindModelActionsProviderException;
 use Kajona\System\System\Model;
 
-interface ModelActionsProviderFactory
+interface ModelActionsProviderLocatorInterface
 {
     /**
      * @param Model $model
      * @param ModelActionContext $context
-     * @return ModelActionsProvider
+     * @return ModelActionsProviderInterface
      * @throws UnableToFindModelActionsProviderException
      */
-    public function find(Model $model, ModelActionContext $context): ModelActionsProvider;
+    public function find(Model $model, ModelActionContext $context): ModelActionsProviderInterface;
 }

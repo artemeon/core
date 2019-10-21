@@ -11,16 +11,16 @@ namespace Kajona\System\System\Modelaction;
 use Kajona\System\Admin\ToolkitAdmin;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
-use Kajona\System\System\FeatureDetector;
+use Kajona\System\System\FeatureDetectorInterface;
 use Kajona\System\System\Lang;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
 use Kajona\System\System\VersionableInterface;
 
-final class ChangeHistoryModelAction implements ModelAction
+final class ChangeHistoryModelAction implements ModelActionInterface
 {
     /**
-     * @var FeatureDetector
+     * @var FeatureDetectorInterface
      */
     private $featureDetector;
 
@@ -34,7 +34,7 @@ final class ChangeHistoryModelAction implements ModelAction
      */
     private $lang;
 
-    public function __construct(FeatureDetector $featureDetector, ToolkitAdmin $toolkit, Lang $lang)
+    public function __construct(FeatureDetectorInterface $featureDetector, ToolkitAdmin $toolkit, Lang $lang)
     {
         $this->featureDetector = $featureDetector;
         $this->toolkit = $toolkit;

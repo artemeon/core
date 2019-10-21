@@ -10,7 +10,7 @@ namespace Kajona\System\System;
 
 use Throwable;
 
-final class SystemFeatureDetector implements FeatureDetector
+final class SystemFeatureDetector implements FeatureDetectorInterface
 {
     public function isChangeHistoryFeatureEnabled(): bool
     {

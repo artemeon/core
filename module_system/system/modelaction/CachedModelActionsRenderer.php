@@ -12,14 +12,14 @@ use Exception;
 use Kajona\System\System\CacheManager;
 use Kajona\System\System\Exceptions\UnableToRenderModelActionsException;
 use Kajona\System\System\Model;
-use Kajona\System\System\ModelCacheKeyGenerator;
+use Kajona\System\System\ModelCacheKeyGeneratorInterface;
 
-final class CachedModelActionsRenderer implements ModelActionsRenderer
+final class CachedModelActionsRenderer implements ModelActionsRendererInterface
 {
     private const CACHE_TYPE = CacheManager::TYPE_PHPFILE;
 
     /**
-     * @var ModelActionsRenderer
+     * @var ModelActionsRendererInterface
      */
     private $wrappedModelActionsRenderer;
 
@@ -29,14 +29,14 @@ final class CachedModelActionsRenderer implements ModelActionsRenderer
     private $cacheManager;
 
     /**
-     * @var ModelCacheKeyGenerator
+     * @var ModelCacheKeyGeneratorInterface
      */
     private $modelCacheKeyGenerator;
 
     public function __construct(
-        ModelActionsRenderer $wrappedModelActionsRenderer,
+        ModelActionsRendererInterface $wrappedModelActionsRenderer,
         CacheManager $cacheManager,
-        ModelCacheKeyGenerator $modelCacheKeyGenerator
+        ModelCacheKeyGeneratorInterface $modelCacheKeyGenerator
     ) {
         $this->wrappedModelActionsRenderer = $wrappedModelActionsRenderer;
         $this->cacheManager = $cacheManager;

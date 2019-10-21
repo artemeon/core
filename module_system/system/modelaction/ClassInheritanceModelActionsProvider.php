@@ -12,7 +12,7 @@ use Kajona\System\System\Exceptions\InvalidInheritanceClassNameGivenException;
 use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 
-class ClassInheritanceModelActionsProvider implements ModelActionsProvider
+class ClassInheritanceModelActionsProvider implements ModelActionsProviderInterface
 {
     /**
      * @var string
@@ -20,16 +20,16 @@ class ClassInheritanceModelActionsProvider implements ModelActionsProvider
     private $inheritanceClassName;
 
     /**
-     * @var ModelActionList
+     * @var ModelActionListInterface
      */
     private $modelActions;
 
     /**
      * @param string $inheritanceClassName
-     * @param ModelActionList $modelActions
+     * @param ModelActionListInterface $modelActions
      * @throws InvalidInheritanceClassNameGivenException
      */
-    public function __construct(string $inheritanceClassName, ModelActionList $modelActions)
+    public function __construct(string $inheritanceClassName, ModelActionListInterface $modelActions)
     {
         if (!\is_a($inheritanceClassName, Model::class, true)) {
             throw new InvalidInheritanceClassNameGivenException($inheritanceClassName);
@@ -45,7 +45,7 @@ class ClassInheritanceModelActionsProvider implements ModelActionsProvider
             && $this->modelActions->supports($model, $context);
     }
 
-    public function getActions(Model $model, ModelActionContext $context): ModelActionList
+    public function getActions(Model $model, ModelActionContext $context): ModelActionListInterface
     {
         if (!$this->supports($model, $context)) {
             throw new UnableToRetrieveActionsForModelException($model);

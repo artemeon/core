@@ -48,7 +48,7 @@ spl_autoload_register(array(\Kajona\System\System\Classloader::getInstance(), "l
 
 // -- Exception handler ------------------------------------------------------------------------------------------------
 // Register global exception handler for exceptions thrown but not catched (bad style ;) )
-//set_exception_handler(array("Kajona\\System\\System\\Exception", "globalExceptionHandler"));
+set_exception_handler(array("Kajona\\System\\System\\Exception", "globalExceptionHandler"));
 
 // -- The Path on web --------------------------------------------------------------------------------------------------
 defineWebPath();

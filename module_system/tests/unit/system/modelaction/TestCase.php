@@ -8,7 +8,7 @@ use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\LanguagesLanguage;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionList;
+use Kajona\System\System\Modelaction\ModelActionListInterface;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\SystemSession;
 use Kajona\System\System\SystemSetting;
@@ -46,6 +46,13 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
+    public function provideModelActionListIdentifiers(): iterable
+    {
+        foreach (self::MODEL_CLASS_NAMES_AND_LIST_IDENTIFIERS as $listIdentifier) {
+            yield [$listIdentifier];
+        }
+    }
+
     public function provideModelActionContexts(): iterable
     {
         foreach (self::MODEL_CLASS_NAMES_AND_LIST_IDENTIFIERS as $listIdentifier) {
@@ -54,9 +61,9 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    protected function createModelActionListThatSupportsEverything(): ModelActionList
+    protected function createModelActionListThatSupportsEverything(): ModelActionListInterface
     {
-        $modelActionList = $this->prophesize(ModelActionList::class);
+        $modelActionList = $this->prophesize(ModelActionListInterface::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $modelActionList->supports(Argument::cetera())
@@ -70,9 +77,9 @@ abstract class TestCase extends BaseTestCase
         return $modelActionList->reveal();
     }
 
-    protected function createModelActionListThatSupportsNothing(): ModelActionList
+    protected function createModelActionListThatSupportsNothing(): ModelActionListInterface
     {
-        $modelActionList = $this->prophesize(ModelActionList::class);
+        $modelActionList = $this->prophesize(ModelActionListInterface::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $modelActionList->supports(Argument::cetera())

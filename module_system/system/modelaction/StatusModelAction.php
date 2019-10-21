@@ -13,7 +13,7 @@ use Kajona\System\System\Exception;
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\Model;
 
-final class StatusModelAction implements ModelAction
+final class StatusModelAction implements ModelActionInterface
 {
     /**
      * @var ToolkitAdmin

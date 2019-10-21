@@ -57,7 +57,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testConfirmsAvailabilityForModelThatIsInAValidState(Model $modelInAValidState): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createDummyModelControllerProvider(),
+            $this->createDummyModelControllerLocator(),
             $this->createDummyToolkit(),
             $this->createDummyLang()
         );
@@ -130,7 +130,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testDeniesAvailabilityForModelThatIsInAnInvalidState(Model $modelInAnInvalidState): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createDummyModelControllerProvider(),
+            $this->createDummyModelControllerLocator(),
             $this->createDummyToolkit(),
             $this->createDummyLang()
         );
@@ -170,7 +170,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testCatchesExceptionsThrownDuringAvailabilityDeterminationAndDeniesAvailability(Model $modelThatThrowsExceptions): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createDummyModelControllerProvider(),
+            $this->createDummyModelControllerLocator(),
             $this->createDummyToolkit(),
             $this->createDummyLang()
         );
@@ -188,7 +188,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testDelegatesRenderingOfModelToToolkitClass(Model $modelInAValidState): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createModelControllerProviderThatReturnsAModelController(),
+            $this->createModelControllerLocatorThatReturnsAModelController(),
             $this->createDummyToolkit(),
             $this->createDummyLang()
         );
@@ -204,7 +204,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testThrowsExceptionWhenRenderingModelItIsNotAvailableFor(Model $modelInAnInvalidState): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createDummyModelControllerProvider(),
+            $this->createDummyModelControllerLocator(),
             $this->createDummyToolkit(),
             $this->createDummyLang()
         );
@@ -221,7 +221,7 @@ final class PermissionsModelActionTest extends ModelActionTestCase
     public function testWrapsExceptionThrownDuringRenderingOfModel(Model $modelInAValidState): void
     {
         $permissionsModelAction = new PermissionsModelAction(
-            $this->createModelControllerProviderThatReturnsAModelController(),
+            $this->createModelControllerLocatorThatReturnsAModelController(),
             $this->createToolkitThatThrowsExceptions(),
             $this->createDummyLang()
         );

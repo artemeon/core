@@ -11,22 +11,22 @@ namespace Kajona\System\System\Modelaction\Legacy;
 use Kajona\System\Admin\AdminSimple;
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\Model;
-use Kajona\System\System\Modelaction\ModelAction;
+use Kajona\System\System\Modelaction\ModelActionInterface;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\ModelControllerProvider;
+use Kajona\System\System\ModelControllerLocatorInterface;
 use ReflectionMethod;
 use Throwable;
 
-abstract class LegacyModelAction implements ModelAction
+abstract class LegacyModelAction implements ModelActionInterface
 {
     /**
-     * @var ModelControllerProvider
+     * @var ModelControllerLocatorInterface
      */
-    private $modelControllerProvider;
+    private $modelControllerLocator;
 
-    public function __construct(ModelControllerProvider $modelControllerProvider)
+    public function __construct(ModelControllerLocatorInterface $modelControllerProvider)
     {
-        $this->modelControllerProvider = $modelControllerProvider;
+        $this->modelControllerLocator = $modelControllerProvider;
     }
 
     public function supports(Model $model, ModelActionContext $context): bool
@@ -58,7 +58,7 @@ abstract class LegacyModelAction implements ModelAction
     public function render(Model $model, ModelActionContext $context): string
     {
         try {
-            $modelController = $this->modelControllerProvider->getControllerForModel($model);
+            $modelController = $this->modelControllerLocator->getControllerForModel($model);
             $controllerActionResult = $this->invokeControllerAction($modelController, $model);
 
             return $this->normalizeControllerActionResult($controllerActionResult);

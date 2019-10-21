@@ -24,7 +24,7 @@ use Kajona\System\System\Modelaction\DefaultModelActionList;
 use Kajona\System\System\Modelaction\DefaultModelActionsRenderer;
 use Kajona\System\System\Modelaction\DeleteModelAction;
 use Kajona\System\System\Modelaction\EditModelAction;
-use Kajona\System\System\Modelaction\ExtendableModelActionsProviderFactory;
+use Kajona\System\System\Modelaction\ExtendableModelActionsProviderLocator;
 use Kajona\System\System\Modelaction\Legacy\LegacyAdditionalModelAction;
 use Kajona\System\System\Modelaction\Legacy\LegacyChangeHistoryModelAction;
 use Kajona\System\System\Modelaction\Legacy\LegacyCopyModelAction;
@@ -35,9 +35,11 @@ use Kajona\System\System\Modelaction\Legacy\LegacyPermissionsModelAction;
 use Kajona\System\System\Modelaction\Legacy\LegacyStatusModelAction;
 use Kajona\System\System\Modelaction\Legacy\LegacyTagModelAction;
 use Kajona\System\System\Modelaction\Legacy\LegacyUnlockModelAction;
-use Kajona\System\System\Modelaction\ModelActionList;
-use Kajona\System\System\Modelaction\ModelActionsProviderFactory;
-use Kajona\System\System\Modelaction\ModelActionsRenderer;
+use Kajona\System\System\Modelaction\ModelActionContextFactory;
+use Kajona\System\System\Modelaction\ModelActionContextFactoryInterface;
+use Kajona\System\System\Modelaction\ModelActionListInterface;
+use Kajona\System\System\Modelaction\ModelActionsProviderLocatorInterface;
+use Kajona\System\System\Modelaction\ModelActionsRendererInterface;
 use Kajona\System\System\Modelaction\PermissionsModelAction;
 use Kajona\System\System\Modelaction\StaticModelActionsProvider;
 use Kajona\System\System\Modelaction\StatusModelAction;
@@ -219,9 +221,9 @@ class ServiceProvider implements ServiceProviderInterface
 
     private function registerModelActions(Container $container): void
     {
-        $container[DefaultModelActionList::class] = static function (Container $container): ModelActionList {
-            $modelControllerProvider = $container[ModelControllerProvider::class];
-            $featureDetector = $container[FeatureDetector::class];
+        $container[DefaultModelActionList::class] = static function (Container $container): ModelActionListInterface {
+            $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
+            $featureDetector = $container[FeatureDetectorInterface::class];
             $toolkit = $container[self::STR_ADMINTOOLKIT];
             $lang = $container[self::STR_LANG];
 
@@ -239,9 +241,9 @@ class ServiceProvider implements ServiceProviderInterface
 
         // This default model actions provider will not be used as long as the legacy model actions provider is registered!
         $container->extend(
-            ModelActionsProviderFactory::class,
-            static function (ModelActionsProviderFactory $modelActionsProviderFactory, Container $container): ModelActionsProviderFactory {
-                if ($modelActionsProviderFactory instanceof ExtendableModelActionsProviderFactory) {
+            ModelActionsProviderLocatorInterface::class,
+            static function (ModelActionsProviderLocatorInterface $modelActionsProviderFactory, Container $container): ModelActionsProviderLocatorInterface {
+                if ($modelActionsProviderFactory instanceof ExtendableModelActionsProviderLocator) {
                     $modelActionsProviderFactory->add(
                         new ClassInheritanceModelActionsProvider(
                             Model::class,
@@ -257,8 +259,8 @@ class ServiceProvider implements ServiceProviderInterface
 
     private function registerLegacyModelActions(Container $container): void
     {
-        $container[LegacyModelActionList::class] = static function (Container $container): ModelActionList {
-            $modelControllerProvider = $container[ModelControllerProvider::class];
+        $container[LegacyModelActionList::class] = static function (Container $container): ModelActionListInterface {
+            $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
 
             return new LegacyModelActionList(
                 new LegacyUnlockModelAction($modelControllerProvider),
@@ -273,9 +275,9 @@ class ServiceProvider implements ServiceProviderInterface
             );
         };
         $container->extend(
-            ModelActionsProviderFactory::class,
-            static function (ModelActionsProviderFactory $modelActionsProviderFactory, Container $container): ModelActionsProviderFactory {
-                if ($modelActionsProviderFactory instanceof ExtendableModelActionsProviderFactory) {
+            ModelActionsProviderLocatorInterface::class,
+            static function (ModelActionsProviderLocatorInterface $modelActionsProviderFactory, Container $container): ModelActionsProviderLocatorInterface {
+                if ($modelActionsProviderFactory instanceof ExtendableModelActionsProviderLocator) {
                     $modelActionsProviderFactory->add(
                         new StaticModelActionsProvider(
                             $container[LegacyModelActionList::class]
@@ -291,12 +293,12 @@ class ServiceProvider implements ServiceProviderInterface
     private function cacheModelActionsRenderer(Container $container): void
     {
         $container->extend(
-            ModelActionsRenderer::class,
-            static function (ModelActionsRenderer $modelActionsRenderer, Container $container): ModelActionsRenderer {
+            ModelActionsRendererInterface::class,
+            static function (ModelActionsRendererInterface $modelActionsRenderer, Container $container): ModelActionsRendererInterface {
                 return new CachedModelActionsRenderer(
                     $modelActionsRenderer,
                     $container[self::STR_CACHE_MANAGER],
-                    $container[ModelCacheKeyGenerator::class]
+                    $container[ModelCacheKeyGeneratorInterface::class]
                 );
             }
         );
@@ -498,28 +500,29 @@ class ServiceProvider implements ServiceProviderInterface
             );
         };
 
-        $objContainer[FeatureDetector::class] = static function (Container $container): FeatureDetector {
+        $objContainer[FeatureDetectorInterface::class] = static function (Container $container): FeatureDetectorInterface {
             return new CachedFeatureDetector(
                 new SystemFeatureDetector(),
                 $container[self::STR_CACHE_MANAGER],
                 $container[self::STR_SESSION]
             );
         };
-        $objContainer[ModelControllerProvider::class] = static function (): ModelControllerProvider {
-            return new AnnotationBasedModelControllerProvider();
+        $objContainer[ModelControllerLocatorInterface::class] = static function (): ModelControllerLocatorInterface {
+            return new AnnotationBasedModelControllerLocator();
         };
-        $objContainer[ModelCacheKeyGenerator::class] = static function (Container $container): ModelCacheKeyGenerator {
-            return new DefaultModelCacheKeyGenerator(
-                $container[self::STR_RIGHTS]
-            );
+        $objContainer[ModelCacheKeyGeneratorInterface::class] = static function (): ModelCacheKeyGeneratorInterface {
+            return new DefaultModelCacheKeyGenerator();
         };
 
-        $objContainer[ModelActionsProviderFactory::class] = static function (): ModelActionsProviderFactory {
-            return new ExtendableModelActionsProviderFactory();
+        $objContainer[ModelActionContextFactoryInterface::class] = static function (): ModelActionContextFactoryInterface {
+            return new ModelActionContextFactory();
         };
-        $objContainer[ModelActionsRenderer::class] = static function (Container $container): ModelActionsRenderer {
+        $objContainer[ModelActionsProviderLocatorInterface::class] = static function (): ModelActionsProviderLocatorInterface {
+            return new ExtendableModelActionsProviderLocator();
+        };
+        $objContainer[ModelActionsRendererInterface::class] = static function (Container $container): ModelActionsRendererInterface {
             return new DefaultModelActionsRenderer(
-                $container[ModelActionsProviderFactory::class]
+                $container[ModelActionsProviderLocatorInterface::class]
             );
         };
 

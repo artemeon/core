@@ -8,7 +8,7 @@ declare(strict_types=1);
 
 namespace Kajona\System\System;
 
-interface FeatureDetector
+interface FeatureDetectorInterface
 {
     public function isChangeHistoryFeatureEnabled(): bool;
 

@@ -10,14 +10,14 @@ namespace Kajona\System\System;
 
 use Throwable;
 
-final class CachedFeatureDetector implements FeatureDetector
+final class CachedFeatureDetector implements FeatureDetectorInterface
 {
     private const CACHE_TYPE = CacheManager::TYPE_PHPFILE;
 
     private const CACHE_TTL = 180;
 
     /**
-     * @var FeatureDetector
+     * @var FeatureDetectorInterface
      */
     private $wrappedFeatureDetector;
 
@@ -31,7 +31,7 @@ final class CachedFeatureDetector implements FeatureDetector
      */
     private $session;
 
-    public function __construct(FeatureDetector $wrappedFeatureDetector, CacheManager $cacheManager, Session $session)
+    public function __construct(FeatureDetectorInterface $wrappedFeatureDetector, CacheManager $cacheManager, Session $session)
     {
         $this->wrappedFeatureDetector = $wrappedFeatureDetector;
         $this->cacheManager = $cacheManager;

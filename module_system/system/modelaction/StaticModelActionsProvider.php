@@ -10,14 +10,14 @@ namespace Kajona\System\System\Modelaction;
 
 use Kajona\System\System\Model;
 
-class StaticModelActionsProvider implements ModelActionsProvider
+class StaticModelActionsProvider implements ModelActionsProviderInterface
 {
     /**
-     * @var ModelActionList
+     * @var ModelActionListInterface
      */
     protected $modelActions;
 
-    public function __construct(ModelActionList $modelActions)
+    public function __construct(ModelActionListInterface $modelActions)
     {
         $this->modelActions = $modelActions;
     }
@@ -27,7 +27,7 @@ class StaticModelActionsProvider implements ModelActionsProvider
         return $this->modelActions->supports($model, $context);
     }
 
-    public function getActions(Model $model, ModelActionContext $context): ModelActionList
+    public function getActions(Model $model, ModelActionContext $context): ModelActionListInterface
     {
         return $this->modelActions;
     }

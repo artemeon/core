@@ -11,7 +11,7 @@ namespace Kajona\System\System;
 use Kajona\System\Admin\AdminSimple;
 use Kajona\System\System\Exceptions\UnableToRetrieveControllerForModelException;
 
-interface ModelControllerProvider
+interface ModelControllerLocatorInterface
 {
     /**
      * @param Model $model

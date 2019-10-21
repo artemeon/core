@@ -14,14 +14,14 @@ use Kajona\System\System\Exceptions\UnableToRenderModelActionsException;
 use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 
-final class DefaultModelActionsRenderer implements ModelActionsRenderer
+final class DefaultModelActionsRenderer implements ModelActionsRendererInterface
 {
     /**
-     * @var ModelActionsProviderFactory
+     * @var ModelActionsProviderLocatorInterface
      */
     private $modelActionsProviderFactory;
 
-    public function __construct(ModelActionsProviderFactory $modelActionsProviderFactory)
+    public function __construct(ModelActionsProviderLocatorInterface $modelActionsProviderFactory)
     {
         $this->modelActionsProviderFactory = $modelActionsProviderFactory;
     }

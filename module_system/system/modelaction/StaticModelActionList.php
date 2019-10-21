@@ -10,14 +10,14 @@ namespace Kajona\System\System\Modelaction;
 
 use Kajona\System\System\Model;
 
-class StaticModelActionList implements ModelActionList
+class StaticModelActionList implements ModelActionListInterface
 {
     /**
-     * @var ModelAction[]
+     * @var ModelActionInterface[]
      */
     protected $modelActions;
 
-    public function __construct(ModelAction ...$modelActions)
+    public function __construct(ModelActionInterface ...$modelActions)
     {
         $this->modelActions = $modelActions;
     }
@@ -47,9 +47,9 @@ class StaticModelActionList implements ModelActionList
     }
 
     public function withAdditionalModelActions(
-        ModelAction $modelActionToBeAdded,
-        ModelAction ...$furtherModelActionsToBeAdded
-    ): ModelActionList {
+        ModelActionInterface $modelActionToBeAdded,
+        ModelActionInterface ...$furtherModelActionsToBeAdded
+    ): ModelActionListInterface {
         $insertIndex = 0;
         foreach ($this->modelActions as $index => $existingModelAction) {
             if ($existingModelAction instanceof EditModelAction) {
@@ -72,7 +72,7 @@ class StaticModelActionList implements ModelActionList
     public function withoutModelActionsOfType(
         string $modelActionClassNameToBeRemoved,
         string ...$furtherModelActionClassNamesToBeRemoved
-    ): ModelActionList {
+    ): ModelActionListInterface {
         $modelActionClassNamesToBeRemoved = \array_merge(
             [$modelActionClassNameToBeRemoved],
             $furtherModelActionClassNamesToBeRemoved
@@ -81,7 +81,7 @@ class StaticModelActionList implements ModelActionList
         return new self(
             ...\array_filter(
                 $this->modelActions,
-                static function (ModelAction $modelAction) use ($modelActionClassNamesToBeRemoved): bool {
+                static function (ModelActionInterface $modelAction) use ($modelActionClassNamesToBeRemoved): bool {
                     foreach ($modelActionClassNamesToBeRemoved as $modelActionClassNameToBeRemoved) {
                         if ($modelAction instanceof $modelActionClassNameToBeRemoved) {
                             return false;

@@ -15,21 +15,21 @@ use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\DefaultModelActionsRenderer;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionList;
-use Kajona\System\System\Modelaction\ModelActionsProvider;
-use Kajona\System\System\Modelaction\ModelActionsProviderFactory;
+use Kajona\System\System\Modelaction\ModelActionListInterface;
+use Kajona\System\System\Modelaction\ModelActionsProviderInterface;
+use Kajona\System\System\Modelaction\ModelActionsProviderLocatorInterface;
 use Prophecy\Argument;
 
 final class DefaultModelActionsRendererTest extends TestCase
 {
     /**
      * @param string $renderingResult
-     * @return ModelActionList
+     * @return ModelActionListInterface
      * @throws \Exception
      */
-    private function createModelActionsWithTheGivenRenderingResult(string $renderingResult): ModelActionList
+    private function createModelActionsWithTheGivenRenderingResult(string $renderingResult): ModelActionListInterface
     {
-        $modelActions = $this->prophesize(ModelActionList::class);
+        $modelActions = $this->prophesize(ModelActionListInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActions->renderAll(Argument::cetera())
             ->willReturn($renderingResult);
@@ -38,13 +38,13 @@ final class DefaultModelActionsRendererTest extends TestCase
     }
 
     /**
-     * @param ModelActionList $modelActions
-     * @return ModelActionsProvider
+     * @param ModelActionListInterface $modelActions
+     * @return ModelActionsProviderInterface
      * @throws \Exception
      */
-    private function createModelActionsProviderThatReturns(ModelActionList $modelActions): ModelActionsProvider
+    private function createModelActionsProviderThatReturns(ModelActionListInterface $modelActions): ModelActionsProviderInterface
     {
-        $modelActionsProvider = $this->prophesize(ModelActionsProvider::class);
+        $modelActionsProvider = $this->prophesize(ModelActionsProviderInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActionsProvider->getActions(Argument::cetera())
             ->willReturn($modelActions);
@@ -53,13 +53,13 @@ final class DefaultModelActionsRendererTest extends TestCase
     }
 
     /**
-     * @param ModelActionsProvider $modelActionsProvider
-     * @return ModelActionsProviderFactory
+     * @param ModelActionsProviderInterface $modelActionsProvider
+     * @return ModelActionsProviderLocatorInterface
      * @throws \Exception
      */
-    private function createModelActionsProviderFactoryThatReturns(ModelActionsProvider $modelActionsProvider): ModelActionsProviderFactory
+    private function createModelActionsProviderFactoryThatReturns(ModelActionsProviderInterface $modelActionsProvider): ModelActionsProviderLocatorInterface
     {
-        $modelActionsProviderFactory = $this->prophesize(ModelActionsProviderFactory::class);
+        $modelActionsProviderFactory = $this->prophesize(ModelActionsProviderLocatorInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActionsProviderFactory->find(Argument::cetera())
             ->willReturn($modelActionsProvider);
@@ -90,12 +90,12 @@ final class DefaultModelActionsRendererTest extends TestCase
     }
 
     /**
-     * @return ModelActionsProviderFactory
+     * @return ModelActionsProviderLocatorInterface
      * @throws \Exception
      */
-    private function createModelActionsProviderFactoryThatThrowsExceptionOnSearch(): ModelActionsProviderFactory
+    private function createModelActionsProviderFactoryThatThrowsExceptionOnSearch(): ModelActionsProviderLocatorInterface
     {
-        $modelActionsProviderFactory = $this->prophesize(ModelActionsProviderFactory::class);
+        $modelActionsProviderFactory = $this->prophesize(ModelActionsProviderLocatorInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActionsProviderFactory->find(Argument::cetera())
             ->willThrow(UnableToFindModelActionsProviderException::class);
@@ -120,12 +120,12 @@ final class DefaultModelActionsRendererTest extends TestCase
     }
 
     /**
-     * @return ModelActionList
+     * @return ModelActionListInterface
      * @throws \Exception
      */
-    private function createModelActionsProviderThatThrowExceptionOnRendering(): ModelActionsProvider
+    private function createModelActionsProviderThatThrowExceptionOnRendering(): ModelActionsProviderInterface
     {
-        $modelActionsProvider = $this->prophesize(ModelActionsProvider::class);
+        $modelActionsProvider = $this->prophesize(ModelActionsProviderInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActionsProvider->getActions(Argument::cetera())
             ->willThrow(UnableToRetrieveActionsForModelException::class);
@@ -152,12 +152,12 @@ final class DefaultModelActionsRendererTest extends TestCase
     }
 
     /**
-     * @return ModelActionList
+     * @return ModelActionListInterface
      * @throws \Exception
      */
-    private function createModelActionsThatThrowExceptionOnRendering(): ModelActionList
+    private function createModelActionsThatThrowExceptionOnRendering(): ModelActionListInterface
     {
-        $modelActions = $this->prophesize(ModelActionList::class);
+        $modelActions = $this->prophesize(ModelActionListInterface::class);
         /** @noinspection PhpParamsInspection */
         $modelActions->renderAll(Argument::cetera())
             ->willThrow(UnableToRenderActionForModelException::class);

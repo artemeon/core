@@ -11,15 +11,15 @@ namespace Kajona\System\System\Modelaction;
 use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 
-interface ModelActionsProvider
+interface ModelActionsProviderInterface
 {
     public function supports(Model $model, ModelActionContext $context): bool;
 
     /**
      * @param Model $model
      * @param ModelActionContext $context
-     * @return ModelActionList
+     * @return ModelActionListInterface
      * @throws UnableToRetrieveActionsForModelException
      */
-    public function getActions(Model $model, ModelActionContext $context): ModelActionList;
+    public function getActions(Model $model, ModelActionContext $context): ModelActionListInterface;
 }

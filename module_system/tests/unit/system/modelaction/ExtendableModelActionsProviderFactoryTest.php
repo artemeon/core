@@ -10,11 +10,11 @@ namespace Kajona\System\Tests\Unit\System\Modelaction;
 
 use Kajona\System\System\Exceptions\UnableToFindModelActionsProviderException;
 use Kajona\System\System\Model;
-use Kajona\System\System\Modelaction\ExtendableModelActionsProviderFactory;
-use Kajona\System\System\Modelaction\ModelAction;
+use Kajona\System\System\Modelaction\ExtendableModelActionsProviderLocator;
+use Kajona\System\System\Modelaction\ModelActionInterface;
 use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionList;
-use Kajona\System\System\Modelaction\ModelActionsProvider;
+use Kajona\System\System\Modelaction\ModelActionListInterface;
+use Kajona\System\System\Modelaction\ModelActionsProviderInterface;
 
 final class ExtendableModelActionsProviderFactoryTest extends TestCase
 {
@@ -22,16 +22,16 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
     {
         yield [];
         yield [
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
         ];
         yield [
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
         ];
         yield [
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
-            $this->prophesize(ModelActionsProvider::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
+            $this->prophesize(ModelActionsProviderInterface::class)->reveal(),
         ];
     }
 
@@ -41,15 +41,15 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
      */
     public function testAllowsInstantiationUsingValidArguments(...$validArguments): void
     {
-        $factory = new ExtendableModelActionsProviderFactory(...$validArguments);
-        $this->assertInstanceOf(ExtendableModelActionsProviderFactory::class, $factory);
+        $modelActionsProviderLocator = new ExtendableModelActionsProviderLocator(...$validArguments);
+        $this->assertInstanceOf(ExtendableModelActionsProviderLocator::class, $modelActionsProviderLocator);
     }
 
     public function provideInvalidModelActionsProviderFactoryArguments(): iterable
     {
         yield [new \stdClass()];
-        yield [$this->prophesize(ModelAction::class)->reveal()];
-        yield [$this->prophesize(ModelActionList::class)->reveal()];
+        yield [$this->prophesize(ModelActionInterface::class)->reveal()];
+        yield [$this->prophesize(ModelActionListInterface::class)->reveal()];
     }
 
     /**
@@ -59,23 +59,23 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
     public function testPreventsInstantiationUsingInvalidArguments(...$invalidArguments): void
     {
         $this->expectException(\Error::class);
-        $this->expectExceptionMessageRegExp('/' . \preg_quote(ExtendableModelActionsProviderFactory::class, '/') . '::__construct\(\)/');
+        $this->expectExceptionMessageRegExp('/' . \preg_quote(ExtendableModelActionsProviderLocator::class, '/') . '::__construct\(\)/');
 
-        new ExtendableModelActionsProviderFactory(...$invalidArguments);
+        new ExtendableModelActionsProviderLocator(...$invalidArguments);
     }
 
-    private function createModelActionsProviderThatDoesSupport(Model $model, ModelActionContext $context): ModelActionsProvider
+    private function createModelActionsProviderThatDoesSupport(Model $model, ModelActionContext $context): ModelActionsProviderInterface
     {
-        $modelActionsProvider = $this->prophesize(ModelActionsProvider::class);
+        $modelActionsProvider = $this->prophesize(ModelActionsProviderInterface::class);
         $modelActionsProvider->supports($model, $context)
             ->willReturn(true);
 
         return $modelActionsProvider->reveal();
     }
 
-    private function createModelActionsProviderThatDoesntSupport(Model $model, ModelActionContext $context): ModelActionsProvider
+    private function createModelActionsProviderThatDoesntSupport(Model $model, ModelActionContext $context): ModelActionsProviderInterface
     {
-        $modelActionsProvider = $this->prophesize(ModelActionsProvider::class);
+        $modelActionsProvider = $this->prophesize(ModelActionsProviderInterface::class);
         $modelActionsProvider->supports($model, $context)
             ->willReturn(false);
 
@@ -92,12 +92,12 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
     {
         $modelActionsProviderWithSupport = $this->createModelActionsProviderThatDoesSupport($model, $context);
 
-        $factory = new ExtendableModelActionsProviderFactory();
-        $factory->add($this->createModelActionsProviderThatDoesntSupport($model, $context));
-        $factory->add($this->createModelActionsProviderThatDoesntSupport($model, $context));
-        $factory->add($modelActionsProviderWithSupport);
+        $modelActionsProviderLocator = new ExtendableModelActionsProviderLocator();
+        $modelActionsProviderLocator->add($this->createModelActionsProviderThatDoesntSupport($model, $context));
+        $modelActionsProviderLocator->add($this->createModelActionsProviderThatDoesntSupport($model, $context));
+        $modelActionsProviderLocator->add($modelActionsProviderWithSupport);
 
-        $this->assertEquals($modelActionsProviderWithSupport, $factory->find($model, $context));
+        $this->assertEquals($modelActionsProviderWithSupport, $modelActionsProviderLocator->find($model, $context));
     }
 
     /**
@@ -108,10 +108,10 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
      */
     public function testThrowsExceptionIfNoModelActionsProvidersHaveBeenAdded(Model $model, ModelActionContext $context): void
     {
-        $factory = new ExtendableModelActionsProviderFactory();
+        $modelActionsProviderLocator = new ExtendableModelActionsProviderLocator();
 
         $this->expectException(UnableToFindModelActionsProviderException::class);
-        $factory->find($model, $context);
+        $modelActionsProviderLocator->find($model, $context);
     }
 
     /**
@@ -122,11 +122,11 @@ final class ExtendableModelActionsProviderFactoryTest extends TestCase
      */
     public function testThrowsExceptionIfNoMatchingModelActionsProvidersCouldBeFound(Model $model, ModelActionContext $context): void
     {
-        $factory = new ExtendableModelActionsProviderFactory(
+        $modelActionsProviderLocator = new ExtendableModelActionsProviderLocator(
             $this->createModelActionsProviderThatDoesntSupport($model, $context)
         );
 
         $this->expectException(UnableToFindModelActionsProviderException::class);
-        $factory->find($model, $context);
+        $modelActionsProviderLocator->find($model, $context);
     }
 }

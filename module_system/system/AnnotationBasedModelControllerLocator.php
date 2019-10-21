@@ -13,7 +13,7 @@ use Kajona\System\System\Exceptions\UnableToRetrieveControllerForModelException;
 use LogicException;
 use Throwable;
 
-final class AnnotationBasedModelControllerProvider implements ModelControllerProvider
+final class AnnotationBasedModelControllerLocator implements ModelControllerLocatorInterface
 {
     /**
      * @param Model $model

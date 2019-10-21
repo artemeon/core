@@ -11,26 +11,26 @@ namespace Kajona\System\System\Modelaction;
 use Kajona\System\System\Exceptions\UnableToFindModelActionsProviderException;
 use Kajona\System\System\Model;
 
-final class ExtendableModelActionsProviderFactory implements ModelActionsProviderFactory
+final class ExtendableModelActionsProviderLocator implements ModelActionsProviderLocatorInterface
 {
     /**
-     * @var ModelActionsProvider[]
+     * @var ModelActionsProviderInterface[]
      */
     private $modelActionsProviders;
 
-    public function __construct(ModelActionsProvider ...$modelActionsProviders)
+    public function __construct(ModelActionsProviderInterface ...$modelActionsProviders)
     {
         $this->modelActionsProviders = $modelActionsProviders;
     }
 
     public function add(
-        ModelActionsProvider $modelActionsProvider,
-        ModelActionsProvider ...$additionalModelActionsProviders
+        ModelActionsProviderInterface $modelActionsProvider,
+        ModelActionsProviderInterface ...$additionalModelActionsProviders
     ): void {
         \array_unshift($this->modelActionsProviders, $modelActionsProvider, ...$additionalModelActionsProviders);
     }
 
-    public function find(Model $model, ModelActionContext $context): ModelActionsProvider
+    public function find(Model $model, ModelActionContext $context): ModelActionsProviderInterface
     {
         foreach ($this->modelActionsProviders as $modelActionsProvider) {
             if ($modelActionsProvider->supports($model, $context)) {

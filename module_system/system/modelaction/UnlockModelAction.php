@@ -15,7 +15,7 @@ use Kajona\System\System\Lang;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
 
-final class UnlockModelAction implements ModelAction
+final class UnlockModelAction implements ModelActionInterface
 {
     /**
      * @var ToolkitAdmin

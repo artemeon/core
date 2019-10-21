@@ -16,13 +16,12 @@ use Kajona\System\System\AdminGridableInterface;
 use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\ArraySectionIterator;
-use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleModelException;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
-use Kajona\System\System\Modelaction\ModelActionContext;
-use Kajona\System\System\Modelaction\ModelActionsRenderer;
+use Kajona\System\System\Modelaction\ModelActionContextFactoryInterface;
+use Kajona\System\System\Modelaction\ModelActionsRendererInterface;
 use Kajona\System\System\ModelInterface;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\StringUtil;
@@ -49,9 +48,16 @@ abstract class AdminSimple extends AdminController
     private $strPeAddon = "";
 
     /**
-     * @var ModelActionsRenderer
+     * @var ModelActionContextFactoryInterface
+     * @inject Kajona\System\System\Modelaction\ModelActionContextFactoryInterface
      */
-    private $modelActionsRenderer;
+    protected $modelActionContextFactory;
+
+    /**
+     * @var ModelActionsRendererInterface
+     * @inject Kajona\System\System\Modelaction\ModelActionsRendererInterface
+     */
+    protected $modelActionsRenderer;
 
     /**
      * @param string $strSystemid
@@ -60,7 +66,6 @@ abstract class AdminSimple extends AdminController
     public function __construct($strSystemid = "")
     {
         parent::__construct($strSystemid);
-        $this->modelActionsRenderer = Carrier::getInstance()->getContainer()[ModelActionsRenderer::class];
 
         if ($this->getParam("unlockid") != "") {
             $objUnlock = Objectfactory::getInstance()->getObject($this->getParam("unlockid"));
@@ -368,7 +373,7 @@ abstract class AdminSimple extends AdminController
      */
     public function getActionIcons($model, $listIdentifier = '')
     {
-        $context = new ModelActionContext($listIdentifier);
+        $context = $this->modelActionContextFactory->forListIdentifier($listIdentifier);
 
         try {
             return $this->modelActionsRenderer->render($model, $context);
