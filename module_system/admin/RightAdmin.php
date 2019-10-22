@@ -243,26 +243,24 @@ class RightAdmin extends AdminController implements AdminInterface
     /**
      * Recalculates Rights from form
      *
-     * @throws Exception
      * @return array
      * @permissions right
-     * @responseType json
+     * @throws Exception
      */
     protected function actionRecalculatePermissions()
     {
+        $strSystemid = $this->getSystemid();
+        $record = $this->objFactory->getObject($strSystemid);
 
-        $record = "";
         /** @var PermissionHandlerFactory $permissionFactory */
         $permissionFactory = Carrier::getInstance()->getContainer()->offsetGet(\Kajona\System\System\ServiceProvider::STR_PERMISSION_HANDLER_FACTORY);
         $permissionHandler = $permissionFactory->factory(get_class($record));
-        $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
-        if ($permissionHandler) {
-            $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "error"];
+        if (is_null($permissionHandler)) {
+            $strReturn = ["message" => $this->getLang("recalculate_rights_error"), "type" => "error"];
+        } else {
+            $permissionHandler->calculatePermissions($record);
+            $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
         }
-//        $permissionHandler->calculatePermissions($record);
-
-//        $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
-//        $strReturn = ["message" => $this->getLang("recalculate_rights_error"), "type" => "error"];
 
         return $strReturn;
     }
