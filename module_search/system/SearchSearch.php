@@ -11,8 +11,6 @@ use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\Date;
 use Kajona\System\System\Model;
 use Kajona\System\System\ModelInterface;
-use Kajona\System\System\SortableRatingInterface;
-use Kajona\System\System\StringUtil;
 use Kajona\System\System\SystemModule;
 
 /**
@@ -43,23 +41,8 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
      * @tableColumn agp_search_search.search_search_filter_modules
      * @tableColumnDatatype char254
      */
-    private $arrInternalFilterModules = array();
+    private $arrFilterModules = array();
 
-    /**
-     * @var string
-     * @tableColumn agp_search_search.search_search_private
-     * @tableColumnDatatype int
-     */
-    private $intPrivate = 0;
-
-    /**
-     * For form-generation only
-     *
-     * @var array
-     * @fieldType Kajona\System\Admin\Formentries\FormentryToggleButtonbar
-     * @fieldLabel search_modules
-     */
-    private $arrFormFilterModules = array();
 
     /**
      * For form-generation only
@@ -103,7 +86,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
      */
     public function setFilterModules(array $filterModules)
     {
-        $this->arrInternalFilterModules = $filterModules;
+        $this->arrFilterModules = $filterModules;
     }
 
     /**
@@ -113,7 +96,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
      */
     public function getFilterModules(): array
     {
-        return $this->arrInternalFilterModules;
+        return $this->arrFilterModules;
     }
 
     /**
@@ -135,6 +118,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
      * a subset of getModuleIds() / all module-entries
      *
      * @return array
+     * @throws \Kajona\System\System\Exception
      */
     public function getPossibleModulesForFilter()
     {
@@ -233,43 +217,10 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     /**
      * @param array $arrObjectTypes
      */
-    public function setArrObjectTypes(array $arrObjectTypes)
+    public function setArrObjectTypes($arrObjectTypes)
     {
         $this->arrObjectTypes = $arrObjectTypes;
     }
-
-    /**
-     * @return array
-     */
-    public function getArrInternalFilterModules(): array
-    {
-        return $this->arrInternalFilterModules;
-    }
-
-    /**
-     * @param array $arrInternalFilterModules
-     */
-    public function setArrInternalFilterModules(array $arrInternalFilterModules): void
-    {
-        $this->arrInternalFilterModules = $arrInternalFilterModules;
-    }
-
-    /**
-     * @return array
-     */
-    public function getArrFormFilterModules(): array
-    {
-        return $this->arrFormFilterModules;
-    }
-
-    /**
-     * @param array $arrFormFilterModules
-     */
-    public function setArrFormFilterModules(array $arrFormFilterModules): void
-    {
-        $this->arrFormFilterModules = $arrFormFilterModules;
-    }
-
 
     /**
      * @param string $arrFormFilterModules
@@ -320,19 +271,5 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
         return $this->objChangeStartdate;
     }
 
-    /**
-     * @param string $intPrivate
-     */
-    public function setIntPrivate($intPrivate)
-    {
-        $this->intPrivate = $intPrivate;
-    }
 
-    /**
-     * @return string
-     */
-    public function getIntPrivate()
-    {
-        return $this->intPrivate;
-    }
 }
