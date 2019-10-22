@@ -7,7 +7,7 @@ import MenuAspect from '../MenuAspect/MenuAspect.vue'
 
 @Component({ components: { MenuAspect, Loader } })
 class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons'])) {
-    @namespace('MenuModule').Action getMenu: any
+    @namespace('MenuModule').Action getMenu: Function
 
     @namespace('MenuModule').State aspects: Array<any>
 
@@ -19,7 +19,9 @@ class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons
     }
 
     private switchAspect(aspectId: string): boolean {
-        ModuleNavigation.switchAspect(aspectId); return false
+        ModuleNavigation.switchAspect(aspectId)
+
+        return false
     }
 }
 
