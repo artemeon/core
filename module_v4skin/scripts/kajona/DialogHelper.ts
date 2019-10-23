@@ -1,5 +1,5 @@
-import Dialog from './Dialog'
 import Folderview from 'core/module_system/scripts/kajona/Folderview'
+import Dialog from './Dialog'
 
 class DialogHelper {
     private static loadingModal: Dialog = null
@@ -19,7 +19,7 @@ class DialogHelper {
         strConfirmationLabel: string,
         strConfirmationHref: string | Function
     ) {
-        var dialogInstance = new Dialog('jsDialog1', 1)
+        var dialogInstance = new Dialog(Dialog.ID_DIALOG_1, 1)
         dialogInstance.setTitle(strTitle)
         dialogInstance.setContent(
             strContent,
@@ -68,7 +68,7 @@ class DialogHelper {
      */
     public static showLoadingModal () {
         if (this.loadingModal === null) {
-            this.loadingModal = new Dialog('jsDialog3', 3)
+            this.loadingModal = new Dialog(Dialog.ID_DIALOG_3, 3)
         }
 
         this.loadingModal.init()
@@ -80,7 +80,7 @@ class DialogHelper {
      * @returns {module:dialog}
      */
     public static showInfoModal (title: string, content: string) {
-        var dialogInstance = new Dialog('jsDialog_0', 0)
+        var dialogInstance = new Dialog(Dialog.ID_DIALOG_0, 0)
         dialogInstance.setTitle(title)
         dialogInstance.setContentRaw(content)
         dialogInstance.init(300, 300)

@@ -233,7 +233,7 @@ final class Logger implements LoggerInterface
             $strLevel = "WARNING";
         }
 
-        $strSessid = Carrier::getInstance()->getObjSession()->getUserID();
+        $strSessid = Carrier::getInstance()->getObjSession()->isInitialized() ? Carrier::getInstance()->getObjSession()->getUserID() : '        n.a.        ';
         $strMessage = StringUtil::replace(array("\r", "\n"), array(" ", " "), $strMessage);
 
         $strFileInfo = "";
