@@ -37,6 +37,8 @@ class Checkboxarray extends FormentryComponentAbstract
     /** @var bool */
     protected $inline = false;
 
+    /** @var bool */
+    protected $showSelectedFirst = false;
 
     /**
      * @param string $name
@@ -62,22 +64,50 @@ class Checkboxarray extends FormentryComponentAbstract
 
         $context['type'] = $this->type;
 
-        $rows = [];
-        foreach ($this->items as $key => $value) {
-            $rows[] = [
-                'key' => $key,
-                'title' => $value,
-                'checked' => in_array($key, $this->selected) ? 'checked' : '',
-                'inline' => $this->inline ? '-inline' : '',
-                'readonly' => $this->readOnly ? 'disabled' : '',
-                'type' => $this->type,
-                'value' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? 'checked' : $key,
-                'name' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? $this->name.'['.$key.']' : $this->name,
-            ];
-        }
-        $context["rows"] = $rows;
+        $context["rows"] = $this->itemsToRows();
         return $context;
     }
+
+    private function itemsToRows()
+    {
+        $rows = [];
+        if (!$this->showSelectedFirst) {
+            foreach ($this->items as $key => $value) {
+                $rows[] = [
+                    'key' => $key,
+                    'title' => $value,
+                    'checked' => in_array($key, $this->selected) ? 'checked' : '',
+                    'inline' => $this->inline ? '-inline' : '',
+                    'readonly' => $this->readOnly ? 'disabled' : '',
+                    'type' => $this->type,
+                    'value' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? 'checked' : $key,
+                    'name' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? $this->name.'['.$key.']' : $this->name,
+                ];
+            }
+        } else {
+            foreach ($this->selected as $itemKey) {
+                if (!isset($this->items[$itemKey])) {
+                    continue;
+                }
+                $rows[] = [
+                    'key' => $itemKey,
+                    'title' => $this->items[$itemKey],
+                    'checked' => 'checked',
+                    'inline' => $this->inline ? '-inline' : '',
+                    'readonly' => $this->readOnly ? 'disabled' : '',
+                    'type' => $this->type,
+                    'value' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? 'checked' : $itemKey,
+                    'name' => $this->type == FormentryCheckboxarray::TYPE_CHECKBOX ? $this->name.'['.$itemKey.']' : $this->name,
+                ];
+                unset($this->items[$itemKey]);
+            }
+            $this->setShowSelectedFirst(false);
+            $rows = array_merge($rows, $this->itemsToRows());
+        }
+
+        return $rows;
+    }
+
 
     /**
      * @return int
@@ -113,6 +143,22 @@ class Checkboxarray extends FormentryComponentAbstract
     {
         $this->inline = $inline;
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowSelectedFirst(): bool
+    {
+        return $this->showSelectedFirst;
+    }
+
+    /**
+     * @param bool $showSelectedFirst
+     */
+    public function setShowSelectedFirst(bool $showSelectedFirst): void
+    {
+        $this->showSelectedFirst = $showSelectedFirst;
     }
 
 

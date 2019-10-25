@@ -18,12 +18,13 @@ use Kajona\System\System\Lang;
  * @author andrii.konoval@artemeon.de
  * @since 7.2
  */
-class FormentryCountriesDropdown extends FormentryDropdown
+class FormentryCountriesCheckboxarray extends FormentryCheckboxarray
 {
     public function __construct(string $formName, string $sourceProperty, object $sourceObject = null)
     {
         parent::__construct($formName, $sourceProperty, $sourceObject);
 
         $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "countries"));
+        $this->setShowSelectedFirst(true);
     }
 }
