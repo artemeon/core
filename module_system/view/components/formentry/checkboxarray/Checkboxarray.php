@@ -40,6 +40,9 @@ class Checkboxarray extends FormentryComponentAbstract
     /** @var bool */
     protected $showSelectedFirst = false;
 
+    /** @var bool */
+    protected $showFilter = false;
+
     /**
      * @param string $name
      * @param string $title
@@ -63,8 +66,9 @@ class Checkboxarray extends FormentryComponentAbstract
         $context = parent::buildContext();
 
         $context['type'] = $this->type;
-
         $context["rows"] = $this->itemsToRows();
+        $context["filter"] = $this->isShowFilter();
+
         return $context;
     }
 
@@ -161,5 +165,20 @@ class Checkboxarray extends FormentryComponentAbstract
         $this->showSelectedFirst = $showSelectedFirst;
     }
 
+    /**
+     * @return bool
+     */
+    public function isShowFilter(): bool
+    {
+        return $this->showFilter;
+    }
+
+    /**
+     * @param bool $showFilter
+     */
+    public function setShowFilter(bool $showFilter): void
+    {
+        $this->showFilter = $showFilter;
+    }
 
 }

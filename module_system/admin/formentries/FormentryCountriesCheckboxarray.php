@@ -26,5 +26,6 @@ class FormentryCountriesCheckboxarray extends FormentryCheckboxarray
 
         $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "countries"));
         $this->setShowSelectedFirst(true);
+        $this->setShowFilter(true);
     }
 }

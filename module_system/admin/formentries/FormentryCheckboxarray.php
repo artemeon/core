@@ -33,6 +33,7 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
     private $bitInline = false;
     private $arrKeyValues = array();
     private $showSelectedFirst = false;
+    private $showFilter = false;
 
     /**
      * a list of [key=>value],[key=>value] pairs, resolved from the language-files
@@ -91,6 +92,7 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
         $cmp->setReadOnly($this->getBitReadonly());
         $cmp->setDataArray($this->getDataAttributes());
         $cmp->setShowSelectedFirst($this->isShowSelectedFirst());
+        $cmp->setShowFilter($this->isShowFilter());
 
         $strReturn .= $cmp->renderComponent();
         $strReturn .= $objToolkit->formInputHidden($this->getPresCheckKey(), "1");
@@ -220,6 +222,22 @@ class FormentryCheckboxarray extends FormentryBase implements FormentryPrintable
     public function setShowSelectedFirst(bool $showSelectedFirst): void
     {
         $this->showSelectedFirst = $showSelectedFirst;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isShowFilter(): bool
+    {
+        return $this->showFilter;
+    }
+
+    /**
+     * @param bool $showFilter
+     */
+    public function setShowFilter(bool $showFilter): void
+    {
+        $this->showFilter = $showFilter;
     }
 
     /**
