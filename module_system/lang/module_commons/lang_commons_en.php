@@ -78,6 +78,7 @@ $lang["commons_reset"]                   = "Reset";
 $lang["commons_result_page"]             = "Result page";
 $lang["commons_save"]                    = "Save";
 $lang["commons_savenext"]                = "Save & Next";
+$lang["commons_create"]                  = "Create";
 $lang["commons_cancel"]                  = "Cancel";
 $lang["commons_back"]                    = "Back";
 $lang["commons_select_all"]              = "Select all";

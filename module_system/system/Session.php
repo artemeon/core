@@ -677,6 +677,15 @@ final class Session
     }
 
     /**
+     * Checks whether is internal session is active or not
+     * @return bool
+     */
+    public function isInitialized()
+    {
+        return $this->objInternalSession !== null;
+    }
+
+    /**
      * Returns an instance of the current user or null of not given
      *
      * @return UserUser

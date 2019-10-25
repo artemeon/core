@@ -7,6 +7,7 @@
 namespace Kajona\System\Admin\Formentries;
 
 use Kajona\System\System\Carrier;
+use Kajona\System\View\Components\Formentry\Buttonbar\Buttonbar;
 
 
 /**
@@ -57,8 +58,15 @@ class FormentryToggleButtonbar extends FormentryMultiselect {
         if($this->getStrValue() !== "" && $this->getStrValue() !== null) {
             $arrSelectedKeys = explode(",", $this->getStrValue());
         }
-        $strReturn .= $objToolkit->formToggleButtonBar($this->getStrEntryName(), $this->arrKeyValues, $this->getStrLabel(), $arrSelectedKeys, !$this->getBitReadonly(), $this->strType);
+
+        $buttonBar = new Buttonbar($this->getStrEntryName(), $this->getStrLabel(), $this->arrKeyValues, $arrSelectedKeys);
+        $buttonBar->setReadOnly($this->getBitReadonly());
+        $buttonBar->setType($this->strType);
+
+        $strReturn .= $buttonBar->renderComponent();
+        $strReturn .= $objToolkit->formInputHidden($this->getPresCheckKey(), "1");
         return $strReturn;
+
     }
 
 }

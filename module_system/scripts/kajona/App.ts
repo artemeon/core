@@ -15,6 +15,7 @@ import i18n from './VueMainComponent/VueLang'
 import GlobalAxiosConfig from './GlobalAxiosConfig'
 import VueI18n from 'vue-i18n'
 import KeymapsController from './KeymapsController'
+import StringPolyfill from './Polyfills/StringPolyfill'
 
 declare global {
     interface Window {
@@ -55,6 +56,9 @@ class App {
             }
         }
 
+        // load polyfills
+        StringPolyfill.init()
+
         Folderview.dialog = KAJONA.admin.folderview.dialog
 
         // register the global router
@@ -71,13 +75,13 @@ class App {
         // BC layer
 
         /** @deprecated */
-        window.jsDialog_0 = new Dialog('jsDialog_0', 0)
+        window.jsDialog_0 = new Dialog(Dialog.ID_DIALOG_0, 0)
         /** @deprecated */
-        window.jsDialog_1 = new Dialog('jsDialog_1', 1)
+        window.jsDialog_1 = new Dialog(Dialog.ID_DIALOG_1, 1)
         /** @deprecated */
-        window.jsDialog_2 = new Dialog('jsDialog_2', 2)
+        window.jsDialog_2 = new Dialog(Dialog.ID_DIALOG_2, 2)
         /** @deprecated */
-        window.jsDialog_3 = new Dialog('jsDialog_3', 3)
+        window.jsDialog_3 = new Dialog(Dialog.ID_DIALOG_3, 3)
 
         // configure toastr global
         toastr.options.positionClass = 'toast-bottom-right'

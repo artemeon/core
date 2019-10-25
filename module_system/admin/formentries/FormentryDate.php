@@ -145,7 +145,7 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         $objDate = null;
         if ($this->getStrValue() instanceof Date) {
             $objDate = $this->getStrValue();
-        } elseif ($this->getStrValue() !== '') {
+        } elseif ($this->getStrValue() !== null && $this->getStrValue() !== '') {
             $objDate = new Date($this->getStrValue());
         }
 
