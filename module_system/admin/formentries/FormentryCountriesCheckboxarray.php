@@ -24,7 +24,7 @@ class FormentryCountriesCheckboxarray extends FormentryCheckboxarray
     {
         parent::__construct($formName, $sourceProperty, $sourceObject);
 
-        $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "countries"));
+        $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "system"));
         $this->setShowSelectedFirst(true);
         $this->setShowFilter(true);
     }

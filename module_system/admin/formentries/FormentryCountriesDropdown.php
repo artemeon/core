@@ -24,6 +24,6 @@ class FormentryCountriesDropdown extends FormentryDropdown
     {
         parent::__construct($formName, $sourceProperty, $sourceObject);
 
-        $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "countries"));
+        $this->setArrKeyValues(Lang::getInstance()->getLang("countries", "system"));
     }
 }
