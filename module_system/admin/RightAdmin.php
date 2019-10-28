@@ -9,7 +9,6 @@
 
 namespace Kajona\System\Admin;
 
-use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Link;
 use Kajona\System\System\Objectfactory;
@@ -40,7 +39,7 @@ class RightAdmin extends AdminController implements AdminInterface
 
     /**
      * @inject system_permission_handler_factory
-     * @var PermissionHandlerFactory
+     * @var PermissionHandlerFactory $permissionHandlerFactory
      */
     protected $permissionHandlerFactory;
 
@@ -65,7 +64,7 @@ class RightAdmin extends AdminController implements AdminInterface
         $strSystemid = $this->getSystemid();
         $record = $this->objFactory->getObject($strSystemid);
 
-        $permissionHandler = $this->permissionFactory->factory(get_class($record));
+        $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
         if (is_null($permissionHandler)) {
             $this->isPermissionHandlerExisting = false;
         } else {
@@ -124,8 +123,12 @@ class RightAdmin extends AdminController implements AdminInterface
             $strReturn .= $this->objToolkit->formInputHidden("systemid", $strSystemID);
 
             //Close the form
-            $strReturn .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"), "", "", "save-permissions");
-            $strReturn .= $this->objToolkit->formInputSubmit($this->getLang("commons_recalculate_permissions"), "Submit", 'Permissions.recalculatePermission();return false;', "recalc-permissions");
+            $strButtons = "";
+            $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"), "", "", "save-permissions");
+            if ($this->isPermissionHandlerExisting) {
+                $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_recalculate_permissions"), "Submit", 'Permissions.recalculatePermission();return false;', "recalc-permissions");
+            }
+            $strReturn .= $this->objToolkit->formInputButtonWrapper($strButtons);
             $strReturn .= $this->objToolkit->formClose();
 
             $strReturn .= "<script type=\"text/javascript\">
@@ -267,21 +270,19 @@ class RightAdmin extends AdminController implements AdminInterface
      * @return array
      * @permissions right
      * @responseType json
-     * @throws Exception
      */
     protected function actionRecalculatePermissions()
     {
         $strSystemid = $this->getSystemid();
         $record = $this->objFactory->getObject($strSystemid);
 
-        /** @var PermissionHandlerFactory $permissionFactory */
-        $permissionFactory = Carrier::getInstance()->getContainer()->offsetGet(\Kajona\System\System\ServiceProvider::STR_PERMISSION_HANDLER_FACTORY);
-        $permissionHandler = $permissionFactory->factory(get_class($record));
-        if (is_null($permissionHandler)) {
-            $strReturn = ["message" => $this->getLang("recalculate_rights_error"), "type" => "error"];
-        } else {
+        try {
+            $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
             $permissionHandler->calculatePermissions($record);
             $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
+        }
+        catch(Exception $objExc) {
+            $strReturn = ["message" => $this->getLang("recalculate_rights_error"), "type" => "error"];
         }
 
         return $strReturn;

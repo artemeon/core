@@ -172,8 +172,8 @@ class Permissions {
                 + $('#systemid').val(),
             type: 'POST',
             contentType: 'application/json',
-            dataType: 'json'
-        }).done(function (data) {
+            dataType: 'json',
+        }).done((data) => {
             // enable submit button
             submitBtn.removeClass('processing').prop('disabled', false)
 
