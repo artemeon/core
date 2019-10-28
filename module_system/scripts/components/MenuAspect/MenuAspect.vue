@@ -1,5 +1,5 @@
 <template>
-        <div :data-kajona-aspectid="aspect.Aspect_id" :id="aspect.Aspect_id" class="aspect-container panel-group test">
+        <div :data-kajona-aspectid="aspect.Aspect_id" :id="aspect.Aspect_id" class="aspect-container panel-group">
             <div class="panel panel-default panel-combined">
                 <div class="panel-heading">
                     <span class="linkcontainer collapsed">
