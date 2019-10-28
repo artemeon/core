@@ -77,7 +77,7 @@ class SearchIndexEventTest extends Testbase
         $arrResult = $objSearchCommons->doIndexedSearch($objSearchParams, null);
         $this->assertEquals(count($arrResult), 2);
 
-        $objSearchParams->setStrInternalFilterModules(_system_modul_id_);
+        $objSearchParams->setFilterModules([_system_modul_id_]);
         $arrResult = $objSearchCommons->doIndexedSearch($objSearchParams, null);
         $this->assertEquals(count($arrResult), 1);
         $this->assertEquals($arrResult[0]->getObjObject()->getStrSystemid(), $objAspect->getStrSystemid());
