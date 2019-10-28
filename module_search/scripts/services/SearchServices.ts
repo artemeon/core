@@ -1,56 +1,34 @@
-import axios from 'axios'
-import to from 'await-to-js'
-import qs from 'qs'
+import { AxiosResponse } from 'axios'
+import HttpClient from 'core/module_system/scripts/kajona/HttpClient'
 
 /**
  * makes all the necessary api calls of the searchModule
  */
 class SearchServices {
-    // todo add correct payload types after SearchApiController is ready
-    public static async triggerSearch (payload) : Promise<any[]> {
-        const [err, res] = await to(axios({
-            url: '/xml.php',
-            method: 'POST',
-            params: {
-                module: 'search',
-                action: 'getFilteredSearch',
-                search_query: payload.searchQuery,
-                filtermodules: payload.selectedIds,
-                search_changestartdate: payload.startDate,
-                search_changeenddate: payload.endDate,
-                search_formfilteruser_id: payload.selectedUser
-            },
-            paramsSerializer: (params : any) => {
-                return qs.stringify(params, { arrayFormat: 'comma' })
-            }
-
-        }))
-        return [err, res]
-    }
-    public static async getFilterModules () : Promise<any[]> {
-        const [err, res] = await to(axios({
-            url: '/xml.php?',
-            method: 'GET',
-            params: {
-                module: 'search',
-                action: 'getModulesForFilter'
-            }
-        }))
+    public static async triggerSearch(payload): Promise<[Error, AxiosResponse]> {
+        const [err, res] = await HttpClient.get('/api.php/v1/search', {
+            searchQuery: payload.searchQuery,
+            filterModules: payload.selectedIds,
+            searchChangeStartDate: payload.startDate,
+            searchChangeEndDate: payload.endDate,
+            searchFormFilterUserId: payload.selectedUser,
+        })
         return [err, res]
     }
 
-    public static async getAutocompleteUsers (payload) : Promise<any[]> {
-        const [err, res] = await to(axios({
-            url: '/xml.php',
-            method: 'POST',
-            params: {
-                module: 'user',
-                action: 'getUserByFilter',
-                user: true,
-                group: false,
-                filter: payload.userQuery
-            }
-        }))
+    public static async getFilterModules(): Promise<[Error, AxiosResponse]> {
+        const [err, res] = await HttpClient.get('/api.php/v1/search/modules')
+        return [err, res]
+    }
+
+    public static async getAutocompleteUsers(payload): Promise<[Error, AxiosResponse]> {
+        const [err, res] = await HttpClient.post('/xml.php', {
+            module: 'user',
+            action: 'getUserByFilter',
+            user: true,
+            group: false,
+            filter: payload.userQuery,
+        })
         return [err, res]
     }
 }
