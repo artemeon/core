@@ -170,7 +170,9 @@ class Permissions {
             url:
                 KAJONA_WEBPATH + '/xml.php?admin=1&module=right&action=recalculatePermissions&systemid='
                 + $('#systemid').val(),
-            type: 'GET',
+            type: 'POST',
+            contentType: 'application/json',
+            dataType: 'json'
         }).done(function (data) {
             // enable submit button
             submitBtn.removeClass('processing').prop('disabled', false)

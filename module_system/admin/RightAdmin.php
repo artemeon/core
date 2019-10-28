@@ -39,6 +39,17 @@ class RightAdmin extends AdminController implements AdminInterface
     protected $rights;
 
     /**
+     * @inject system_permission_handler_factory
+     * @var PermissionHandlerFactory
+     */
+    protected $permissionHandlerFactory;
+
+    /**
+     * @var boolean
+     */
+    private $isPermissionHandlerExisting;
+
+    /**
      * Constructor
      * @throws Exception
      */
@@ -49,6 +60,16 @@ class RightAdmin extends AdminController implements AdminInterface
 
         if ($this->getAction() === "list") {
             $this->setAction("change");
+        }
+
+        $strSystemid = $this->getSystemid();
+        $record = $this->objFactory->getObject($strSystemid);
+
+        $permissionHandler = $this->permissionFactory->factory(get_class($record));
+        if (is_null($permissionHandler)) {
+            $this->isPermissionHandlerExisting = false;
+        } else {
+            $this->isPermissionHandlerExisting = true;
         }
     }
 
@@ -245,6 +266,7 @@ class RightAdmin extends AdminController implements AdminInterface
      *
      * @return array
      * @permissions right
+     * @responseType json
      * @throws Exception
      */
     protected function actionRecalculatePermissions()
