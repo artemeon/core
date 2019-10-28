@@ -24,7 +24,7 @@ class GlobalAxiosConfig {
             const token = KAJONA_ACCESS_TOKEN
             const jwt = jwtDecode<Token>(token)
             const timestamp = Math.floor(Date.now() / 1000)
-            const timeWindow = 15 * 60; // refresh 10 minutes before the token expires
+            const timeWindow = 15 * 60; // refresh 15 minutes before the token expires
             const refreshTime = jwt.exp - timeWindow;
 
             if (timestamp > jwt.exp) {
