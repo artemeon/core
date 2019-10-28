@@ -11,8 +11,6 @@ use Kajona\System\System\AdminListableInterface;
 use Kajona\System\System\Date;
 use Kajona\System\System\Model;
 use Kajona\System\System\ModelInterface;
-use Kajona\System\System\SortableRatingInterface;
-use Kajona\System\System\StringUtil;
 use Kajona\System\System\SystemModule;
 
 /**
@@ -39,27 +37,12 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     private $strQuery;
 
     /**
-     * @var string
+     * @var array
      * @tableColumn agp_search_search.search_search_filter_modules
      * @tableColumnDatatype char254
      */
-    private $strInternalFilterModules = "-1";
+    private $arrFilterModules = array();
 
-    /**
-     * @var string
-     * @tableColumn agp_search_search.search_search_private
-     * @tableColumnDatatype int
-     */
-    private $intPrivate = 0;
-
-    /**
-     * For form-generation only
-     *
-     * @var array
-     * @fieldType Kajona\System\Admin\Formentries\FormentryToggleButtonbar
-     * @fieldLabel search_modules
-     */
-    private $arrFormFilterModules = array();
 
     /**
      * For form-generation only
@@ -96,18 +79,24 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
         return $this->getStrQuery();
     }
 
+    /**
+     * Sets the filter modules
+     *
+     * @param array $filterModules
+     */
+    public function setFilterModules(array $filterModules)
+    {
+        $this->arrFilterModules = $filterModules;
+    }
 
     /**
      * Returns the filter modules to edit the filter modules
      *
      * @return array
      */
-    public function getFilterModules()
+    public function getFilterModules(): array
     {
-        if (StringUtil::length($this->strInternalFilterModules) > 0 && $this->strInternalFilterModules != "-1") {
-            return explode(",", $this->strInternalFilterModules);
-        }
-        return array();
+        return $this->arrFilterModules;
     }
 
     /**
@@ -129,6 +118,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
      * a subset of getModuleIds() / all module-entries
      *
      * @return array
+     * @throws \Kajona\System\System\Exception
      */
     public function getPossibleModulesForFilter()
     {
@@ -168,15 +158,6 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
         return $arrReturn;
     }
 
-    /**
-     * Sets the filter modules
-     *
-     * @param $arrFilterModules
-     */
-    public function setFilterModules($arrFilterModules)
-    {
-        $this->strInternalFilterModules = implode(",", $arrFilterModules);
-    }
 
     /**
      * Returns the icon the be used in lists.
@@ -236,44 +217,9 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     /**
      * @param array $arrObjectTypes
      */
-    public function setArrObjectTypes(array $arrObjectTypes)
+    public function setArrObjectTypes($arrObjectTypes)
     {
         $this->arrObjectTypes = $arrObjectTypes;
-    }
-
-    /**
-     * @return array
-     */
-    public function getArrFilterModules()
-    {
-        if ($this->strInternalFilterModules != "" && $this->strInternalFilterModules != "-1") {
-            return explode(",", $this->strInternalFilterModules);
-        } else {
-            return $this->getModuleNumbers();
-        }
-    }
-
-    /**
-     * @param array $arrFormFilterModules
-     */
-    public function setArrFormFilterModules($arrFormFilterModules)
-    {
-        if (is_array($arrFormFilterModules)) {
-            $arrFormFilterModules = implode(",", $arrFormFilterModules);
-        }
-        $this->strInternalFilterModules = $arrFormFilterModules;
-    }
-
-    /**
-     * @return array
-     */
-    public function getArrFormFilterModules()
-    {
-        if ($this->strInternalFilterModules != "" && $this->strInternalFilterModules != "-1") {
-            return explode(",", $this->strInternalFilterModules);
-        } else {
-            return array();
-        }
     }
 
     /**
@@ -294,23 +240,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
 
 
     /**
-     * @param string $strFilterModules
-     */
-    public function setStrInternalFilterModules($strFilterModules)
-    {
-        $this->strInternalFilterModules = $strFilterModules;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStrInternalFilterModules()
-    {
-        return $this->strInternalFilterModules;
-    }
-
-    /**
-     * @param \Kajona\System\System\Date $objChangeEnddate
+     * @param Date $objChangeEnddate
      */
     public function setObjChangeEnddate($objChangeEnddate)
     {
@@ -318,7 +248,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     }
 
     /**
-     * @return \Kajona\System\System\Date
+     * @return Date
      */
     public function getObjChangeEnddate()
     {
@@ -326,7 +256,7 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     }
 
     /**
-     * @param \Kajona\System\System\Date $objChangeStartdate
+     * @param Date $objChangeStartdate
      */
     public function setObjChangeStartdate($objChangeStartdate)
     {
@@ -334,26 +264,12 @@ class SearchSearch extends Model implements ModelInterface, AdminListableInterfa
     }
 
     /**
-     * @return \Kajona\System\System\Date
+     * @return Date
      */
     public function getObjChangeStartdate()
     {
         return $this->objChangeStartdate;
     }
 
-    /**
-     * @param string $intPrivate
-     */
-    public function setIntPrivate($intPrivate)
-    {
-        $this->intPrivate = $intPrivate;
-    }
 
-    /**
-     * @return string
-     */
-    public function getIntPrivate()
-    {
-        return $this->intPrivate;
-    }
 }

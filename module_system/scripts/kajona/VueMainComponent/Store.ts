@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import RatingDetailModule from 'core_customer/module_hsbcact/scripts/modules/RatingDetailModule'
 import SearchModule from 'core/module_search/scripts/modules/SearchModule'
 import MenuModule from 'core/module_system/scripts/modules/MenuModule';
 // import VueI18n from 'vue-i18n'
@@ -8,6 +9,7 @@ Vue.use(<any>Vuex)
 export default new Vuex.Store({
     modules: {
         SearchModule: SearchModule,
-        MenuModule: MenuModule
+        MenuModule: MenuModule,
+        ratingModule: RatingDetailModule
     }
 })

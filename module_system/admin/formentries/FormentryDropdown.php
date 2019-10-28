@@ -199,7 +199,9 @@ class FormentryDropdown extends FormentryBase implements FormentryPrintableInter
      */
     public function getValueAsText()
     {
-        return isset($this->arrKeyValues[$this->getStrValue()]) ? $this->arrKeyValues[$this->getStrValue()] : "";
+        $value = isset($this->arrKeyValues[$this->getStrValue()]) ? $this->arrKeyValues[$this->getStrValue()] : "";
+
+        return htmlentities($value, null, null, false);
     }
 
     /**
