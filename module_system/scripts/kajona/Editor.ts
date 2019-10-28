@@ -151,6 +151,19 @@ class Editor {
     }
 
     public static setContent(name, content) {
+        document.getElementById(`${name}_pell`).addEventListener('paste', (e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            let clipText
+            if (e.clipboardData !== undefined) {
+                clipText = e.clipboardData.getData('text/plain')
+                pell.exec('insertText', clipText)
+            } else {
+                clipText = (window as any).clipboardData.getData('text')
+                pell.exec('paste', clipText)
+            }
+        })
+
         const decodeHTML = function (html) {
             const txt = document.createElement('textarea')
             txt.innerHTML = html
