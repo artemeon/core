@@ -24,11 +24,12 @@ class GlobalAxiosConfig {
             const token = KAJONA_ACCESS_TOKEN
             const jwt = jwtDecode<Token>(token)
             const timestamp = Math.floor(Date.now() / 1000)
-            const threshold = 60 * (10 * 60); // refresh 10 minutes before the token expires
+            const timeWindow = 15 * 60; // refresh 10 minutes before the token expires
+            const refreshTime = jwt.exp - timeWindow;
 
-            if ((token && timestamp - (jwt.exp - threshold) > 0)) {
-                config.headers.Authorization = `Bearer ${token}`
-            } else {
+            if (timestamp > jwt.exp) {
+                // in this case we have missed our window to extend the token, there is nothing we can do here
+            } else if (timestamp > refreshTime) {
                 fetch('api.php/v1/authorization/refresh', {
                     method: 'post',
                     headers: {
@@ -41,6 +42,8 @@ class GlobalAxiosConfig {
                         config.headers.Authorization = `Bearer ${response.access_token}`
                     })
                 })
+            } else {
+                config.headers.Authorization = `Bearer ${token}`
             }
             return config
         }, (err) => Promise.reject(err))
