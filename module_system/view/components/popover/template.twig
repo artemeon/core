@@ -36,6 +36,18 @@
              pc.addClass('loadDone');
          })
         </script>
+        <script>
+            $('[data-toggle=popover]').on('click', function (e) {
+                $('[data-toggle=popover]').not(this).popover('hide');
+            });
+
+            $(document).click(function(event) {
+                //if you click on anything except the popover itself, close the popover
+                if (!$(event.target).closest('.popover,[data-toggle=popover]').length) {
+                    $('[data-toggle=popover]').popover('hide');
+                }
+            });
+        </script>
     {% else %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}">{{ content|raw }}</div>
         <script type="text/javascript">
