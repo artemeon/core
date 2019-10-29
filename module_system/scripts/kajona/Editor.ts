@@ -154,12 +154,12 @@ class Editor {
         document.getElementById(`${name}_pell`).addEventListener('paste', (e) => {
             e.stopPropagation()
             e.preventDefault()
-            let clipText
+            let clipText = ''
             if (e.clipboardData !== undefined) {
-                clipText = e.clipboardData.getData('text/plain')
+                clipText = e.clipboardData.getData('text/plain').trim()
                 pell.exec('insertText', clipText)
             } else {
-                clipText = (window as any).clipboardData.getData('text')
+                clipText = (window as any).clipboardData.getData('text').trim()
                 pell.exec('paste', clipText)
             }
         })
@@ -170,8 +170,8 @@ class Editor {
             return txt.value
         }
         const decoded = decodeHTML(content);
-        (<HTMLInputElement>document.getElementById(`${name}_pell`).getElementsByClassName('pell-content')[0]).innerHTML = decoded;
-        (<HTMLInputElement>document.getElementById(name)).innerHTML = content
+        (document.getElementById(`${name}_pell`).getElementsByClassName('pell-content')[0]).innerHTML = decoded;
+        (document.getElementById(name)).innerHTML = content
 
         document.getElementById(`${name}_pell`).getElementsByClassName('pell-content')[0].classList.add('form-control')
         const $objInput = $(`#${name}`)
@@ -180,5 +180,5 @@ class Editor {
         })
     }
 }
-(<any>window).Editor = Editor
+(window as any).Editor = Editor
 export default Editor
