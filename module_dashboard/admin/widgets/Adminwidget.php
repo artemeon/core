@@ -106,7 +106,7 @@ abstract class Adminwidget
         try {
             return $this->getWidgetOutput();
         } catch (\Throwable $e) {
-            return $this->objToolkit->warningBox($e->getMessage(), 'alert-info');
+            return $this->objToolkit->warningBox($e->getMessage(), 'alert-danger');
         }
     }
 
