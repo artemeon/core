@@ -29,6 +29,8 @@ class GlobalAxiosConfig {
 
             if (timestamp > jwt.exp) {
                 // in this case we have missed our window to extend the token, there is nothing we can do here
+                // so we logout the user
+                location.href = 'login/adminLogout.html';
             } else if (timestamp > refreshTime) {
                 fetch('api.php/v1/authorization/refresh', {
                     method: 'post',
