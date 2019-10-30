@@ -280,9 +280,8 @@ class FlowGraphWriter
         return <<<HTML
 <div id='flow-graph' class='mermaid' style='color:#fff; {$strHeight} '>{$strGraph}</div>
 <script type="text/javascript">
-        let mm = new window.Mermaidwrapper('{$strTmpSystemId}', '{$strLinkTransition}', '{$strLinkTransitionAction}', '{$strLinkTransitionCondition}', '{$strAction}', '{$strCondition}', {$isIe})
-        mm.renderGraph();
-        
+       var mm = new window.Mermaidwrapper('{$strTmpSystemId}', '{$strLinkTransition}', '{$strLinkTransitionAction}', '{$strLinkTransitionCondition}', '{$strAction}', '{$strCondition}', {$isIe})
+       mm.renderGraph();
 </script>
 HTML;
     }
