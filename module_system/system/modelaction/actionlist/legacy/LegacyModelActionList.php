@@ -6,15 +6,15 @@ namespace Kajona\System\System\Modelaction\Actionlist\Legacy;
 
 use Kajona\System\System\Modelaction\Action\Legacy\LegacyEditModelAction;
 use Kajona\System\System\Modelaction\Action\ModelActionInterface;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionListInterface;
-use Kajona\System\System\Modelaction\Actionlist\StaticModelActionList;
+use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Actionlist\InMemoryModelActionsContainer;
 
-final class LegacyModelActionList extends StaticModelActionList
+final class LegacyModelActionList extends InMemoryModelActionsContainer
 {
     public function withAdditionalModelActions(
         ModelActionInterface $modelActionToBeAdded,
         ModelActionInterface ...$furtherModelActionsToBeAdded
-    ): ModelActionListInterface {
+    ): ModelActionsContainerInterface {
         $insertIndex = 0;
         foreach ($this->modelActions as $index => $existingModelAction) {
             if ($existingModelAction instanceof LegacyEditModelAction) {

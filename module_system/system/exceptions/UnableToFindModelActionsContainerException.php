@@ -7,7 +7,7 @@ namespace Kajona\System\System\Exceptions;
 use Kajona\System\System\Exception;
 use Throwable;
 
-final class UnableToFindModelActionsProviderException extends Exception
+final class UnableToFindModelActionsContainerException extends Exception
 {
     public function __construct(Throwable $previousException = null)
     {

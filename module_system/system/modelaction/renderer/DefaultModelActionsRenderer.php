@@ -8,33 +8,31 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction\Renderer;
 
-use Kajona\System\System\Exceptions\UnableToFindModelActionsProviderException;
+use Kajona\System\System\Exceptions\UnableToFindModelActionsContainerException;
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\Exceptions\UnableToRenderModelActionsException;
-use Kajona\System\System\Exceptions\UnableToRetrieveActionsForModelException;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\Context\ModelActionContext;
-use Kajona\System\System\Modelaction\Provider\ModelActionsProviderLocatorInterface;
+use Kajona\System\System\Modelaction\Register\ModelActionsContainerRegistryInterface;
 
 final class DefaultModelActionsRenderer implements ModelActionsRendererInterface
 {
     /**
-     * @var ModelActionsProviderLocatorInterface
+     * @var ModelActionsContainerRegistryInterface
      */
-    private $modelActionsProviderFactory;
+    private $modelActionsContainerRegistry;
 
-    public function __construct(ModelActionsProviderLocatorInterface $modelActionsProviderFactory)
+    public function __construct(ModelActionsContainerRegistryInterface $modelActionsContainerRegistry)
     {
-        $this->modelActionsProviderFactory = $modelActionsProviderFactory;
+        $this->modelActionsContainerRegistry = $modelActionsContainerRegistry;
     }
 
     public function render(Model $model, ModelActionContext $context): string
     {
         try {
-            return $this->modelActionsProviderFactory->find($model, $context)
-                ->getActions($model, $context)
+            return $this->modelActionsContainerRegistry->find($model)
                 ->renderAll($model, $context);
-        } catch (UnableToFindModelActionsProviderException|UnableToRetrieveActionsForModelException|UnableToRenderActionForModelException $exception) {
+        } catch (UnableToFindModelActionsContainerException|UnableToRenderActionForModelException $exception) {
             throw new UnableToRenderModelActionsException($model, $context, $exception);
         }
     }

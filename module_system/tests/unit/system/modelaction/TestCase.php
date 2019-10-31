@@ -8,7 +8,7 @@ use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\LanguagesLanguage;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\Context\ModelActionContext;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionListInterface;
+use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\SystemSession;
 use Kajona\System\System\SystemSetting;
@@ -61,9 +61,9 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    protected function createModelActionListThatSupportsEverything(): ModelActionListInterface
+    protected function createModelActionListThatSupportsEverything(): ModelActionsContainerInterface
     {
-        $modelActionList = $this->prophesize(ModelActionListInterface::class);
+        $modelActionList = $this->prophesize(ModelActionsContainerInterface::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $modelActionList->supports(Argument::cetera())
@@ -77,9 +77,9 @@ abstract class TestCase extends BaseTestCase
         return $modelActionList->reveal();
     }
 
-    protected function createModelActionListThatSupportsNothing(): ModelActionListInterface
+    protected function createModelActionListThatSupportsNothing(): ModelActionsContainerInterface
     {
-        $modelActionList = $this->prophesize(ModelActionListInterface::class);
+        $modelActionList = $this->prophesize(ModelActionsContainerInterface::class);
         /** @noinspection PhpParamsInspection */
         /** @noinspection PhpUndefinedMethodInspection */
         $modelActionList->supports(Argument::cetera())

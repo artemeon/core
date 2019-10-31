@@ -8,6 +8,6 @@ declare(strict_types=1);
 
 namespace Kajona\System\System\Modelaction\Actionlist;
 
-final class DefaultModelActionList extends StaticModelActionList
+final class DefaultModelActionList extends InMemoryModelActionsContainer
 {
 }
