@@ -58,8 +58,16 @@ class CommentComment extends Model implements ModelInterface
     /**
      * @var bool
      * @tableColumn agp_comment_comment.comment_done
+     * @tableColumnDatatype int
      */
     private $bitCommentDone;
+
+    /**
+     * @var string
+     * @tableColumn agp_comment.comment_assignee
+     * @tableColumnDatatype char20
+     */
+    private $strAssignee = null;
 
     /**
      * Sets the field id
@@ -147,6 +155,22 @@ class CommentComment extends Model implements ModelInterface
     public function getCommentDone()
     {
         return $this->bitCommentDone;
+    }
+
+    /**
+     * @param string assignee
+     */
+    public function setAssignee($assignee)
+    {
+        $this->strAssignee = $assignee;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAssignee()
+    {
+        return $this->strAssignee;
     }
 
     /*

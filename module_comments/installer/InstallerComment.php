@@ -33,10 +33,8 @@ class InstallerComment extends InstallerBase implements InstallerRemovableInterf
 
     public function install()
     {
+        $strReturn = '';
         $objManager = new OrmSchemamanager();
-        //Install Index Tables
-        $strReturn = $this->installIndexTables();
-
         //Table for comments
         $strReturn .= "Installing table comment_comment...\n";
         $objManager->createTable(CommentComment::class);
