@@ -26,6 +26,21 @@ use Kajona\System\System\SystemModule;
  */
 class CommentComment extends Model implements ModelInterface
 {
+
+    /**
+     * @var string
+     * @tableColumn agp_comment_comment.comment_field_id
+     * @tableColumnDatatype char20
+     */
+    private $fieldId = null;
+
+    /**
+     * @var string
+     * @tableColumn agp_comment_comment.comment_predec_reference
+     * @tableColumnDatatype char20
+     */
+    private $predecRef = null;
+
     /**
      * @var Date
      * @tableColumn agp_comment_comment.comment_comment_time_limit
@@ -45,6 +60,7 @@ class CommentComment extends Model implements ModelInterface
      * @tableColumn agp_comment_comment.comment_comment_done
      */
     private $bitCommentDone;
+
     /*
      * Returns the name to be used when rendering the current object, e.g. in admin-lists.
      *
