@@ -64,7 +64,7 @@ class CommentComment extends Model implements ModelInterface
 
     /**
      * @var string
-     * @tableColumn agp_comment.comment_assignee
+     * @tableColumn agp_comment_comment.comment_assignee
      * @tableColumnDatatype char20
      */
     private $strAssignee = null;
