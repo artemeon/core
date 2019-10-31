@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://apidocs.kajona.de/xsd/package_v2.xsd"
+>
+    <title>comments</title>
+    <description>TODO Description </description>
+    <version>7.1</version>
+    <author>Kajona Team</author>
+    <providesInstaller>TRUE</providesInstaller>
+    <requiredModules>
+        <module name="system" version="7.1" />
+    </requiredModules>
+    <constants>
+        <constant name="_comments_module_id_" value="20191030" />
+    </constants>
+</package>
