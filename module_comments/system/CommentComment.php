@@ -19,7 +19,7 @@ use Kajona\System\System\SystemModule;
  * @package module_comments
  * @author rym.rjab@artemeon.de
  * @since 3.4
- * @targetTable agp_comment_comment.comment_comment_id
+ * @targetTable agp_comment_comment.comment_id
  *
  * @module comments
  * @moduleId _comments_module_id_
@@ -32,34 +32,122 @@ class CommentComment extends Model implements ModelInterface
      * @tableColumn agp_comment_comment.comment_field_id
      * @tableColumnDatatype char20
      */
-    private $fieldId = null;
+    private $strFieldId = null;
 
     /**
      * @var string
-     * @tableColumn agp_comment_comment.comment_predec_reference
+     * @tableColumn agp_comment_comment.comment_prev_id
      * @tableColumnDatatype char20
      */
-    private $predecRef = null;
+    private $strCommentPrevId = null;
 
     /**
      * @var Date
-     * @tableColumn agp_comment_comment.comment_comment_time_limit
+     * @tableColumn agp_comment_comment.comment_end_date
      * @tableColumnDatatype long
      */
-    private $timeLimit = null;
+    private $objEndDate = null;
 
     /**
      * @var string
-     * @tableColumn agp_comment_comment.comment_comment_text
+     * @tableColumn agp_comment_comment.comment_text
      * @tableColumnDatatype text
      */
-    private $commentText = null;
+    private $strCommentText = null;
 
     /**
      * @var bool
-     * @tableColumn agp_comment_comment.comment_comment_done
+     * @tableColumn agp_comment_comment.comment_done
      */
     private $bitCommentDone;
+
+    /**
+     * Sets the field id
+     *
+     * @param string $fieldId
+     */
+    public function setFieldId(string $fieldId)
+    {
+        $this->strFieldId = $fieldId;
+    }
+
+    /**
+     * returns the field_id
+     *
+     * @return string
+     */
+    public function getFieldId()
+    {
+        return $this->strFieldId;
+    }
+
+    /**
+     * Sets the previous comment  id
+     *
+     * @param string $prevId
+     */
+    public function setPrevId(string $prevId)
+    {
+        $this->strCommentPrevId= $prevId;
+    }
+
+    /**
+     * returns the comment_prev_id
+     *
+     * @return string
+     */
+    public function getCommentPrevId()
+    {
+        return $this->strCommentPrevId;
+    }
+
+    /**
+     * @param Date $objEndDate
+     */
+    public function setObjEndDate($objEndDate)
+    {
+        $this->objEndDate = $objEndDate;
+    }
+
+    /**
+     * @return Date
+     */
+    public function getEndDate()
+    {
+        return $this->objEndDate;
+    }
+
+    /**
+     * @param string $commentText
+     */
+    public function setCommentText($commentText)
+    {
+        $this->strCommentText = $commentText;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommentText()
+    {
+        return $this->strCommentText;
+    }
+
+    /**
+     * @param bool $commentDone
+     */
+    public function setCommentDone($commentDone)
+    {
+        $this->bitCommentDone = $commentDone;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getCommentDone()
+    {
+        return $this->bitCommentDone;
+    }
 
     /*
      * Returns the name to be used when rendering the current object, e.g. in admin-lists.
