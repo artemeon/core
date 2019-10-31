@@ -37,7 +37,7 @@ class InstallerComment extends InstallerBase implements InstallerRemovableInterf
         //Install Index Tables
         $strReturn = $this->installIndexTables();
 
-        //Table for search
+        //Table for comments
         $strReturn .= "Installing table comment_comment...\n";
         $objManager->createTable(CommentComment::class);
 
