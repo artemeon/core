@@ -10,7 +10,7 @@ namespace Kajona\System\System\Exceptions;
 
 use Kajona\System\System\Exception;
 use Kajona\System\System\Model;
-use Kajona\System\System\Modelaction\ModelActionContext;
+use Kajona\System\System\Modelaction\Context\ModelActionContext;
 use Throwable;
 
 final class UnableToRenderModelActionsException extends Exception
