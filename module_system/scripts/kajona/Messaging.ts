@@ -71,11 +71,7 @@ class Messaging {
         if ($('#loginContainer').length > 0) {
             return
         }
-        const [error, response] = await HttpClient.get('/xml.php?admin=1&module', {
-            admin: 1,
-            module: 'messaging',
-            action: 'getUnreadMessagesCount',
-        })
+        const [error, response] = await HttpClient.get('/api.php/v1/messages/count')
         if (response) {
             if (response.status === 401 && $('#loginContainer').length === 0
             && !$('body').hasClass('anonymous')) {
