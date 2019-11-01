@@ -11,14 +11,9 @@ namespace Kajona\Comments\Api;
 
 use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Comments\System\CommentComment;
-use Kajona\System\Admin\AdminSimple;
-use Kajona\System\System\AdminListableInterface;
-use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
-use Kajona\System\System\Link;
-use Kajona\System\System\Session;
-use Kajona\System\System\SystemModule;
+use Kajona\System\System\Objectfactory;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
 use Kajona\Api\System\Http\JsonResponse;
@@ -32,5 +27,76 @@ use Kajona\Api\System\Http\JsonResponse;
  */
 class CommentApiController implements ApiControllerInterface
 {
+    /**
+     * @inject system_object_factory
+     * @var Objectfactory
+     */
+    protected $objectFactory;
+
+    /**
+     * returns available comments for a system_id
+     *
+     * @param HttpContext $context
+     * @return HttpResponse
+     * @api
+     * @method GET
+     * @path /v1/comments/{id}
+     * @authorization usertoken
+     */
+    public function listComments(HttpContext $context): HttpResponse
+    {
+
+    }
+
+    /**
+     * add a new comment to  system_id
+     *
+     * @param array body
+     * @param HttpContext $context
+     * @return HttpResponse
+     * @throws Exception
+     * @api
+     * @method POST
+     * @path /v1/comments/{id}
+     * @authorization usertoken
+     */
+    public function addComment($body, HttpContext $context): HttpResponse
+    {
+
+    }
+
+    /**
+     * Update comment
+     *
+     * @param array body
+     * @param HttpContext $context
+     * @return HttpResponse
+     * @throws Exception
+     * @api
+     * @method PUT
+     * @path /v1/comments/{id}
+     * @authorization usertoken
+     */
+    public function updateComment($body, HttpContext $context): HttpResponse
+    {
+
+    }
+
+    /**
+     * add a new comment to  system_id
+     *
+     * @param array body
+     * @param HttpContext $context
+     * @return HttpResponse
+     * @throws Exception
+     * @api
+     * @method DELETE
+     * @path /v1/comments/{id}
+     * @authorization usertoken
+     */
+    public function deleteComment($body, HttpContext $context): HttpResponse
+    {
+
+    }
 
 }
