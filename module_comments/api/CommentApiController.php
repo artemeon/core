@@ -13,6 +13,7 @@ use Kajona\Api\System\ApiControllerInterface;
 use Kajona\Comments\System\CommentComment;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
+use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
 use Kajona\System\System\Objectfactory;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
@@ -32,6 +33,12 @@ class CommentApiController implements ApiControllerInterface
      * @var Objectfactory
      */
     protected $objectFactory;
+
+    /**
+     * @inject system_life_cycle_factory
+     * @var ServiceLifeCycleFactory
+     */
+    protected $lifeCycleFactory;
 
     /**
      * returns available comments for a system_id
@@ -62,7 +69,23 @@ class CommentApiController implements ApiControllerInterface
      */
     public function addComment($body, HttpContext $context): HttpResponse
     {
+        $language = Carrier::getInstance()->getObjLang();
+        $comment = new CommentComment();
 
+        $commentText = $body['text']??null;
+        $commentFieldId = $body['fieldId']??'';
+        $commentPred = $body['pred']??'';
+        $commentEndDate = $body['endDate']??null;
+        $commentDone = $body['done']??null;
+        $commentAssignee = $body['assignee']??null;
+        $comment->setAssignee($commentAssignee);
+        $comment->setCommentDone($commentDone);
+        $comment->setCommentText($commentText);
+        $comment->setFieldId($commentFieldId);
+        $comment->setPrevId($commentPred);
+        $comment->setObjEndDate($commentEndDate);
+
+        return new JsonResponse(['message' => 'success'], 200);
     }
 
     /**

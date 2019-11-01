@@ -1,6 +1,7 @@
 <template>
   <div>
     <Searchbar></Searchbar>
+    <CommentsMain></CommentsMain>
     <router-view/>
   </div>
 </template>

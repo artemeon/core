@@ -173,6 +173,16 @@ class CommentComment extends Model implements ModelInterface
         return $this->strAssignee;
     }
 
+    /**
+     * CommentComment constructor.
+     * @param string $strSystemid
+     * @throws \Kajona\System\System\Exception
+     */
+    public function __construct($strSystemid = '')
+    {
+        parent::__construct($strSystemid);
+    }
+
     /*
      * Returns the name to be used when rendering the current object, e.g. in admin-lists.
      *
