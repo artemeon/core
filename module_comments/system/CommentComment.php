@@ -39,7 +39,7 @@ class CommentComment extends Model implements ModelInterface
      * @tableColumn agp_comment_comment.comment_prev_id
      * @tableColumnDatatype char20
      */
-    private $strCommentPrevId = null;
+    private $strCommentPrevId = '';
 
     /**
      * @var Date
@@ -60,14 +60,14 @@ class CommentComment extends Model implements ModelInterface
      * @tableColumn agp_comment_comment.comment_done
      * @tableColumnDatatype int
      */
-    private $bitCommentDone;
+    private $bitCommentDone = 0;
 
     /**
      * @var string
      * @tableColumn agp_comment_comment.comment_assignee
      * @tableColumnDatatype char20
      */
-    private $strAssignee = null;
+    private $strAssignee = '';
 
     /**
      * Sets the field id
@@ -173,15 +173,7 @@ class CommentComment extends Model implements ModelInterface
         return $this->strAssignee;
     }
 
-    /**
-     * CommentComment constructor.
-     * @param string $strSystemid
-     * @throws \Kajona\System\System\Exception
-     */
-    public function __construct($strSystemid = '')
-    {
-        parent::__construct($strSystemid);
-    }
+
 
     /*
      * Returns the name to be used when rendering the current object, e.g. in admin-lists.

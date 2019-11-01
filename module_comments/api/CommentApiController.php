@@ -67,25 +67,25 @@ class CommentApiController implements ApiControllerInterface
      * @path /v1/comments/{id}
      * @authorization usertoken
      */
-    public function addComment($body, HttpContext $context): HttpResponse
+    public function addComment(array $body, HttpContext $context): HttpResponse
     {
         $language = Carrier::getInstance()->getObjLang();
         $comment = new CommentComment();
-
-        $commentText = $body['text']??null;
-        $commentFieldId = $body['fieldId']??'';
-        $commentPred = $body['pred']??'';
-        $commentEndDate = $body['endDate']??null;
-        $commentDone = $body['done']??null;
-        $commentAssignee = $body['assignee']??null;
+        $commentText = $body['text'];
+        $commentFieldId = $body['fieldId'];
+        $commentPred = $body['pred'];
+        $commentEndDate = 123123123;
+        $commentDone = $body['done'];
+        $commentAssignee = $body['assignee'];
         $comment->setAssignee($commentAssignee);
         $comment->setCommentDone($commentDone);
         $comment->setCommentText($commentText);
         $comment->setFieldId($commentFieldId);
         $comment->setPrevId($commentPred);
         $comment->setObjEndDate($commentEndDate);
-
-        return new JsonResponse(['message' => 'success'], 200);
+        $this->lifeCycleFactory->factory(\get_class($comment))->update($comment);
+//        Carrier::getInstance()->getObjDB()->flushQueryCache();
+        return new JsonResponse(['message' => 'success test test'], 200);
     }
 
     /**

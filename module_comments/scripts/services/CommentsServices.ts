@@ -6,7 +6,7 @@ import HttpClient from 'core/module_system/scripts/kajona/HttpClient'
  */
 class CommentsServices{
     public static async addComment(payload): Promise<[Error, AxiosResponse]> {
-        const [err, res] = await HttpClient.post('api.php/v1/comments/09790b35dbb1287229a8', {
+        const [err, res] = await HttpClient.post('api.php/v1/comments/09790b35dbb1287229a8', {},{
             text: 'test test test lorem ipsum test',
             fieldId: '362b9e155667',
             pred: '0',
