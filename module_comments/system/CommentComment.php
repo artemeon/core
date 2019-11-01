@@ -112,7 +112,7 @@ class CommentComment extends Model implements ModelInterface
     /**
      * @param Date $objEndDate
      */
-    public function setObjEndDate($objEndDate)
+    public function setObjEndDateComment($objEndDate)
     {
         $this->objEndDate = $objEndDate;
     }

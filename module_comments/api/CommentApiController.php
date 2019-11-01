@@ -71,6 +71,7 @@ class CommentApiController implements ApiControllerInterface
     {
         $language = Carrier::getInstance()->getObjLang();
         $comment = new CommentComment();
+        $strSystemId=$comment->getStrSystemid();
         $commentText = $body['text'];
         $commentFieldId = $body['fieldId'];
         $commentPred = $body['pred'];
@@ -82,8 +83,8 @@ class CommentApiController implements ApiControllerInterface
         $comment->setCommentText($commentText);
         $comment->setFieldId($commentFieldId);
         $comment->setPrevId($commentPred);
-        $comment->setObjEndDate($commentEndDate);
-        $this->lifeCycleFactory->factory(\get_class($comment))->update($comment);
+        $comment->setObjEndDateComment($commentEndDate);
+        $this->lifeCycleFactory->factory($comment)->update($comment,$strSystemId);
 //        Carrier::getInstance()->getObjDB()->flushQueryCache();
         return new JsonResponse(['message' => 'success test test'], 200);
     }
