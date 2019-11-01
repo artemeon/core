@@ -7,10 +7,12 @@
 namespace Kajona\Api\System;
 
 use Kajona\System\Admin\Exceptions\ModelNotFoundException;
+use Kajona\System\Admin\MemoryCacheManager;
 use Kajona\System\System\CoreEventdispatcher;
 use Kajona\System\System\Exception;
 use Kajona\System\System\ObjectBuilder;
 use Kajona\System\System\RequestEntrypointEnum;
+use Kajona\System\System\Session;
 use Kajona\System\System\SystemEventidentifier;
 use Pimple\Container;
 use PSX\Http\Environment\HttpContext;
@@ -110,7 +112,16 @@ class AppBuilder
                 return $next($request, $response);
             }
         });
-
+        // add Caching middleware
+        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) {
+            $userId = Session::getInstance()->getUserID();
+            $key = $request->getUri()->getPath() . '/' . $userId;
+            $value = (new MemoryCacheManager)->get($key);
+            if ($value !== '') {
+                return $response->withJson(json_decode($value));
+            }
+            return $next($request, $response);
+        });
         foreach ($routes as $route) {
             $app->map($route["httpMethod"], $route["path"], function (SlimRequest $request, SlimResponse $response, array $args) use ($route, $objectBuilder, $container) {
                 $instance = $objectBuilder->factory($route["class"]);
