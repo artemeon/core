@@ -15,6 +15,9 @@ use Kajona\System\System\Carrier;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
 use Kajona\System\System\Objectfactory;
+use Kajona\System\System\OrmComparatorEnum;
+use Kajona\System\System\OrmObjectlist;
+use Kajona\System\System\OrmPropertyCondition;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
 use Kajona\Api\System\Http\JsonResponse;
@@ -52,7 +55,11 @@ class CommentApiController implements ApiControllerInterface
      */
     public function listComments(HttpContext $context): HttpResponse
     {
-
+        $strId = $context->getUriFragment('id');
+        $ormObj = new OrmObjectlist();
+        $fields = $ormObj->getObjectList(CommentComment::class,$strId);
+        $results = $this->createCommentsResult($fields);
+        return new JsonResponse(['comments' => $results], 200);
     }
 
     /**
@@ -71,7 +78,6 @@ class CommentApiController implements ApiControllerInterface
     {
         $language = Carrier::getInstance()->getObjLang();
         $comment = new CommentComment();
-        $strSystemId=$comment->getStrSystemid();
         $commentText = $body['text'];
         $commentFieldId = $body['fieldId'];
         $commentPred = $body['pred'];
@@ -84,7 +90,7 @@ class CommentApiController implements ApiControllerInterface
         $comment->setFieldId($commentFieldId);
         $comment->setPrevId($commentPred);
         $comment->setObjEndDateComment($commentEndDate);
-        $this->lifeCycleFactory->factory($comment)->update($comment,$strSystemId);
+        $this->lifeCycleFactory->factory(\get_class($comment))->update($comment,$context->getUriFragment('id'));
 //        Carrier::getInstance()->getObjDB()->flushQueryCache();
         return new JsonResponse(['message' => 'success test test'], 200);
     }
@@ -123,4 +129,20 @@ class CommentApiController implements ApiControllerInterface
 
     }
 
+    /**
+     * Parses comments objects into json
+     * @param array $comments
+     * @return array
+     */
+    private function createCommentsResult(array $comments): array
+    {
+        $items = array();
+        foreach ($comments as $oneComment){
+            $item = array();
+            $item['id'] = $oneComment->getStrSystemid();
+            $item['text'] = $oneComment->getCommentText();
+            $items[] = $item;
+        }
+        return $items;
+    }
 }

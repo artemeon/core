@@ -6,6 +6,7 @@ import CommentsModule from "core/module_comments/scripts/modules/CommentsModule"
 @Component
 class CommentsMain extends Mixins(LangMixin(['comments'])) {
     @namespace('commentsModule').Action addCommentAction: any
+    @namespace('commentsModule').Action listCommentsAction: any
     created(){
         const name = 'commentsModule'
         const store = this.$store
@@ -18,6 +19,7 @@ class CommentsMain extends Mixins(LangMixin(['comments'])) {
         parent.appendChild(this.$el)
         console.log('here')
         this.addCommentAction()
+        this.listCommentsAction()
     }
 }
 export default CommentsMain

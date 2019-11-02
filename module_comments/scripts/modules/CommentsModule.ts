@@ -5,6 +5,9 @@ const CommentsModule = {
     state: {},
     mutations: {},
     actions: {
+        async listCommentsAction({commit}) : Promise<void> {
+            const [err, res] = await CommentsServices.listComments('test')
+        },
         async addCommentAction ({ commit }) : Promise<void> {
             const [err, res] = await CommentsServices.addComment('test')
         }
