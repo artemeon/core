@@ -21,7 +21,7 @@ use Kajona\System\System\OrmPropertyCondition;
 use PSX\Http\Environment\HttpContext;
 use PSX\Http\Environment\HttpResponse;
 use Kajona\Api\System\Http\JsonResponse;
-
+use Kajona\System\System\Date;
 /**
  * Class CommentApiController
  * @package Kajona\Comments\Api
@@ -57,7 +57,8 @@ class CommentApiController implements ApiControllerInterface
     {
         $strId = $context->getUriFragment('id');
         $ormObj = new OrmObjectlist();
-        $fields = $ormObj->getObjectList(CommentComment::class,$strId);
+        $ormObj->addWhereRestriction(new OrmPropertyCondition('commentSystemId', OrmComparatorEnum::Like(), $strId));
+        $fields = $ormObj->getObjectList(CommentComment::class);
         $results = $this->createCommentsResult($fields);
         return new JsonResponse(['comments' => $results], 200);
     }
@@ -81,16 +82,18 @@ class CommentApiController implements ApiControllerInterface
         $commentText = $body['text'];
         $commentFieldId = $body['fieldId'];
         $commentPred = $body['pred'];
-        $commentEndDate = 123123123;
-        $commentDone = $body['done'];
+        $commentEndDate = new Date($body['endDate']);
+        $commentDone = (bool)$body['done'];
+        $commentSystemId = $context->getUriFragment('id');
         $commentAssignee = $body['assignee'];
         $comment->setAssignee($commentAssignee);
         $comment->setCommentDone($commentDone);
         $comment->setCommentText($commentText);
         $comment->setFieldId($commentFieldId);
-        $comment->setPrevId($commentPred);
-        $comment->setObjEndDateComment($commentEndDate);
-        $this->lifeCycleFactory->factory(\get_class($comment))->update($comment,$context->getUriFragment('id'));
+        $comment->setCommentPrevId($commentPred);
+        $comment->setCommentSystemId($commentSystemId);
+        $comment->setEndDate($commentEndDate);
+        $this->lifeCycleFactory->factory(\get_class($comment))->update($comment);
 //        Carrier::getInstance()->getObjDB()->flushQueryCache();
         return new JsonResponse(['message' => 'success test test'], 200);
     }

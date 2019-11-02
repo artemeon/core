@@ -26,151 +26,165 @@ use Kajona\System\System\SystemModule;
  */
 class CommentComment extends Model implements ModelInterface
 {
+    /**
+     * @var string
+     * @tableColumn agp_comment_comment.comment_system_id
+     * @tableColumnDatatype char20
+     */
+    private $commentSystemId = null;
 
     /**
      * @var string
      * @tableColumn agp_comment_comment.comment_field_id
      * @tableColumnDatatype char20
      */
-    private $strFieldId = null;
+    private $fieldId = null;
 
     /**
      * @var string
      * @tableColumn agp_comment_comment.comment_prev_id
      * @tableColumnDatatype char20
      */
-    private $strCommentPrevId = '';
+    private $commentPrevId = '';
 
     /**
      * @var Date
      * @tableColumn agp_comment_comment.comment_end_date
      * @tableColumnDatatype long
      */
-    private $objEndDate = null;
+    private $endDate = null;
 
     /**
      * @var string
      * @tableColumn agp_comment_comment.comment_text
      * @tableColumnDatatype text
      */
-    private $strCommentText = null;
+    private $commentText = null;
 
     /**
      * @var bool
      * @tableColumn agp_comment_comment.comment_done
      * @tableColumnDatatype int
      */
-    private $bitCommentDone = 0;
+    private $commentDone;
 
     /**
      * @var string
      * @tableColumn agp_comment_comment.comment_assignee
      * @tableColumnDatatype char20
      */
-    private $strAssignee = '';
+    private $assignee = '';
 
     /**
-     * Sets the field id
-     *
+     * @return string
+     */
+    public function getCommentSystemId(): ?string
+    {
+        return $this->commentSystemId;
+    }
+
+    /**
+     * @param string $commentSystemId
+     */
+    public function setCommentSystemId(?string $commentSystemId): void
+    {
+        $this->commentSystemId = $commentSystemId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFieldId(): ?string
+    {
+        return $this->fieldId;
+    }
+
+    /**
      * @param string $fieldId
      */
-    public function setFieldId(string $fieldId)
+    public function setFieldId(?string $fieldId): void
     {
-        $this->strFieldId = $fieldId;
+        $this->fieldId = $fieldId;
     }
 
     /**
-     * returns the field_id
-     *
      * @return string
      */
-    public function getFieldId()
+    public function getCommentPrevId(): ?string
     {
-        return $this->strFieldId;
+        return $this->commentPrevId;
     }
 
     /**
-     * Sets the previous comment  id
-     *
-     * @param string $prevId
+     * @param string $commentPrevId
      */
-    public function setPrevId(string $prevId)
+    public function setCommentPrevId(?string $commentPrevId): void
     {
-        $this->strCommentPrevId= $prevId;
-    }
-
-    /**
-     * returns the comment_prev_id
-     *
-     * @return string
-     */
-    public function getCommentPrevId()
-    {
-        return $this->strCommentPrevId;
-    }
-
-    /**
-     * @param Date $objEndDate
-     */
-    public function setObjEndDateComment($objEndDate)
-    {
-        $this->objEndDate = $objEndDate;
+        $this->commentPrevId = $commentPrevId;
     }
 
     /**
      * @return Date
      */
-    public function getEndDate()
+    public function getEndDate(): ?Date
     {
-        return $this->objEndDate;
+        return $this->endDate;
+    }
+
+    /**
+     * @param Date $endDate
+     */
+    public function setEndDate(?Date $endDate): void
+    {
+        $this->endDate = $endDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCommentText(): ?string
+    {
+        return $this->commentText;
     }
 
     /**
      * @param string $commentText
      */
-    public function setCommentText($commentText)
+    public function setCommentText(?string $commentText): void
     {
-        $this->strCommentText = $commentText;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCommentText()
-    {
-        return $this->strCommentText;
-    }
-
-    /**
-     * @param bool $commentDone
-     */
-    public function setCommentDone($commentDone)
-    {
-        $this->bitCommentDone = $commentDone;
+        $this->commentText = $commentText;
     }
 
     /**
      * @return bool
      */
-    public function getCommentDone()
+    public function isCommentDone(): ?bool
     {
-        return $this->bitCommentDone;
+        return $this->commentDone;
     }
 
     /**
-     * @param string assignee
+     * @param bool $commentDone
      */
-    public function setAssignee($assignee)
+    public function setCommentDone(?bool $commentDone): void
     {
-        $this->strAssignee = $assignee;
+        $this->commentDone = $commentDone;
     }
 
     /**
      * @return string
      */
-    public function getAssignee()
+    public function getAssignee(): ?string
     {
-        return $this->strAssignee;
+        return $this->assignee;
+    }
+
+    /**
+     * @param string $assignee
+     */
+    public function setAssignee(?string $assignee): void
+    {
+        $this->assignee = $assignee;
     }
 
 
