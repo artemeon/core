@@ -48,10 +48,6 @@ class MessagingApiController implements ApiControllerInterface
         $userId = $this->objSession->getUserID();
         $count = MessagingMessage::getNumberOfMessagesForUser($userId, true);
         $alert = MessagingAlert::getNextAlertForUser($userId);
-        (new MemoryCacheManager)->set($key, json_encode([
-            "count" => $count,
-            "alert" => $alert
-        ]));
         return new JsonResponse([
             "count" => $count,
             "alert" => $alert

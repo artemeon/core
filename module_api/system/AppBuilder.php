@@ -97,7 +97,7 @@ class AppBuilder
         $objectBuilder = $this->objectBuilder;
         $container = $this->container;
         $routes = $this->endpointScanner->getEndpoints();
-
+        $cacheableRoutes = $this->endpointScanner->getCacheableEndPoints();
         // add CORS middleware
         $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) {
             $response = $response
@@ -113,13 +113,11 @@ class AppBuilder
             }
         });
         // add Caching middleware
-        $endpoinScanner = $this->endpointScanner;
-        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($endpoinScanner) {
-            //get all cacheable Api-end-points
-            $routes = $endpoinScanner->getCacheableEndPoints();
+        $endpointScanner = $this->endpointScanner;
+        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($cacheableRoutes) {
             //check if requested end-point is cachable
             $path = '/' . $request->getUri()->getPath();
-            if (in_array($path, $routes)) {
+            if (in_array($path, $cacheableRoutes)) {
                 $userId = Session::getInstance()->getUserID();
                 $key = $path . '/' . $userId;
                 $value = (new MemoryCacheManager)->get($key);
@@ -131,7 +129,7 @@ class AppBuilder
             return $next($request, $response);
         });
         foreach ($routes as $route) {
-            $app->map($route["httpMethod"], $route["path"], function (SlimRequest $request, SlimResponse $response, array $args) use ($route, $objectBuilder, $container) {
+            $app->map($route["httpMethod"], $route["path"], function (SlimRequest $request, SlimResponse $response, array $args) use ($route, $objectBuilder, $container, $cacheableRoutes) {
                 $instance = $objectBuilder->factory($route["class"]);
 
                 try {
@@ -163,8 +161,15 @@ class AppBuilder
                         foreach ($headers as $name => $value) {
                             $response = $response->withHeader($name, $value);
                         }
-
+                        //if end-point is cacheable set the payload to cache
+                        $path = '/' . $request->getUri()->getPath();
+                        if (in_array($path, $cacheableRoutes)) {
+                            $userId = Session::getInstance()->getUserID();
+                            $key = $path . '/' . $userId;
+                            (new MemoryCacheManager)->set($key, $data->getBody());
+                        }
                         $response = $response->write($data->getBody());
+
                     } else {
                         $response = $response->withHeader("Content-Type", "application/json")
                             ->write(json_encode($data, JSON_PRETTY_PRINT));
