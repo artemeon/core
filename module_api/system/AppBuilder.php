@@ -27,6 +27,7 @@ use Slim\Exception\MethodNotAllowedException;
 use Slim\Exception\NotFoundException;
 use Slim\Http\Request as SlimRequest;
 use Slim\Http\Response as SlimResponse;
+use Throwable;
 
 /**
  * AppBuilder
@@ -74,8 +75,7 @@ class AppBuilder
      * Creates a new app, attaches all available routes and executes the app
      *
      * @throws Exception
-     * @throws MethodNotAllowedException
-     * @throws NotFoundException
+     * @throws Throwable
      */
     public function run()
     {
@@ -113,13 +113,21 @@ class AppBuilder
             }
         });
         // add Caching middleware
-        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) {
-            $userId = Session::getInstance()->getUserID();
-            $key = $request->getUri()->getPath() . '/' . $userId;
-            $value = (new MemoryCacheManager)->get($key);
-            if ($value !== '') {
-                return $response->withJson(json_decode($value));
+        $endpoinScanner = $this->endpointScanner;
+        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($endpoinScanner) {
+            //get all cacheable Api-end-points
+            $routes = $endpoinScanner->getCacheableEndPoints();
+            //check if requested end-point is cachable
+            $path = '/' . $request->getUri()->getPath();
+            if (in_array($path, $routes)) {
+                $userId = Session::getInstance()->getUserID();
+                $key = $path . '/' . $userId;
+                $value = (new MemoryCacheManager)->get($key);
+                if ($value !== '') {
+                    return $response->withJson(json_decode($value));
+                }
             }
+
             return $next($request, $response);
         });
         foreach ($routes as $route) {
@@ -169,7 +177,7 @@ class AppBuilder
                     $response = $response->withStatus($e->getStatusCode())
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode(["error" => $e->getMessage()]));
-                } catch (\Throwable $e) {
+                } catch (Throwable $e) {
                     $response = $response->withStatus(500)
                         ->withHeader("Content-Type", "application/json")
                         ->write(json_encode(["error" => $e->getMessage()]));
