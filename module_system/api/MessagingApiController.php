@@ -36,13 +36,14 @@ class MessagingApiController implements ApiControllerInterface
      * @return HttpResponse
      * @throws Exception
      * @api
+     * @cacheable
      * @method GET
      * @path /v1/messages/count
      * @authorization usertoken
      */
     public function getUnreadMessagesCount(HttpContext $context): HttpResponse
     {
-        $key = 'v1/messages/count/' . $this->objSession->getUserID();
+        $key = '/v1/messages/count/' . $this->objSession->getUserID();
 
         $userId = $this->objSession->getUserID();
         $count = MessagingMessage::getNumberOfMessagesForUser($userId, true);
