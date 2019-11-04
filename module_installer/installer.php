@@ -769,6 +769,7 @@ class Installer
                      'KAJONA_BROWSER_CACHEBUSTER' => SystemSetting::getConfigValue("_system_browser_cachebuster_"),
                      'KAJONA_LANGUAGE' => Carrier::getInstance()->getObjSession()->getAdminLanguage(),
                      'KAJONA_PHARMAP' => array_values(Classloader::getInstance()->getArrPharModules()),
+                     'KAJONA_ACCESS_TOKEN' => null,
                  ] as $name => $value) {
             $parts[] = $name . ' = ' . json_encode($value) . ';';
         }
