@@ -101,9 +101,13 @@ abstract class Adminwidget
      *
      * @return string
      */
-    final public function generateWidgetOutput()
+    final public function generateWidgetOutput(): string
     {
-        return $this->getWidgetOutput();
+        try {
+            return $this->getWidgetOutput();
+        } catch (\Throwable $e) {
+            return $this->objToolkit->warningBox($e->getMessage(), 'alert-danger');
+        }
     }
 
     /**
