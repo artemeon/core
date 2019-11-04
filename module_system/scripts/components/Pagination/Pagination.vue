@@ -32,7 +32,7 @@
         :class="{active : page.active === true}"
         @click="changePage(page.label)"
       >
-        <span v-if="page.disable">...</span>
+        <a v-if="page.disable">...</a>
         <a :class="{active : page.active === true}" v-else>{{page.label}}</a>
       </li>
       <li></li>
