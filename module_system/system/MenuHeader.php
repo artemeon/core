@@ -7,7 +7,7 @@
 namespace Kajona\System\System;
 
 /**
- * Class which represents a Link of a module item from the menu
+ * Class which represents a Header of a module item from the menu
  *
  * @package module_system
  * @author laura.albersmann@artemeon.de
@@ -16,26 +16,26 @@ namespace Kajona\System\System;
 class MenuHeader extends MenuItem
 {
     private $right = "";
-    private $href = "";
+    private $name = "";
 
     /**
      *
      * Constructor
      * @param string $right Right to view menu item
-     * @param string $href href link of the menu item
+     * @param string $name href link of the menu item
      */
-    public function __construct(string $right, string $href)
+    public function __construct(string $right, string $name)
     {
         $this->right = $right;
-        $this->href = $href;
+        $this->name = $name;
     }
 
     /**
      * Return right
      *
-     * @return Right|string
+     * @return string
      */
-    public function getMenuItemRight()
+    public function getRight()
     {
         return $this->right;
     }
@@ -43,20 +43,20 @@ class MenuHeader extends MenuItem
     /**
      *  Returns name
      *
-     * @return Name|string
+     * @return string
      */
-    public function getMenuItemName()
+    public function getName()
     {
-        return "";
+        return $this->name;
     }
 
     /**
      * Returns href
      *
-     * @return href|string
+     * @return string
      */
-    public function getMenuItemHref()
+    public function getHref()
     {
-        return $this->href;
+        return "";
     }
 }

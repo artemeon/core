@@ -17,7 +17,7 @@
                      :data-kajona-module="header.module.moduleTitle">
                     <div class="panel-body">
                         <ul >
-                            <li v-for="(action, i) in header.module.actions" :key="i + action.link" :class="[action.link === '' ? 'divider' : '']">
+                            <li v-for="(action, i) in header.module.actions" :key="i + action.link" :class="[action.name === '' ? 'divider' : '']">
                                 <a v-if="action.name !== '' && action.link !== ''" :title="action.name" :href="action.href" class="adminnavi">{{ action.name }}</a>
                             </li>
                         </ul>

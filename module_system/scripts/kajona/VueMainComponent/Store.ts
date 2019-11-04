@@ -7,7 +7,7 @@ Vue.use(<any>Vuex)
 // Vue.use(VueI18n)
 export default new Vuex.Store({
     modules: {
-        SearchModule: SearchModule,
-        MenuModule: MenuModule
+        SearchModule,
+        MenuModule,
     }
 })

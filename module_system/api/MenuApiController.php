@@ -33,117 +33,125 @@ class MenuApiController implements ApiControllerInterface
      */
     public function getMenu(): JsonResponse
     {
-        $arrToggleEntries = [];
-        foreach (SystemAspect::getActiveObjectList() as $objOneAspect) {
-            if (!$objOneAspect->rightView()) {
+        $toggleEntries = [];
+        foreach (SystemAspect::getActiveObjectList() as $oneAspect) {
+            if (!$oneAspect->rightView()) {
                 continue;
             }
 
-            $arrModules = SystemModule::getModulesInNaviAsArray($objOneAspect->getSystemid());
+            $modules = SystemModule::getModulesInNaviAsArray($oneAspect->getSystemid());
 
-            /** @var $arrNaviInstances SystemModule[] */
-            $arrNaviInstances = [];
-            foreach ($arrModules as $arrModule) {
-                $objModule = SystemModule::getModuleBySystemid($arrModule["module_id"]);
+            /** @var $naviInstances SystemModule[] */
+            $naviInstances = [];
+            foreach ($modules as $module) {
+                $objModule = SystemModule::getModuleBySystemid($module["module_id"]);
                 if ($objModule->rightView()) {
-                    $arrNaviInstances[] = $objModule;
+                    $naviInstances[] = $objModule;
                 }
             }
 
-            $arrMenuHeader = [];
-            $arrMenuBody = [];
-            $arrCombined = [
+            $menuHeader = [];
+            $menuBody = [];
+            $combined = [
                 "messaging" => "fa-envelope",
                 "dashboard" => "fa-home",
                 "tags" => "fa-tags",
             ];
 
-            foreach ($arrNaviInstances as $objOneInstance) {
-                $arrActions = self::getModuleActionNaviHelper($objOneInstance);
+            foreach ($naviInstances as $oneInstance) {
+                $actions = $this->getModuleActionNaviHelper($oneInstance);
 
-                $arrModuleLevel = [
-                    "module" => Link::getLinkAdmin($objOneInstance->getStrName(), "", "", Carrier::getInstance()->getObjLang()->getLang("modul_titel", $objOneInstance->getStrName())),
-                    "actions" => $arrActions,
-                    "systemid" => $objOneInstance->getSystemid(),
-                    "moduleTitle" => $objOneInstance->getStrName(),
-                    "moduleName" => Carrier::getInstance()->getObjLang()->getLang("modul_titel", $objOneInstance->getStrName()),
-                    "moduleHref" => Link::getLinkAdminHref($objOneInstance->getStrName(), ""),
-                    "aspectId" => $objOneAspect->getSystemid(),
+                $moduleLevel = [
+                    "module" => Link::getLinkAdmin($oneInstance->getStrName(), "", "", Carrier::getInstance()->getObjLang()->getLang("modul_titel", $oneInstance->getStrName())),
+                    "actions" => $actions,
+                    "systemid" => $oneInstance->getSystemid(),
+                    "moduleTitle" => $oneInstance->getStrName(),
+                    "moduleName" => Carrier::getInstance()->getObjLang()->getLang("modul_titel", $oneInstance->getStrName()),
+                    "moduleHref" => Link::getLinkAdminHref($oneInstance->getStrName(), ""),
+                    "aspectId" => $oneAspect->getSystemid(),
                 ];
 
-                if (array_key_exists($objOneInstance->getStrName(), $arrCombined)) {
-                    $arrModuleLevel["faicon"] = $arrCombined[$objOneInstance->getStrName()];
-                    $arrMenuHeader[] = ["module" => $arrModuleLevel];
+                if (array_key_exists($oneInstance->getStrName(), $combined)) {
+                    $moduleLevel["faicon"] = $combined[$oneInstance->getStrName()];
+                    $menuHeader[] = ["module" => $moduleLevel];
                 } else {
-                    $arrMenuBody[] = ["module" => $arrModuleLevel];
+                    $menuBody[] = ["module" => $moduleLevel];
                 }
             }
 
-            $arrToggleEntries[] = ["Aspect_name" => $objOneAspect->getStrDisplayName(), "Aspect_id" => $objOneAspect->getSystemid(), "header" => $arrMenuHeader, "body" => $arrMenuBody, "onclick" => "ModuleNavigation.switchAspect('{$objOneAspect->getSystemid()}'); return false;"];
+            $toggleEntries[] = ["Aspect_name" => $oneAspect->getStrDisplayName(), "Aspect_id" => $oneAspect->getSystemid(), "header" => $menuHeader, "body" => $menuBody, "onclick" => "ModuleNavigation.switchAspect('{$oneAspect->getSystemid()}'); return false;"];
         }
 
         return new JsonResponse([
-            "aspects" => $arrToggleEntries
+            "aspects" => $toggleEntries
         ]);
     }
 
     /**
      * Fetches the list of actions for a single module, saved to the session for performance reasons
      *
-     * @param SystemModule $objModule
+     * @param SystemModule $module
      *
      * @return array
      * @throws \Kajona\System\System\Exception
      *
      */
-    private function getModuleActionNaviHelper(SystemModule $objModule)
+    private function getModuleActionNaviHelper(SystemModule $module)
     {
         if (Carrier::getInstance()->getObjSession()->isLoggedin()) {
-            $strKey = __CLASS__."adminNaviEntries".$objModule->getSystemid().SystemAspect::getCurrentAspectId();
 
-            $arrFinalItems = Carrier::getInstance()->getObjSession()->getSession($strKey);
-            if ($arrFinalItems !== false) {
-                return $arrFinalItems;
-            }
-
-            $objAdminInstance = $objModule->getAdminInstanceOfConcreteModule();
-            if ($objAdminInstance == null) {
+            $adminInstance = $module->getAdminInstanceOfConcreteModule();
+            if ($adminInstance == null) {
                 return array();
             }
 
-            $arrItems = $objAdminInstance->getOutputModuleNavi();
-            $arrItems = array_merge($arrItems, $objAdminInstance->getModuleRightNaviEntry());
-            $arrFinalItems = array();
+            $items = $adminInstance->getOutputModuleNavi();
+            $items = array_merge($items, $adminInstance->getModuleRightNaviEntry());
+            $finalItems = array();
 
             //build array of final items
-            $intI = 0;
-            foreach ($arrItems as $arrOneItem) {
-                if ($arrOneItem[0] == "") {
-                    $bitAdd = true;
-                } else {
-                    $bitAdd = Carrier::getInstance()->getObjRights()->validatePermissionString($arrOneItem[0], $objModule);
-                }
+            $i = 0;
+            foreach ($items as $oneItem) {
+                if ($oneItem instanceof MenuItem) {
+                    if ($oneItem->getRight() == "") {
+                        $add = true;
+                    } else {
+                        $add = Carrier::getInstance()->getObjRights()->validatePermissionString($oneItem->getRight(), $module);
+                    }
 
-                if ($bitAdd || $arrOneItem[1] == "") {
-                    if ($arrOneItem[1] != "" || (!isset($arrFinalItems[$intI - 1]) || $arrFinalItems[$intI - 1] != "")) {
-                        if ($arrOneItem[1] instanceof MenuItem) {
-                            $arrFinalItems[] = $arrOneItem[1]->toArray();
-                        } else {
-                            $arrSplitOneItem = splitUpLink($arrOneItem[1]);
-                            $arrFinalItems[] = $arrSplitOneItem;
+                    if ($add || $oneItem->getHref() == "") {
+                        if ($oneItem->getHref() != "" || (!isset($finalItems[$i - 1]) || $finalItems[$i - 1] != "")) {
+                            $finalItems[] = $oneItem->toArray();
+                            $i++;
                         }
-                        $intI++;
+                    }
+                } else if (is_array($oneItem)) {
+                    if ($oneItem[0] == "") {
+                        $add = true;
+                    } else {
+                        $add = Carrier::getInstance()->getObjRights()->validatePermissionString($oneItem[0], $module);
+                    }
+
+                    if ($add || $oneItem[1] == "") {
+                        if ($oneItem[1] != "" || (!isset($finalItems[$i - 1]) || $finalItems[$i - 1] != "")) {
+                            $splitOneItem = splitUpLink($oneItem[1]);
+                            if($splitOneItem["name"] == "" && $splitOneItem["link"] != "") {
+                                $splitOneItem["name"] = $splitOneItem["link"];
+                                $splitOneItem["link"] = "";
+                            }
+                            $finalItems[] = $splitOneItem;
+                            $i++;
+                        }
                     }
                 }
             }
 
             //if the last one is a divider, remove it
-            if ($arrFinalItems[count($arrFinalItems) - 1]["name"] == "" && $arrFinalItems[count($arrFinalItems) - 1]["href"] == "") {
-                unset($arrFinalItems[count($arrFinalItems) - 1]);
+            if ($finalItems[count($finalItems) - 1]["name"] == "") {
+                unset($finalItems[count($finalItems) - 1]);
             }
 
-            Carrier::getInstance()->getObjSession()->setSession($strKey, $arrFinalItems);
-            return $arrFinalItems;
+            return $finalItems;
         }
         return array();
     }

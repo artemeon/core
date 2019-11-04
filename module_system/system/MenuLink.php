@@ -36,9 +36,9 @@ class MenuLink extends MenuItem
     /**
      * Return right
      *
-     * @return Right|string
+     * @return string
      */
-    public function getMenuItemRight()
+    public function getRight()
     {
         return $this->right;
     }
@@ -46,9 +46,9 @@ class MenuLink extends MenuItem
     /**
      *  Returns name
      *
-     * @return Name|string
+     * @return string
      */
-    public function getMenuItemName()
+    public function getName()
     {
         return $this->name;
     }
@@ -56,9 +56,9 @@ class MenuLink extends MenuItem
     /**
      * Returns href
      *
-     * @return href|string
+     * @return string
      */
-    public function getMenuItemHref()
+    public function getHref()
     {
         return $this->href;
     }

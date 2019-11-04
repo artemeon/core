@@ -2,11 +2,12 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { namespace } from 'vuex-class'
 import ModuleNavigation from 'core/module_system/scripts/kajona/ModuleNavigation'
 import { LangMixin } from 'core/module_system/scripts/kajona/VueMixings'
+import Loader from 'core/module_system/scripts/components/Loader/Loader.vue'
 import MenuAspect from '../MenuAspect/MenuAspect.vue'
 
-@Component({ components: { MenuAspect } })
+@Component({ components: { MenuAspect, Loader } })
 class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons'])) {
-    @namespace('MenuModule').Action getMenu: any
+    @namespace('MenuModule').Action getMenu: Function
 
     @namespace('MenuModule').State aspects: Array<any>
 
@@ -14,12 +15,13 @@ class Menu extends Mixins(LangMixin(['commons_product_title', 'system', 'commons
 
     private async mounted(): Promise<void> {
         await this.getMenu()
-        this.switchAspect(this.aspects[0].onclick)
+        this.switchAspect(this.aspects[0].Aspect_id)
     }
 
-    private switchAspect(href: string): string {
-        const splitted = href.split(/'|return /)
-        ModuleNavigation.switchAspect(splitted[1]); return splitted[3]
+    private switchAspect(aspectId: string): boolean {
+        ModuleNavigation.switchAspect(aspectId)
+
+        return false
     }
 }
 

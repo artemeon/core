@@ -7,7 +7,7 @@
 namespace Kajona\System\System;
 
 /**
- * Class which represents a Link of a module item from the menu
+ * Class which represents a Separator of a module item from the menu
  *
  * @package module_system
  * @author laura.albersmann@artemeon.de
@@ -30,9 +30,9 @@ class MenuSeparator extends MenuItem
     /**
      * Return right
      *
-     * @return Right|string
+     * @return string
      */
-    public function getMenuItemRight()
+    public function getRight()
     {
         return $this->right;
     }
@@ -40,9 +40,9 @@ class MenuSeparator extends MenuItem
     /**
      *  Returns name
      *
-     * @return Name|string
+     * @return string
      */
-    public function getMenuItemName()
+    public function getName()
     {
         return "";
     }
@@ -50,9 +50,9 @@ class MenuSeparator extends MenuItem
     /**
      * Returns href
      *
-     * @return href|string
+     * @return string
      */
-    public function getMenuItemHref()
+    public function getHref()
     {
         return "";
     }
