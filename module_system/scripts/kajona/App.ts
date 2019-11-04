@@ -2,6 +2,7 @@
 import Router from './Router'
 import 'jquery-ui.custom'
 import 'jquery-ui-touch-punch'
+import $ from 'jquery'
 import * as toastr from 'toastr'
 import V4skin from 'core/module_v4skin/scripts/kajona/V4skin'
 import Dialog from 'core/module_v4skin/scripts/kajona/Dialog'
@@ -104,6 +105,15 @@ class App {
             store: store,
             i18n: i18n,
             render: h => h(VueMain)
+        })
+    }
+
+    public static closePopoverFromOutside(): void {
+        $(document).click((event) => {
+            // if you click on anything except the popover itself, close the popover
+            if (!$(event.target).closest('.popover,[data-toggle=popover]').length) {
+                $('[data-toggle=popover]').popover('hide')
+            }
         })
     }
 }
