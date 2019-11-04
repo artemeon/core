@@ -1,10 +1,13 @@
 <?php
+
 /*"******************************************************************************************************
  *   (c) 2007-2016 by Kajona, www.kajona.de                                                              *
  *       Published under the GNU LGPL v2.1, see /system/licence_lgpl.txt                                 *
  *-------------------------------------------------------------------------------------------------------*
  *    $Id$                                                *
  ********************************************************************************************************/
+
+declare(strict_types=1);
 
 namespace Kajona\System\Admin;
 
@@ -17,6 +20,8 @@ use Kajona\System\System\Exception;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleModelException;
 use Kajona\System\System\Link;
 use Kajona\System\System\Model;
+use Kajona\System\System\Modelaction\Context\ModelActionContextFactoryInterface;
+use Kajona\System\System\Modelaction\Renderer\ModelActionsRendererInterface;
 use Kajona\System\System\ModelInterface;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\StringUtil;
@@ -27,7 +32,6 @@ use Kajona\System\View\Components\Dropdownmenu\Dropdownmenu;
 use Kajona\System\View\Components\Menu\Item\Text;
 use Kajona\System\View\Components\Menu\Menu;
 use Kajona\System\View\Components\Menu\MenuItem;
-use Kajona\V4skin\Admin\Skins\Kajona_V4\AdminskinImageresolver;
 
 /**
  * Class holding common methods for extended and simplified admin-guis.
@@ -37,12 +41,23 @@ use Kajona\V4skin\Admin\Skins\Kajona_V4\AdminskinImageresolver;
  */
 abstract class AdminSimple extends AdminController
 {
-
     /**
      * @var string
      * @deprecated
      */
     private $strPeAddon = "";
+
+    /**
+     * @var ModelActionContextFactoryInterface
+     * @inject Kajona\System\System\Modelaction\ModelActionContextFactoryInterface
+     */
+    protected $modelActionContextFactory;
+
+    /**
+     * @var ModelActionsRendererInterface
+     * @inject Kajona\System\System\Modelaction\ModelActionsRendererInterface
+     */
+    protected $modelActionsRenderer;
 
     /**
      * @param string $strSystemid
@@ -352,29 +367,19 @@ abstract class AdminSimple extends AdminController
     /**
      * Wrapper rendering all action-icons for a given record. In most cases used to render a list-entry.
      *
-     * @param Model|ModelInterface|AdminListableInterface $objOneIterable
-     * @param string $strListIdentifier
-     *
+     * @param Model|ModelInterface|AdminListableInterface $model
+     * @param string $listIdentifier
      * @return string
-     * @throws Exception
      */
-    public function getActionIcons($objOneIterable, $strListIdentifier = "")
+    public function getActionIcons($model, $listIdentifier = '')
     {
-        $strActions = "";
-        $strActions .= $this->renderUnlockAction($objOneIterable);
-        $strActions .= $this->renderEditAction($objOneIterable);
-        $arrAddons = $this->renderAdditionalActions($objOneIterable);
-        if (is_array($arrAddons)) {
-            $strActions .= implode("", $arrAddons);
-        }
-        $strActions .= $this->renderDeleteAction($objOneIterable);
-        $strActions .= $this->renderCopyAction($objOneIterable);
-        $strActions .= $this->renderStatusAction($objOneIterable);
-        $strActions .= $this->renderTagAction($objOneIterable);
-        $strActions .= $this->renderChangeHistoryAction($objOneIterable);
-        $strActions .= $this->renderPermissionsAction($objOneIterable);
+        $context = $this->modelActionContextFactory->forListIdentifier($listIdentifier);
 
-        return $strActions;
+        try {
+            return $this->modelActionsRenderer->render($model, $context);
+        } catch (Exception $exception) {
+            return '';
+        }
     }
 
     /**
