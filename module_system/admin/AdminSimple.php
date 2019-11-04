@@ -49,13 +49,13 @@ abstract class AdminSimple extends AdminController
 
     /**
      * @var ModelActionContextFactoryInterface
-     * @inject Kajona\System\System\Modelaction\ModelActionContextFactoryInterface
+     * @inject Kajona\System\System\Modelaction\Context\ModelActionContextFactoryInterface
      */
     protected $modelActionContextFactory;
 
     /**
      * @var ModelActionsRendererInterface
-     * @inject Kajona\System\System\Modelaction\ModelActionsRendererInterface
+     * @inject Kajona\System\System\Modelaction\Renderer\ModelActionsRendererInterface
      */
     protected $modelActionsRenderer;
 
