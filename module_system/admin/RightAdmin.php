@@ -63,8 +63,12 @@ class RightAdmin extends AdminController implements AdminInterface
 
         $strSystemid = $this->getSystemid();
         $record = $this->objFactory->getObject($strSystemid);
-
-        $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
+        if ($record === null) {
+            $permissionHandler = $this->permissionHandlerFactory->factory(get_class());
+        }
+        else {
+            $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
+        }
         if (is_null($permissionHandler)) {
             $this->isPermissionHandlerExisting = false;
         } else {
@@ -277,7 +281,12 @@ class RightAdmin extends AdminController implements AdminInterface
         $record = $this->objFactory->getObject($strSystemid);
 
         try {
-            $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
+            if ($record === null) {
+                $permissionHandler = $this->permissionHandlerFactory->factory(get_class());
+            }
+            else {
+                $permissionHandler = $this->permissionHandlerFactory->factory(get_class($record));
+            }
             $permissionHandler->calculatePermissions($record);
             $strReturn = ["message" => $this->getLang("recalculate_rights_success"), "type" => "success"];
         }
