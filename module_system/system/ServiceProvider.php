@@ -377,5 +377,11 @@ class ServiceProvider implements ServiceProviderInterface
                 $c[self::STR_RIGHTS]
             );
         };
+
+        $objContainer[CurrentUserProviderInterface::class] = static function (Container $container): CurrentUserProviderInterface {
+            return new CurrentUserFromSessionProvider(
+                $container[self::STR_SESSION]
+            );
+        };
     }
 }
