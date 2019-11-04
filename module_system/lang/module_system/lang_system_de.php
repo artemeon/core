@@ -161,6 +161,10 @@ $lang["quickhelp_system_tasks"]          = "Systemtasks sind kleine Programme, d
 $lang["quickhelp_systemlog"]             = "Das Systemlogbuch gibt die Einträge des Logfiles aus, in welche die Module Nachrichten schreiben können.<br />Die Feinheit des Loggings kann in der config-Datei (/project/system/config/config.php) eingestellt werden.";
 $lang["quickhelp_title"]                 = "Schnellhilfe";
 $lang["quickhelp_updateCheck"]           = "Mit der Aktion Updatecheck werden die Versionsnummern der im System installierten Module mit den Versionsnummern der aktuell verfügbaren Module verglichen. Sollte ein Modul nicht mehr in der neusten Verion installiert sein, so gibt Kajona in der Zeile dieses Moduls einen Hinweis hierzu aus.";
+
+$lang["recalculate_rights_success"]      = "Rechte erfolgreich neu berechnet";
+$lang["recalculate_rights_error"]        = "Fehler beim neu berechnen der Berechtigungen";
+
 $lang["send"]                            = "Versenden";
 
 $lang["session_activity"]                = "Aktivität";

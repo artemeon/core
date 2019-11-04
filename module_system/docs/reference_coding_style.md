@@ -138,6 +138,7 @@ Every file must contain the following copyright header.
 
 ```
 <?php
+
 /*"******************************************************************************************************
  *   (c) ARTEMEON Management Partner GmbH
  *       Published under the GNU LGPL v2.1
@@ -149,6 +150,7 @@ Every file must contain the following copyright header.
 
 ```
 <?php
+
 /*"******************************************************************************************************
  *   (c) ARTEMEON Management Partner GmbH
  ********************************************************************************************************/
