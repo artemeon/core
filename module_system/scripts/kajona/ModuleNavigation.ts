@@ -46,17 +46,6 @@ class ModuleNavigation {
         }
     }
 
-    public static loadNavigation (strAspect: string) {
-        if (!strAspect) {
-            strAspect = ''
-        }
-        Ajax.loadUrlToElement(
-            '#moduleNavigation',
-            '/xml.php?admin=1&module=v4skin&action=getBackendNavi&aspect=' +
-                (strAspect || '')
-        )
-    }
-
     /**
      * @deprecated
      */
