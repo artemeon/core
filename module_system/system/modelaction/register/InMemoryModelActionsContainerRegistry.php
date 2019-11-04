@@ -34,7 +34,7 @@ final class InMemoryModelActionsContainerRegistry implements ModelActionsContain
 
     public function register(string $modelClassName, ModelActionsContainerInterface $modelActionsContainer): void
     {
-        if (!\class_exists($modelClassName) || !\is_subclass_of($modelClassName, Model::class)) {
+        if (!\class_exists($modelClassName) || !\is_a($modelClassName, Model::class, true)) {
             throw new UnableToRegisterModelActionsContainerException();
         }
         if (isset($this->modelActionsContainers[$modelClassName])) {
