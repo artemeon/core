@@ -22,7 +22,7 @@ use Kajona\System\System\ModelControllerLocatorInterface;
 use ReflectionMethod;
 use Throwable;
 
-final class EditModelAction implements ModelActionInterface
+class EditModelAction implements ModelActionInterface
 {
     /**
      * @var ModelControllerLocatorInterface

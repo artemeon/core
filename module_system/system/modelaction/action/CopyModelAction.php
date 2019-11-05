@@ -22,7 +22,7 @@ use Kajona\System\System\StringUtil;
 use ReflectionMethod;
 use Throwable;
 
-final class CopyModelAction implements ModelActionInterface
+class CopyModelAction implements ModelActionInterface
 {
     /**
      * @var ModelControllerLocatorInterface

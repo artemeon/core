@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Kajona\System\System\Modelaction\Actionlist;
+namespace Kajona\System\System\Modelaction\Container;
 
 use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\Model;
@@ -46,5 +46,10 @@ interface ModelActionsContainerInterface
     public function withoutModelActionsOfType(
         string $modelActionClassNameToBeRemoved,
         string ...$furtherModelActionClassNamesToBeRemoved
+    ): self;
+
+    public function replacingModelActionOfType(
+        string $modelActionClassNameToBeReplaced,
+        ModelActionInterface $modelActionToReplaceWith
     ): self;
 }

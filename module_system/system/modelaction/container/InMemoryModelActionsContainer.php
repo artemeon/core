@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace Kajona\System\System\Modelaction\Actionlist;
+namespace Kajona\System\System\Modelaction\Container;
 
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\Context\ModelActionContext;
@@ -82,6 +82,27 @@ class InMemoryModelActionsContainer implements ModelActionsContainerInterface
 
                     return true;
                 }
+            )
+        );
+    }
+
+    public function replacingModelActionOfType(
+        string $modelActionClassNameToBeReplaced,
+        ModelActionInterface $modelActionToReplaceWith
+    ): ModelActionsContainerInterface {
+        return new self(
+            ...\array_map(
+                static function (ModelActionInterface $modelAction) use (
+                    $modelActionClassNameToBeReplaced,
+                    $modelActionToReplaceWith
+                ): ModelActionInterface {
+                    if ($modelAction instanceof $modelActionClassNameToBeReplaced) {
+                        return $modelActionToReplaceWith;
+                    }
+
+                    return $modelAction;
+                },
+                $this->modelActions
             )
         );
     }
