@@ -6,7 +6,7 @@
 
 declare(strict_types=1);
 
-namespace AGP\Contracts\System\Condition;
+namespace Kajona\Flow\System\Flow\Condition;
 
 use Kajona\Flow\System\FlowConditionAbstract;
 use Kajona\Flow\System\FlowConditionResult;
