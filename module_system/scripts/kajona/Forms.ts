@@ -431,6 +431,9 @@ class Forms {
     public static AutoGrowTextArea(textField: HTMLElement): void {
         textField.style.height = 'auto' // required when delete, cut or paste is performed
         textField.style.height = textField.scrollHeight + 'px'
+        if (textField.scrollHeight < 44) {
+            textField.style.height = '44px'
+        }
     }
 }
 ;(<any>window).Forms = Forms

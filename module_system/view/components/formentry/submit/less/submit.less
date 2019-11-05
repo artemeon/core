@@ -1,0 +1,17 @@
+#content .form-group .recalc-permissions .statusicon:before {
+  font-family: fontawesome;
+  content: @fa-var-refresh;
+  color: @kajona-brand-color;
+}
+
+.processing.recalc-permissions > .statusicon:before {
+  content: @fa-var-spinner !important;
+  animation: fa-spin 3s infinite linear;
+}
+
+.processing.save-permissions > .statusicon:before {
+  content: @fa-var-spinner !important;
+  animation: fa-spin 3s infinite linear;
+}
+
+
