@@ -43,7 +43,7 @@ class NextTransitionForSameUserForbiddenCondition extends FlowConditionAbstract
     }
 
     /**
-     * Returns true in case the reviewing user is not quickcheck user
+     * validates if a user executing a flowTransition is not the same use who did the last flow status change
      *
      * @param Model $flowObject
      * @param FlowTransition $FlowTransition
