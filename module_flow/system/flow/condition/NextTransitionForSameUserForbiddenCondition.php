@@ -43,7 +43,7 @@ class NextTransitionForSameUserForbiddenCondition extends FlowConditionAbstract
     }
 
     /**
-     * validates if a user executing a flowTransition is not the same use who did the last flow status change
+     * validates if a user executing a flow transition is not the same user who did the last flow status change
      *
      * @param Model $flowObject
      * @param FlowTransition $FlowTransition
