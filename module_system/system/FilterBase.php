@@ -500,7 +500,7 @@ abstract class FilterBase
      */
     public function getFullParamName(string $strParam): string
     {
-        return $this->getFilterId() . '_' . $strParam;
+        return $this->getFilterId() . '_' . \strtolower($strParam);
     }
 
     /**
