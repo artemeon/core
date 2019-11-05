@@ -84,3 +84,8 @@ $lang["flow_condition_group_title"]   = "Group Bedingung";
 $lang["flow_condition_invert_title"]   = "Invert Bedingung";
 $lang["flow_condition_or_title"]   = "OR Bedingung";
 $lang["flow_condition_xor_title"]   = "XOR Bedingung";
+
+$lang['flow_condition_user_forbidden']              = 'Check Benutzerberechtigung';
+$lang['flow_condition_user_forbidden_title']        = 'Check Benutzerberechtigung für Statusübergang';
+$lang['flow_condition_user_forbidden_description']  = 'Ein Benutzer darf nicht zwei aufeinander folgende Statusübergänge vornehmen (4 Augen Prinzip).';
+$lang['flow_condition_user_forbidden_error']        = 'Sie haben keine Berechtigung den Statusübergang vorzunehmen. Dieser Schritt muss durch einen zweiten Benutzer erfolgen.';
