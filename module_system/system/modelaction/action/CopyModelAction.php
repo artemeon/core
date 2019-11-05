@@ -39,9 +39,9 @@ final class CopyModelAction implements ModelActionInterface
      */
     private $lang;
 
-    public function __construct(ModelControllerLocatorInterface $modelControllerProvider, ToolkitAdmin $toolkit, Lang $lang)
+    public function __construct(ModelControllerLocatorInterface $modelControllerLocator, ToolkitAdmin $toolkit, Lang $lang)
     {
-        $this->modelControllerLocator = $modelControllerProvider;
+        $this->modelControllerLocator = $modelControllerLocator;
         $this->toolkit = $toolkit;
         $this->lang = $lang;
     }
