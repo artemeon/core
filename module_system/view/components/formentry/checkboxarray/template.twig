@@ -2,7 +2,10 @@
     <label for="{{ name }}" class="col-sm-3 control-label">{{ title|raw }}</label>
     <div class="col-sm-6 inputText">
         <div id="{{ name }}" class="inputContainer" {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %}>
-            <ul class="level1">
+            {% if filter %}
+                <input id="itemsFilter_{{ name }}" class="itemsFilter" type="text" placeholder="Search..">
+            {% endif %}
+            <ul id="itemsList_{{ name }}" class="level1">
             {% set nesting = 1 %}
 
             {% for row in rows %}
@@ -84,6 +87,12 @@
                     var checkBoxes = $("input:checkbox[name^='{{ name }}']").not("[disabled]");
                     checkBoxes.prop('checked', $("input:checkbox[name='checkAll_{{ name }}']").prop('checked')).trigger('change');
                 });
+              $("#itemsFilter_{{ name }}").on("keyup", function() {
+                  var value = $(this).val().toLowerCase();
+                  $("#itemsList_{{ name }} li").filter(function() {
+                      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                  });
+              });
         </script>
     {% endif %}
 </div>

@@ -141,15 +141,6 @@ class SkinAdminController extends AdminEvensimpler implements AdminInterface
      * @permissions view
      * @responseType html
      */
-    protected function actionGetBackendNavi()
-    {
-        return $this->objToolkit->getAdminSitemap();
-    }
-
-    /**
-     * @permissions view
-     * @responseType html
-     */
     protected function actionGetLanguageswitch()
     {
         return (SystemModule::getModuleByName("languages") != null ? "<span>".SystemModule::getModuleByName("languages")->getAdminInstanceOfConcreteModule()->getLanguageSwitch()."</span>" : "<span/>");
