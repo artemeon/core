@@ -84,3 +84,8 @@ $lang["flow_condition_group_title"]   = "Group Condition";
 $lang["flow_condition_invert_title"]   = "Invert Condition";
 $lang["flow_condition_or_title"]   = "OR Condition";
 $lang["flow_condition_xor_title"]   = "XOR Condition";
+
+$lang['flow_condition_user_forbidden']              = 'Check user permission';
+$lang['flow_condition_user_forbidden_title']        = 'Check user permission for status change';
+$lang['flow_condition_user_forbidden_description']  = 'A user is not allowed to execute two status changes in a row (two-person rule)';
+$lang['flow_condition_user_forbidden_error']        = 'You have no permission to execute the status change. This step must be performed by a different user.';
