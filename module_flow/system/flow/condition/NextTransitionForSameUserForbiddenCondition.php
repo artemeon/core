@@ -15,6 +15,7 @@ use Kajona\System\Admin\AdminFormgenerator;
 use Kajona\System\System\Model;
 use Kajona\System\System\Session;
 use Kajona\System\System\SystemChangelog;
+use \Kajona\System\System\Exception;
 
 /**
  * User is not allowed to execute two status changes in a row
@@ -27,17 +28,22 @@ use Kajona\System\System\SystemChangelog;
 class NextTransitionForSameUserForbiddenCondition extends FlowConditionAbstract
 {
     /**
-     * @inheritdoc
+     * @var Session
      */
-    public function getTitle()
+    private $session;
+
+    public function __construct($strSystemid = '')
+    {
+        parent::__construct($strSystemid);
+        $this->session = Session::getInstance();
+    }
+
+    public function getTitle(): string
     {
         return $this->getLang('flow_condition_user_forbidden_title', 'flow');
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->getLang('flow_condition_user_forbidden_description', 'flow');
     }
@@ -48,27 +54,25 @@ class NextTransitionForSameUserForbiddenCondition extends FlowConditionAbstract
      * @param Model $flowObject
      * @param FlowTransition $FlowTransition
      * @return FlowConditionResult
-     * @throws \Kajona\System\System\Exception
+     * @throws Exception
      */
     public function validateCondition(Model $flowObject, FlowTransition $FlowTransition)
     {
-        if (Session::getInstance()->isSuperAdmin()) {
+        if ($this->session->isSuperAdmin()) {
             return new FlowConditionResult(true);
         }
         $changeLog = SystemChangelog::getSpecificEntries($flowObject->getStrSystemid(), 'actionEdit', 'intRecordStatus', null, $flowObject->getIntRecordStatus());
         $changeLogLastEntry = array_shift($changeLog);
-        $lastRecordStatusChangeUserId = $changeLogLastEntry ? $changeLogLastEntry->getStrUserId() : '';
-        $activeUserId = Session::getInstance()->getUserID();
-        if ($activeUserId === $lastRecordStatusChangeUserId) {
+        if (
+            !empty($changeLogLastEntry)
+            && $this->session->getUserID() === $changeLogLastEntry->getStrUserId()
+        ) {
             return new FlowConditionResult(false, [$this->getLang('flow_condition_user_forbidden_error', 'flow')]);
         }
 
         return new FlowConditionResult(true);
     }
 
-    /**
-     * @inheritdoc
-     */
     public function configureForm(AdminFormgenerator $objForm)
     {
     }
