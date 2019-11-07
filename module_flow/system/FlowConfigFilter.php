@@ -19,7 +19,8 @@ use Kajona\System\System\FilterBase;
 final class FlowConfigFilter extends FilterBase
 {
     /**
-     * @var string|null
+     * @var string
+     * 
      * @fieldType Kajona\System\Admin\Formentries\FormentryText
      * @tableColumn agp_flow.flow_target_class
      * @filterCompareOperator EQ
