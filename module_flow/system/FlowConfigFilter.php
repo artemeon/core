@@ -12,7 +12,8 @@ use Kajona\System\System\FilterBase;
 
 /**
  * Filter for flow config model objects, works irrespective of current system status.
- *
+ * 
+ * @module flow
  * @author mike.marschall@artemeon.de
  * @since 7.2
  */
