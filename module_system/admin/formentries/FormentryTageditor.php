@@ -75,7 +75,14 @@ class FormentryTageditor extends FormentryMultiselect
             $strReturn .= $objToolkit->formTextRow($this->getStrHint());
         }
 
-        $strReturn .= $objToolkit->formInputTagEditor($this->getStrEntryName(), $this->getStrLabel(), $this->arrKeyValues, $this->strOnChangeCallback, $this->strDelimiter);
+        $data = $this->getStrValue();
+        if (!empty($data)) {
+            $values = json_decode($data);
+        } else {
+            $values = [];
+        }
+
+        $strReturn .= $objToolkit->formInputTagEditor($this->getStrEntryName(), $this->getStrLabel(), $values, $this->strOnChangeCallback, $this->strDelimiter);
         return $strReturn;
     }
 
