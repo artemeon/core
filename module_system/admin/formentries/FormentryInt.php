@@ -62,7 +62,7 @@ class FormentryInt extends FormentryBase implements FormentryPrintableInterface
         $objToolkit = Carrier::getInstance()->getObjToolkit("admin");
         $strReturn = "";
         if ($this->getStrHint() != null) {
-            $strReturn .= $objToolkit->formTextRow($this->getStrHint());
+            $strReturn .= $objToolkit->formTextHint($this->getStrHint(), $this->getBitHideLongHints());
         }
 
         $strValue = self::getStrUIValue($this->getStrValue());
