@@ -6,13 +6,12 @@
 
 namespace Kajona\Api\System;
 
+use Kajona\System\Admin\BackendCacheManager;
 use Kajona\System\Admin\Exceptions\ModelNotFoundException;
-use Kajona\System\Admin\MemoryCacheManager;
 use Kajona\System\System\CoreEventdispatcher;
 use Kajona\System\System\Exception;
 use Kajona\System\System\ObjectBuilder;
 use Kajona\System\System\RequestEntrypointEnum;
-use Kajona\System\System\Session;
 use Kajona\System\System\SystemEventidentifier;
 use Pimple\Container;
 use PSX\Http\Environment\HttpContext;
@@ -23,8 +22,6 @@ use PSX\Http\Request;
 use PSX\Uri\Uri;
 use Slim\App;
 use Slim\Container as SlimContainer;
-use Slim\Exception\MethodNotAllowedException;
-use Slim\Exception\NotFoundException;
 use Slim\Http\Request as SlimRequest;
 use Slim\Http\Response as SlimResponse;
 use Throwable;
@@ -56,6 +53,7 @@ class AppBuilder
      * @var Container
      */
     private $container;
+
 
     /**
      * @param EndpointScanner $endpointScanner
@@ -97,7 +95,7 @@ class AppBuilder
         $objectBuilder = $this->objectBuilder;
         $container = $this->container;
         $routes = $this->endpointScanner->getEndpoints();
-        $cacheableRoutes = $this->endpointScanner->getCacheableEndPoints();
+        $backendCacheManager = new BackendCacheManager($this->container[\Kajona\System\System\ServiceProvider::STR_CACHE_MANAGER], "Kajona\System\Admin\RedisStore");
         // add CORS middleware
         $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) {
             $response = $response
@@ -114,22 +112,15 @@ class AppBuilder
         });
         // add Caching middleware
         $endpointScanner = $this->endpointScanner;
-        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($cacheableRoutes) {
-            //check if requested end-point is cachable
-            $path = '/' . $request->getUri()->getPath();
-            if (in_array($path, $cacheableRoutes)) {
-                $userId = Session::getInstance()->getUserID();
-                $key = $path . '/' . $userId;
-                $value = (new MemoryCacheManager)->get($key);
-                if ($value !== '') {
-                    return $response->withJson(json_decode($value));
-                }
+        $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($backendCacheManager) {
+            $value = $backendCacheManager->get($request);
+            if ($value !== '') {
+                return $response->withJson(json_decode($value));
             }
-
             return $next($request, $response);
         });
         foreach ($routes as $route) {
-            $app->map($route["httpMethod"], $route["path"], function (SlimRequest $request, SlimResponse $response, array $args) use ($route, $objectBuilder, $container, $cacheableRoutes) {
+            $app->map($route["httpMethod"], $route["path"], function (SlimRequest $request, SlimResponse $response, array $args) use ($route, $objectBuilder, $container, $backendCacheManager) {
                 $instance = $objectBuilder->factory($route["class"]);
 
                 try {
@@ -161,13 +152,8 @@ class AppBuilder
                         foreach ($headers as $name => $value) {
                             $response = $response->withHeader($name, $value);
                         }
-                        //if end-point is cacheable set the payload to cache
-                        $path = '/' . $request->getUri()->getPath();
-                        if (in_array($path, $cacheableRoutes)) {
-                            $userId = Session::getInstance()->getUserID();
-                            $key = $path . '/' . $userId;
-                            (new MemoryCacheManager)->set($key, $data->getBody());
-                        }
+                        //set payload to cache
+                        $backendCacheManager->set($request, $data->getBody());
                         $response = $response->write($data->getBody());
 
                     } else {
