@@ -653,7 +653,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $this->objDB->createIndex("agp_user_group", "ix_group_short_id", ["group_short_id"]);
         $this->objDB->createIndex("agp_user_group", "ix_group_system_group", ["group_system_group"]);
 
-
+/*
         $strReturn .= "Creating view-permissions table".PHP_EOL;
         $this->objDB->createTable(
             "agp_permissions_view",
@@ -730,7 +730,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
                 }
                 $strReturn .= "Migrated {$i} records ".PHP_EOL;
 
-        }
+        }*/
 
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.4");
 
