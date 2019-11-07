@@ -104,39 +104,4 @@ class EndpointScanner
 
         return $classes;
     }
-
-    /**
-     * @return array
-     * @throws Exception
-     * @throws \Exception
-     */
-    public function getCacheableEndPoints(): array
-    {
-        $routes = $this->cacheManager->getValue("cacheable_api_routes");
-        if (!empty($routes)) {
-            return $routes;
-        }
-        $routes = [];
-        $classes = $this->getAllApiController();
-        foreach ($classes as $class) {
-            $reflection = new Reflection($class);
-            $methods = $reflection->getMethodsWithAnnotation("@cacheable");
-            if (!empty($methods)) {
-                foreach ($methods as $methodName => $values) {
-                    $path = $reflection->getMethodAnnotationValue($methodName, "@path");
-                    if (empty($path)) {
-                        throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
-                    }
-                    $routes[] = $path;
-                }
-            }
-
-        }
-        if (!empty($routes)) {
-            //save the found routes to cache
-            $this->cacheManager->addValue("cacheable_api_routes", $routes);
-            return $routes;
-        }
-        return [];
-    }
 }
