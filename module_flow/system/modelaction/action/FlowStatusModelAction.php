@@ -47,8 +47,9 @@ final class FlowStatusModelAction implements ModelActionInterface
     public function supports(Model $model, ModelActionContext $context): bool
     {
         try {
-            return $this->flowManager->isFlowConfiguredForClass(\get_class($model)) && !$model->getIntRecordDeleted(
-                ) && $model->rightView();
+            return $this->flowManager->isFlowConfiguredForClass(\get_class($model))
+                && !$model->getIntRecordDeleted()
+                && $model->rightView();
         } catch (Exception $exception) {
             return false;
         }
