@@ -17,9 +17,11 @@ class CommentsMain extends Mixins(LangMixin(['comments'])) {
     mounted(){
         const parent = document.getElementById('content')
         parent.appendChild(this.$el)
-        console.log('here')
-        this.addCommentAction()
-        this.listCommentsAction()
+        var matches = []
+        console.log(parent.querySelectorAll('[data-field-id]'),this)
+
+        // this.addCommentAction()
+        // this.listCommentsAction()
     }
 }
 export default CommentsMain

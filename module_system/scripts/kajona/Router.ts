@@ -66,6 +66,7 @@ class Router {
     }
 
     public static defaultRoutieCallback (url: string) {
+        console.log('parent vue',document.querySelectorAll('[data-field-id]'))
         if (url.includes('/vm/') && KAJONA_ACCESS_TOKEN) {
             return
         } else if (!KAJONA_ACCESS_TOKEN) {
