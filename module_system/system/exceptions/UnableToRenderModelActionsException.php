@@ -18,7 +18,7 @@ final class UnableToRenderModelActionsException extends Exception
     public function __construct(Model $model, ModelActionContext $context, Throwable $previousException = null)
     {
         parent::__construct(
-            \sprintf('unable to actions for model of class "%s" with context %s', \get_class($model), $context),
+            \sprintf('unable to render actions for model of class "%s" with context %s', \get_class($model), $context),
             self::$level_FATALERROR,
             $previousException
         );
