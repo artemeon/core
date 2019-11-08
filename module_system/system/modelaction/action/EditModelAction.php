@@ -22,7 +22,7 @@ use Kajona\System\System\ModelControllerLocatorInterface;
 use ReflectionMethod;
 use Throwable;
 
-final class EditModelAction implements ModelActionInterface
+class EditModelAction implements ModelActionInterface
 {
     /**
      * @var ModelControllerLocatorInterface
@@ -39,9 +39,9 @@ final class EditModelAction implements ModelActionInterface
      */
     private $lang;
 
-    public function __construct(ModelControllerLocatorInterface $modelControllerProvider, ToolkitAdmin $toolkit, Lang $lang)
+    public function __construct(ModelControllerLocatorInterface $modelControllerLocator, ToolkitAdmin $toolkit, Lang $lang)
     {
-        $this->modelControllerLocator = $modelControllerProvider;
+        $this->modelControllerLocator = $modelControllerLocator;
         $this->toolkit = $toolkit;
         $this->lang = $lang;
     }

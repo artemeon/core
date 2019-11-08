@@ -498,9 +498,9 @@ abstract class FilterBase
      * @return string
      * @throws \ReflectionException
      */
-    public function getFullParamName($strParam)
+    public function getFullParamName(string $strParam): string
     {
-        return $this->getFilterId()."_".$strParam;
+        return $this->getFilterId() . '_' . \strtolower($strParam);
     }
 
     /**

@@ -12,7 +12,7 @@ use Kajona\System\System\Exceptions\ModelActionsContainerHasAlreadyBeenRegistere
 use Kajona\System\System\Exceptions\UnableToFindModelActionsContainerException;
 use Kajona\System\System\Exceptions\UnableToRegisterModelActionsContainerException;
 use Kajona\System\System\Model;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Container\ModelActionsContainerInterface;
 
 /**
  * Central register of model actions containers. Model actions containers registered with this class are not persisted.

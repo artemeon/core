@@ -8,7 +8,7 @@ use Kajona\System\System\Exceptions\UnableToRenderActionForModelException;
 use Kajona\System\System\LanguagesLanguage;
 use Kajona\System\System\Model;
 use Kajona\System\System\Modelaction\Context\ModelActionContext;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Container\ModelActionsContainerInterface;
 use Kajona\System\System\SystemModule;
 use Kajona\System\System\SystemSession;
 use Kajona\System\System\SystemSetting;

@@ -33,9 +33,9 @@ use Kajona\System\System\Modelaction\Action\PermissionsModelAction;
 use Kajona\System\System\Modelaction\Action\StatusModelAction;
 use Kajona\System\System\Modelaction\Action\TagModelAction;
 use Kajona\System\System\Modelaction\Action\UnlockModelAction;
-use Kajona\System\System\Modelaction\Actionlist\DefaultModelActionList;
-use Kajona\System\System\Modelaction\Actionlist\Legacy\LegacyModelActionList;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Container\DefaultModelActionsContainer;
+use Kajona\System\System\Modelaction\Container\Legacy\LegacyModelActionsContainer;
+use Kajona\System\System\Modelaction\Container\ModelActionsContainerInterface;
 use Kajona\System\System\Modelaction\Context\ModelActionContextFactory;
 use Kajona\System\System\Modelaction\Context\ModelActionContextFactoryInterface;
 use Kajona\System\System\Modelaction\Register\InMemoryModelActionsContainerRegistry;
@@ -221,13 +221,13 @@ class ServiceProvider implements ServiceProviderInterface
 
     private function registerModelActions(Container $container): void
     {
-        $container[DefaultModelActionList::class] = static function (Container $container): ModelActionsContainerInterface {
+        $container[DefaultModelActionsContainer::class] = static function (Container $container): ModelActionsContainerInterface {
             $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
             $featureDetector = $container[FeatureDetectorInterface::class];
             $toolkit = $container[self::STR_ADMINTOOLKIT];
             $lang = $container[self::STR_LANG];
 
-            return new DefaultModelActionList(
+            return new DefaultModelActionsContainer(
                 new UnlockModelAction($toolkit, $lang),
                 new EditModelAction($modelControllerProvider, $toolkit, $lang),
                 new DeleteModelAction($modelControllerProvider, $toolkit, $lang),
@@ -246,7 +246,7 @@ class ServiceProvider implements ServiceProviderInterface
                 static function (ModelActionsContainerRegistryInterface $modelActionsContainerRegistry, Container $container): ModelActionsContainerRegistryInterface {
                     $modelActionsContainerRegistry->register(
                         Model::class,
-                        $container[DefaultModelActionList::class]
+                        $container[DefaultModelActionsContainer::class]
                     );
 
                     return $modelActionsContainerRegistry;
@@ -257,10 +257,10 @@ class ServiceProvider implements ServiceProviderInterface
 
     private function registerLegacyModelActions(Container $container): void
     {
-        $container[LegacyModelActionList::class] = static function (Container $container): ModelActionsContainerInterface {
+        $container[LegacyModelActionsContainer::class] = static function (Container $container): ModelActionsContainerInterface {
             $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
 
-            return new LegacyModelActionList(
+            return new LegacyModelActionsContainer(
                 new LegacyUnlockModelAction($modelControllerProvider),
                 new LegacyEditModelAction($modelControllerProvider),
                 new LegacyAdditionalModelAction($modelControllerProvider),
@@ -277,7 +277,7 @@ class ServiceProvider implements ServiceProviderInterface
             static function (ModelActionsContainerRegistryInterface $modelActionsContainerRegistry, Container $container): ModelActionsContainerRegistryInterface {
                 $modelActionsContainerRegistry->register(
                     Model::class,
-                    $container[LegacyModelActionList::class]
+                    $container[LegacyModelActionsContainer::class]
                 );
 
                 return $modelActionsContainerRegistry;
@@ -495,6 +495,11 @@ class ServiceProvider implements ServiceProviderInterface
             );
         };
 
+        $objContainer[CurrentUserProviderInterface::class] = static function (Container $container): CurrentUserProviderInterface {
+            return new CurrentUserFromSessionProvider(
+                $container[self::STR_SESSION]
+            );
+        };
         $objContainer[FeatureDetectorInterface::class] = static function (Container $container): FeatureDetectorInterface {
             return new CachedFeatureDetector(
                 new SystemFeatureDetector(),
