@@ -25,7 +25,6 @@
     "bootstrap-less": "^3.3.8",
     "bootstrap-select": "^1.13.10",
     "bootstrap-switch": "^3.3.4",
-    "bootstrap-vue": "^2.0.0-rc.28",
     "calendar-heatmap": "github:artemeon/calendar-heatmap",
     "chart.js": "^2.7.3",
     "chartjs-plugin-datalabels": "^0.5.0",

@@ -171,6 +171,7 @@
     <target name="installNpmBuildDependencies">
         <exec dir="${basedir}" executable="${path.npm}" failonerror="on">
             <arg line=" install"/>
+            <arg line=" --silent"/>
         </exec>
 
     </target>

@@ -104,6 +104,14 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         return $this->getObjValidator()->validate($objDate);
     }
 
+    /**
+     * @inheritDoc
+     */
+    public function isFieldEmpty()
+    {
+        return empty($this->getStrValue());
+    }
+
     public function setValueToObject()
     {
 

@@ -1,15 +1,48 @@
 <?php
 
+/*"******************************************************************************************************
+ *   (c) ARTEMEON Management Partner GmbH
+ ********************************************************************************************************/
+
+declare(strict_types=1);
+
 namespace Kajona\System\System;
 
+use Kajona\System\System\Lifecycle\User\GroupLifecycle;
+use Kajona\System\System\Lifecycle\User\UserLifecycle;
 use Kajona\System\System\Messagequeue\Consumer;
 use Kajona\System\System\Messagequeue\Executor\CallEventExecutor;
 use Kajona\System\System\Messagequeue\Executor\SendMessageExecutor;
 use Kajona\System\System\Messagequeue\Executor\SetRecursiveRightsExecutor;
 use Kajona\System\System\Messagequeue\ExecutorFactory;
 use Kajona\System\System\Messagequeue\Producer;
-use Kajona\System\System\Lifecycle\User\GroupLifecycle;
-use Kajona\System\System\Lifecycle\User\UserLifecycle;
+use Kajona\System\System\Modelaction\Action\ChangeHistoryModelAction;
+use Kajona\System\System\Modelaction\Action\CopyModelAction;
+use Kajona\System\System\Modelaction\Action\DeleteModelAction;
+use Kajona\System\System\Modelaction\Action\EditModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyAdditionalModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyChangeHistoryModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyCopyModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyDeleteModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyEditModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyPermissionsModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyStatusModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyTagModelAction;
+use Kajona\System\System\Modelaction\Action\Legacy\LegacyUnlockModelAction;
+use Kajona\System\System\Modelaction\Action\PermissionsModelAction;
+use Kajona\System\System\Modelaction\Action\StatusModelAction;
+use Kajona\System\System\Modelaction\Action\TagModelAction;
+use Kajona\System\System\Modelaction\Action\UnlockModelAction;
+use Kajona\System\System\Modelaction\Container\DefaultModelActionsContainer;
+use Kajona\System\System\Modelaction\Container\Legacy\LegacyModelActionsContainer;
+use Kajona\System\System\Modelaction\Container\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Context\ModelActionContextFactory;
+use Kajona\System\System\Modelaction\Context\ModelActionContextFactoryInterface;
+use Kajona\System\System\Modelaction\Register\InMemoryModelActionsContainerRegistry;
+use Kajona\System\System\Modelaction\Register\ModelActionsContainerRegistryInterface;
+use Kajona\System\System\Modelaction\Renderer\CachedModelActionsRenderer;
+use Kajona\System\System\Modelaction\Renderer\DefaultModelActionsRenderer;
+use Kajona\System\System\Modelaction\Renderer\ModelActionsRendererInterface;
 use Kajona\System\System\Permissions\PermissionHandlerFactory;
 use Kajona\System\System\Security\PasswordRotator;
 use Kajona\System\System\Security\PasswordValidator;
@@ -182,7 +215,91 @@ class ServiceProvider implements ServiceProviderInterface
      */
     const RECURSIVE_RIGHT_EXECUTOR = "system_recursive_right_executor";
 
-    public function register(Container $objContainer)
+    private const USE_LEGACY_MODEL_ACTIONS = true;
+
+    private const CACHE_RENDERED_MODEL_ACTIONS = true;
+
+    private function registerModelActions(Container $container): void
+    {
+        $container[DefaultModelActionsContainer::class] = static function (Container $container): ModelActionsContainerInterface {
+            $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
+            $featureDetector = $container[FeatureDetectorInterface::class];
+            $toolkit = $container[self::STR_ADMINTOOLKIT];
+            $lang = $container[self::STR_LANG];
+
+            return new DefaultModelActionsContainer(
+                new UnlockModelAction($toolkit, $lang),
+                new EditModelAction($modelControllerProvider, $toolkit, $lang),
+                new DeleteModelAction($modelControllerProvider, $toolkit, $lang),
+                new CopyModelAction($modelControllerProvider, $toolkit, $lang),
+                new StatusModelAction($toolkit),
+                new TagModelAction($featureDetector, $toolkit, $lang),
+                new ChangeHistoryModelAction($featureDetector, $toolkit, $lang),
+                new PermissionsModelAction($modelControllerProvider, $toolkit, $lang)
+            );
+        };
+
+        // The default model actions container can only be registered after removing the legacy model actions container
+        if (!self::USE_LEGACY_MODEL_ACTIONS) {
+            $container->extend(
+                ModelActionsContainerRegistryInterface::class,
+                static function (ModelActionsContainerRegistryInterface $modelActionsContainerRegistry, Container $container): ModelActionsContainerRegistryInterface {
+                    $modelActionsContainerRegistry->register(
+                        Model::class,
+                        $container[DefaultModelActionsContainer::class]
+                    );
+
+                    return $modelActionsContainerRegistry;
+                }
+            );
+        }
+    }
+
+    private function registerLegacyModelActions(Container $container): void
+    {
+        $container[LegacyModelActionsContainer::class] = static function (Container $container): ModelActionsContainerInterface {
+            $modelControllerProvider = $container[ModelControllerLocatorInterface::class];
+
+            return new LegacyModelActionsContainer(
+                new LegacyUnlockModelAction($modelControllerProvider),
+                new LegacyEditModelAction($modelControllerProvider),
+                new LegacyAdditionalModelAction($modelControllerProvider),
+                new LegacyDeleteModelAction($modelControllerProvider),
+                new LegacyCopyModelAction($modelControllerProvider),
+                new LegacyStatusModelAction($modelControllerProvider),
+                new LegacyTagModelAction($modelControllerProvider),
+                new LegacyChangeHistoryModelAction($modelControllerProvider),
+                new LegacyPermissionsModelAction($modelControllerProvider)
+            );
+        };
+        $container->extend(
+            ModelActionsContainerRegistryInterface::class,
+            static function (ModelActionsContainerRegistryInterface $modelActionsContainerRegistry, Container $container): ModelActionsContainerRegistryInterface {
+                $modelActionsContainerRegistry->register(
+                    Model::class,
+                    $container[LegacyModelActionsContainer::class]
+                );
+
+                return $modelActionsContainerRegistry;
+            }
+        );
+    }
+
+    private function cacheModelActionsRenderer(Container $container): void
+    {
+        $container->extend(
+            ModelActionsRendererInterface::class,
+            static function (ModelActionsRendererInterface $modelActionsRenderer, Container $container): ModelActionsRendererInterface {
+                return new CachedModelActionsRenderer(
+                    $modelActionsRenderer,
+                    $container[self::STR_CACHE_MANAGER],
+                    $container[ModelCacheKeyGeneratorInterface::class]
+                );
+            }
+        );
+    }
+
+    public function register(Container $objContainer): void
     {
         $objContainer[self::STR_DB] = function ($c) {
             return Database::getInstance();
@@ -377,5 +494,45 @@ class ServiceProvider implements ServiceProviderInterface
                 $c[self::STR_RIGHTS]
             );
         };
+
+        $objContainer[CurrentUserProviderInterface::class] = static function (Container $container): CurrentUserProviderInterface {
+            return new CurrentUserFromSessionProvider(
+                $container[self::STR_SESSION]
+            );
+        };
+        $objContainer[FeatureDetectorInterface::class] = static function (Container $container): FeatureDetectorInterface {
+            return new CachedFeatureDetector(
+                new SystemFeatureDetector(),
+                $container[self::STR_CACHE_MANAGER],
+                $container[self::STR_SESSION]
+            );
+        };
+        $objContainer[ModelControllerLocatorInterface::class] = static function (): ModelControllerLocatorInterface {
+            return new AnnotationBasedModelControllerLocator();
+        };
+        $objContainer[ModelCacheKeyGeneratorInterface::class] = static function (): ModelCacheKeyGeneratorInterface {
+            return new DefaultModelCacheKeyGenerator();
+        };
+
+        $objContainer[ModelActionContextFactoryInterface::class] = static function (): ModelActionContextFactoryInterface {
+            return new ModelActionContextFactory();
+        };
+        $objContainer[ModelActionsContainerRegistryInterface::class] = static function (): ModelActionsContainerRegistryInterface {
+            return new InMemoryModelActionsContainerRegistry();
+        };
+        $objContainer[ModelActionsRendererInterface::class] = static function (Container $container): ModelActionsRendererInterface {
+            return new DefaultModelActionsRenderer(
+                $container[ModelActionsContainerRegistryInterface::class]
+            );
+        };
+
+        $objContainer['use_legacy_model_actions'] = self::USE_LEGACY_MODEL_ACTIONS;
+
+        $this->registerLegacyModelActions($objContainer);
+        $this->registerModelActions($objContainer);
+
+        if (self::CACHE_RENDERED_MODEL_ACTIONS) {
+            $this->cacheModelActionsRenderer($objContainer);
+        }
     }
 }

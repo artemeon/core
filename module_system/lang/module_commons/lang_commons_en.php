@@ -75,6 +75,7 @@ $lang["commons_open_browser"]            = "Open browser";
 $lang["commons_page_success"]            = "Page in case of success (optional)";
 $lang["commons_path"]                    = "Path";
 $lang["commons_reset"]                   = "Reset";
+$lang["commons_recalculate_permissions"] = "Recalculate";
 $lang["commons_result_page"]             = "Result page";
 $lang["commons_save"]                    = "Save";
 $lang["commons_savenext"]                = "Save & Next";

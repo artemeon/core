@@ -493,19 +493,19 @@ in addition, a container for the calendar is needed. Use %%calendarContainerId%%
     </div>
     <script type="text/javascript">
          var onChange = %%onChange%%;
-            var $objInput = $("#%%name%%");
-            $objInput.TagEditor({
-                initialTags: %%values%%,
-                forceLowercase: false,
-                delimiter: %%delimiter%%,
-                maxLength: 250,
-                onChange: onChange
-            });
-            $objInput.on('kajona.forms.mandatoryAdded', function() {
-                TagEditor.updateMandatoryRendering($(this));
-            });
-            TagEditor.updateMandatoryRendering($objInput);
-            onChange("#%%name%%", $objInput.TagEditor('getTags')[0].editor, %%values%%);
+         var $objInput = $("#%%name%%");
+         $objInput.tagEditor({
+             initialTags: %%values%%,
+             forceLowercase: false,
+             delimiter: %%delimiter%%,
+             maxLength: 250,
+             onChange: onChange
+         });
+         $objInput.on('kajona.forms.mandatoryAdded', function() {
+             TagEditor.updateMandatoryRendering($(this));
+         });
+         TagEditor.updateMandatoryRendering($objInput);
+         onChange("#%%name%%", $objInput.tagEditor('getTags')[0].editor, %%values%%);
     </script>
 </input_tageditor>
 
@@ -1176,79 +1176,6 @@ place ajaxScript before the closing input_tagselector-tag.
 ---------------------------------------------------------------------------------------------------------
 -- BACKEND NAVIGATION -----------------------------------------------------------------------------------
 
-<sitemap_wrapper>
-      <div class="nav-header">
-            %%aspectToggle%%
-            [lang,commons_product_title,commons]
-      </div>
-    %%level%%
-</sitemap_wrapper>
-
-
-<sitemap_aspect_wrapper>
-<div data-kajona-aspectid='%%aspectId%%' id="%%aspectId%%" class='%%class%% aspect-container panel-group'>
-%%aspectContent%%
-</div>
-
-</sitemap_aspect_wrapper>
-
-<sitemap_combined_entry_header>
-    <a data-toggle="collapse" data-parent="#%%aspectId%%" href="#menu_%%systemid%%%%aspectId%%" rel="tooltip"
-       title="%%moduleName%%" data-kajona-module="%%moduleTitle%%"
-       onclick="ModuleNavigation.combinedActive();">
-        <i class="fa %%faicon%%"></i>
-    </a>
-</sitemap_combined_entry_header>
-
-<sitemap_combined_entry_body>
-    <div id="menu_%%systemid%%%%aspectId%%" class="panel-collapse collapse" data-kajona-module="%%moduleTitle%%">
-        <div class="panel-body">
-            <ul>%%actions%%</ul>
-        </div>
-    </div>
-</sitemap_combined_entry_body>
-
-
-<sitemap_combined_entry_wrapper>
-    <div class="panel panel-default panel-combined">
-        <div class="panel-heading">
-            <span class="linkcontainer collapsed">
-            %%combined_header%%
-                <a rel="tooltip" data-kajona-module="search" onclick="var event = new Event('agp.search.open'); document.body.dispatchEvent(event);">
-                    <i class="fa fa-search"></i>
-                </a>
-            </span>
-        </div>
-        %%combined_body%%
-    </div>
-</sitemap_combined_entry_wrapper>
-
-
-<sitemap_module_wrapper>
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <a data-toggle="collapse" data-parent="#%%aspectId%%" href="#menu_%%systemid%%%%aspectId%%"
-               data-kajona-module="%%moduleTitle%%" class="collapsed"
-               onclick="ModuleNavigation.combinedInactive();">
-                %%moduleName%%
-            </a>
-        </div>
-        <div id="menu_%%systemid%%%%aspectId%%" class="panel-collapse collapse" data-kajona-module="%%moduleTitle%%">
-            <div class="panel-body">
-                <ul>%%actions%%</ul>
-            </div>
-        </div>
-    </div>
-</sitemap_module_wrapper>
-
-
-<sitemap_action_entry>
-    <li>%%action%%</li>
-</sitemap_action_entry>
-
-<sitemap_divider_entry>
-<li class="divider"></li>
-</sitemap_divider_entry>
 
 <changelog_heatmap>
     <div class="chart-navigation pull-left"><a href="#" onclick="Changelog.loadPrevYear();return false;"><i class="kj-icon fa fa-arrow-left"></i></a></div>
