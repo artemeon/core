@@ -653,7 +653,6 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
         $this->objDB->createIndex("agp_user_group", "ix_group_short_id", ["group_short_id"]);
         $this->objDB->createIndex("agp_user_group", "ix_group_system_group", ["group_system_group"]);
 
-/*
         $strReturn .= "Creating view-permissions table".PHP_EOL;
         $this->objDB->createTable(
             "agp_permissions_view",
@@ -675,6 +674,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
             ["right2_id", "right2_shortgroup"]
         );
 
+        /*
         $this->objDB->_pQuery("DELETE FROM agp_permissions_view WHERE 1=1", []);
         $this->objDB->_pQuery("DELETE FROM agp_permissions_right2 WHERE 1=1", []);
 
