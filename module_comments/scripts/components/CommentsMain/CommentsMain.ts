@@ -2,7 +2,7 @@ import { Component, Mixins } from 'vue-property-decorator'
 import { LangMixin } from 'core/module_system/scripts/kajona/VueMixings'
 import {namespace} from 'vuex-class'
 import CommentsModule from "core/module_comments/scripts/modules/CommentsModule";
-
+import $ from 'jquery'
 @Component
 class CommentsMain extends Mixins(LangMixin(['comments'])) {
     @namespace('commentsModule').Action addCommentAction: any
@@ -17,9 +17,14 @@ class CommentsMain extends Mixins(LangMixin(['comments'])) {
     mounted(){
         const parent = document.getElementById('content')
         parent.appendChild(this.$el)
-        var matches = []
-        console.log(parent.querySelectorAll('[data-field-id]'),this)
-
+        setTimeout(()=>{
+            let elements = document.querySelectorAll('[data-fieldid]')
+            elements.forEach(element=>{
+                let test= <HTMLVideoElement>element 
+                console.log(test.dataset.systemid, 'works with timeout')
+            })
+        },2000)
+ 
         // this.addCommentAction()
         // this.listCommentsAction()
     }
