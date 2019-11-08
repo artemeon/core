@@ -121,15 +121,20 @@ class OrmObjectinit extends OrmBase
      */
     private function initAssignmentProperties(Reflection $reflection): void
     {
+        $object = $this->getObjObject();
         //get the mapped properties
         $properties = $reflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_OBJECTLIST, ReflectionEnum::PARAMS);
 
         foreach ($properties as $propertyName => $values) {
-            $propertyLazyLoader = new OrmAssignmentArray($this->getObjObject(), $propertyName, $this->getIntCombinedLogicalDeletionConfig());
+            $propertyLazyLoader = new OrmAssignmentArray($object, $propertyName, $this->getIntCombinedLogicalDeletionConfig());
 
             $setter = $reflection->getSetter($propertyName);
             if ($setter !== null) {
-                $this->getObjObject()->{$setter}($propertyLazyLoader);
+                try {
+                    $object->{$setter}($propertyLazyLoader);
+                } catch (\TypeError $exception) {
+                    $object->{$setter}($propertyLazyLoader->getArrayCopy());
+                }
             }
         }
     }
