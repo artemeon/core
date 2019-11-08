@@ -12,14 +12,16 @@ use Kajona\System\System\FilterBase;
 
 /**
  * Filter for flow config model objects, works irrespective of current system status.
- *
+ * 
+ * @module flow
  * @author mike.marschall@artemeon.de
  * @since 7.2
  */
 final class FlowConfigFilter extends FilterBase
 {
     /**
-     * @var string|null
+     * @var string
+     * 
      * @fieldType Kajona\System\Admin\Formentries\FormentryText
      * @tableColumn agp_flow.flow_target_class
      * @filterCompareOperator EQ
