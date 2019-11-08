@@ -6,8 +6,8 @@
 
 declare(strict_types=1);
 
-namespace Kajona\System\System\Modelaction\Actionlist;
+namespace Kajona\System\System\Modelaction\Container;
 
-final class DefaultModelActionList extends InMemoryModelActionsContainer
+final class DefaultModelActionsContainer extends InMemoryModelActionsContainer
 {
 }

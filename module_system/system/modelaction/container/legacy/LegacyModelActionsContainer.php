@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Kajona\System\System\Modelaction\Actionlist\Legacy;
+namespace Kajona\System\System\Modelaction\Container\Legacy;
 
 use Kajona\System\System\Modelaction\Action\Legacy\LegacyEditModelAction;
 use Kajona\System\System\Modelaction\Action\ModelActionInterface;
-use Kajona\System\System\Modelaction\Actionlist\ModelActionsContainerInterface;
-use Kajona\System\System\Modelaction\Actionlist\InMemoryModelActionsContainer;
+use Kajona\System\System\Modelaction\Container\ModelActionsContainerInterface;
+use Kajona\System\System\Modelaction\Container\InMemoryModelActionsContainer;
 
-final class LegacyModelActionList extends InMemoryModelActionsContainer
+final class LegacyModelActionsContainer extends InMemoryModelActionsContainer
 {
     public function withAdditionalModelActions(
         ModelActionInterface $modelActionToBeAdded,
