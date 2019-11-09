@@ -2,9 +2,10 @@ import { Component, Mixins ,Watch} from 'vue-property-decorator'
 import { LangMixin } from 'core/module_system/scripts/kajona/VueMixings'
 import {namespace} from 'vuex-class'
 import CommentsModule from "core/module_comments/scripts/modules/CommentsModule"
-
-
-@Component
+import CommentsEdit from "../CommentsEdit/CommentsEdit.vue"
+import CommentsBox from '../CommentsBox/CommentsBox.vue'
+import Vue from 'vue'
+@Component({components: {CommentsEdit}})
 class CommentsMain extends Mixins(LangMixin(['comments'])) {
     @namespace('commentsModule').Action addCommentAction: any
     @namespace('commentsModule').Action listCommentsAction: any
@@ -44,7 +45,29 @@ class CommentsMain extends Mixins(LangMixin(['comments'])) {
 
     @Watch('test')
     Onchange(old){
-        console.log('test watch changed',this.test,this.test[0].dataset)
+       
+this.test.map(domElement=>{
+    let componentClass = Vue.extend(CommentsEdit)
+    let instance = new componentClass(
+    )
+    instance.$mount()
+    let componentClassBox = Vue.extend(CommentsBox)
+    let instanceBox = new componentClassBox(
+    )
+    instanceBox.$mount()
+    const me = this
+    instance.$on('click', ()=>{me.handleChild(instance,instanceBox)})
+    let parentOfparent = domElement.parentNode.parentNode
+    parentOfparent.insertBefore(instance.$el,domElement.parentNode.nextSibling)
+     parentOfparent.insertBefore(instanceBox.$el,domElement.parentNode.nextSibling)
+})
+        
+    }
+
+    handleChild(sourceBtn,Box){
+        sourceBtn.show=false
+        Box.show=true
+        
     }
     callback(){
         let sets = document.querySelectorAll('[data-field-id]')
