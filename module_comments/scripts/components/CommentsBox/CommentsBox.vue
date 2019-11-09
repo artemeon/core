@@ -1,6 +1,11 @@
 <template>
   <div v-if="show" class="core-component-commentsBox">
-    <textarea name="comment" value class="form-control mandatoryFormElement textBox" />
+    <textarea
+      name="comment"
+      value
+      class="form-control mandatoryFormElement textBox"
+      v-model="message"
+    />
     <a
       class="btn savechanges core-component-formentry-submit textBox"
       name="submitbtn"

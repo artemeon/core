@@ -9,6 +9,8 @@ import Vue from 'vue'
 class CommentsMain extends Mixins(LangMixin(['comments'])) {
     @namespace('commentsModule').Action addCommentAction: any
     @namespace('commentsModule').Action listCommentsAction: any
+    @namespace('commentsModule').State comments: any
+    @namespace('commentsModule').Getter getById: any
     test = []
     created(){
         const name = 'commentsModule'
@@ -44,9 +46,14 @@ class CommentsMain extends Mixins(LangMixin(['comments'])) {
     }
 
     @Watch('test')
-    Onchange(old){
-       
-this.test.map(domElement=>{
+     Onchange(old){
+    let currentSystem = this.test[0].dataset.systemId
+    this.listCommentsAction(currentSystem)
+        console.log('done')
+        //test 
+    this.test.map(domElement=>{
+    let field = domElement.dataset.fieldId
+    console.log(this.getById(field),this.comments)
     let componentClass = Vue.extend(CommentsEdit)
     let instance = new componentClass(
     )
@@ -57,14 +64,39 @@ this.test.map(domElement=>{
     instanceBox.$mount()
     const me = this
     instance.$on('click', ()=>{me.handleChild(instance,instanceBox)})
+    instanceBox.$on('send', (e)=>{me.handleSend(e,instance,instanceBox,domElement)})
     let parentOfparent = domElement.parentNode.parentNode
     let parent = domElement.parentNode
     parentOfparent.insertBefore(instance.$el,domElement.parentNode.nextSibling)
-     parent.insertBefore(instanceBox.$el,domElement.nextSibling)
+    parent.insertBefore(instanceBox.$el,domElement.nextSibling)
 })
+
+        //end
+    
+
         
     }
-
+    handleSend(e,btn,box,source){
+        console.log(e,btn,box)
+        let now = new Date().getTime()
+        let THIRTY_DAYS = 30 * 24 * 60 * 60 * 1000
+        let thirtyDaysFromNow = now + THIRTY_DAYS
+        let fieldId=source.dataset.fieldId
+        let systemId=source.dataset.systemId
+        console.log(source.dataset)
+        let data={
+            fieldId:fieldId,
+            systemId:systemId,
+            text:e,
+            assignee: 'dha',
+            date:thirtyDaysFromNow,
+            pred:'0',
+            done:'0',
+           
+        }
+        console.log(data)
+         this.addCommentAction(data)
+    }
     handleChild(sourceBtn,Box){
         sourceBtn.show=false
         Box.show=true
@@ -74,7 +106,9 @@ this.test.map(domElement=>{
         let sets = document.querySelectorAll('[data-field-id]')
         if(sets && sets.length>0)
         {
-            if(JSON.stringify(sets) !== JSON.stringify(this.test))
+            
+             if(JSON.stringify(sets) !== JSON.stringify(this.test))
+         
             {
                 sets.forEach(nodeEl=>{
                     if(this.test.indexOf(nodeEl)===-1)
@@ -85,9 +119,5 @@ this.test.map(domElement=>{
         }
         //  console.log('no Sets')
     }
-    // workData(dataset){
-    //     clearInterval(this.polling)
-    //     console.log(dataset)
-    // }
 }
 export default CommentsMain

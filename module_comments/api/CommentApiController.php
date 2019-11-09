@@ -142,8 +142,15 @@ class CommentApiController implements ApiControllerInterface
         $items = array();
         foreach ($comments as $oneComment){
             $item = array();
+
             $item['id'] = $oneComment->getStrSystemid();
             $item['text'] = $oneComment->getCommentText();
+            $item['fieldId'] = $oneComment->getFieldId();
+            $item['author'] = $oneComment->getStrOwner($oneComment->getStrSystemid());
+            $item['assignee'] = $oneComment->getAssignee();
+            $item['done'] = $oneComment->isCommentDone();
+            $item['endDate'] = $oneComment->getEndDate();
+            $item['prevId'] = $oneComment->getCommentPrevId();
             $items[] = $item;
         }
         return $items;
