@@ -95,7 +95,7 @@ class AppBuilder
         $objectBuilder = $this->objectBuilder;
         $container = $this->container;
         $routes = $this->endpointScanner->getEndpoints();
-        $backendCacheManager = new BackendCacheManager($this->container[\Kajona\System\System\ServiceProvider::STR_CACHE_MANAGER], "Kajona\System\Admin\RedisStore");
+        $backendCacheManager = new BackendCacheManager($this->endpointScanner, "Kajona\System\Admin\RedisStore");
         // add CORS middleware
         $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) {
             $response = $response
@@ -113,7 +113,8 @@ class AppBuilder
         // add Caching middleware
         $endpointScanner = $this->endpointScanner;
         $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($backendCacheManager) {
-            $value = $backendCacheManager->get($request);
+            //todo run only if $request === GET
+            $value = $backendCacheManager->getCache($request);
             if ($value !== '') {
                 return $response->withJson(json_decode($value));
             }
@@ -153,7 +154,8 @@ class AppBuilder
                             $response = $response->withHeader($name, $value);
                         }
                         //set payload to cache
-                        $backendCacheManager->set($request, $data->getBody());
+                        //todo save to cache only if $request === GET
+                        $backendCacheManager->setCache($request, $data->getBody());
                         $response = $response->write($data->getBody());
 
                     } else {

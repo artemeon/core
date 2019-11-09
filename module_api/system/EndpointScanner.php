@@ -104,4 +104,68 @@ class EndpointScanner
 
         return $classes;
     }
+
+    /**
+     * @return array
+     * @throws Exception
+     * @throws \Exception
+     */
+    public function getCacheableRoutes(): array
+    {
+        $routes = $this->cacheManager->getValue('cacheable_api_routes');
+        if (!empty($routes)) {
+            return $routes;
+        }
+        $routes = [];
+        $apiControllers = $this->getAllApiController();
+        foreach ($apiControllers as $class) {
+            $reflection = new Reflection($class);
+            $methods = $reflection->getMethodsWithAnnotation('@cacheable');
+            if (!empty($methods)) {
+                foreach ($methods as $methodName => $values) {
+                    $path = $reflection->getMethodAnnotationValue($methodName, '@path');
+                    if (empty($path)) {
+                        throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
+                    }
+                    $routes[] = $path;
+                }
+            }
+
+        }
+        if (!empty($routes)) {
+            //save the found routes to cache
+            $this->cacheManager->addValue('cacheable_api_routes', $routes);
+            return $routes;
+        }
+        return [];
+    }
+
+    /**
+     * Returns class::method of the keyGenerator
+     * @param string $path
+     * @return string
+     * @throws Exception
+     */
+    public function getKeyGeneratorForPath(string $path): string
+    {
+        $apiControllers = $this->getAllApiController();
+        foreach ($apiControllers as $class) {
+            $reflection = new Reflection($class);
+            $methods = $reflection->getMethodsWithAnnotation('@path');
+            if (!empty($methods)) {
+                foreach ($methods as $methodName => $values) {
+                    $methodPath = $reflection->getMethodAnnotationValue($methodName, '@path');
+                    if (empty($methodPath)) {
+                        throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
+                    } else if ($methodPath === $path) {
+                        $keyGenerator = $reflection->getAnnotationValuesFromClass('@keyGenerator');
+                        if (empty($keyGenerator)) {
+                            throw new \RuntimeException("Provided an empty keyGenerator at {$class}::{$methodName}");
+                        }
+                        return $keyGenerator[0] . '::' . $methodName;
+                    }
+                }
+            }
+        }
+    }
 }

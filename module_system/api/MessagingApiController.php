@@ -18,6 +18,7 @@ use PSX\Http\Environment\HttpResponse;
  *
  * @author dhafer.harrathi@artemeon.de
  * @since 7.2
+ * @keyGenerator Kajona\System\KeyGenerator\MessagingKeyGenerator
  */
 class MessagingApiController implements ApiControllerInterface
 {
@@ -43,8 +44,6 @@ class MessagingApiController implements ApiControllerInterface
      */
     public function getUnreadMessagesCount(HttpContext $context): HttpResponse
     {
-        $key = '/v1/messages/count/' . $this->objSession->getUserID();
-
         $userId = $this->objSession->getUserID();
         $count = MessagingMessage::getNumberOfMessagesForUser($userId, true);
         $alert = MessagingAlert::getNextAlertForUser($userId);

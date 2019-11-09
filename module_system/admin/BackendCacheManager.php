@@ -3,12 +3,9 @@
 
 namespace Kajona\System\Admin;
 
-use Kajona\Api\System\ApiControllerInterface;
+use Kajona\Api\System\EndpointScanner;
 use Kajona\System\System\CacheManager;
-use Kajona\System\System\Classloader;
 use Kajona\System\System\Exception;
-use Kajona\System\System\Reflection;
-use Kajona\System\System\Resourceloader;
 use Slim\Http\Request as SlimRequest;
 
 
@@ -21,10 +18,13 @@ use Slim\Http\Request as SlimRequest;
 class BackendCacheManager
 {
     /**
-     * @var CacheManager
+     * @var CacheStore
      */
-    private $localCache;
+
     private $cacheStore;
+    /**
+     * @var string
+     */
     private $keyGenerator;
     private $keyInvalidator;
     /**
@@ -35,28 +35,40 @@ class BackendCacheManager
      * @var string
      */
     private $storeType;
+    /**
+     * @var EndpointScanner
+     */
+    private $endpointScanner;
 
     /**
      *
-     * @param CacheManager $localCache
+     * @param EndpointScanner $endpointScanner
      * @param string $storeType
      * @throws Exception
      */
-    public function __construct(CacheManager $localCache, string $storeType)
+    public function __construct(EndpointScanner $endpointScanner, string $storeType)
     {
         $this->storeType = $storeType;
-        $this->localCache = $localCache;
+        $this->endpointScanner = $endpointScanner;
         $this->cacheStore = $this->initStore();
-        $this->cacheableRoutes = $this->getCacheableRoutes();
+        $this->cacheableRoutes = $this->endpointScanner->getCacheableRoutes();
 
     }
 
-    public function get(SlimRequest $request): string
+    /**
+     * @param SlimRequest $request
+     * @return string
+     * @throws Exception
+     */
+    public function getCache(SlimRequest $request): string
     {
+
         //check if requested end-point is cachable
         $path = '/' . $request->getUri()->getPath();
+
         if ($this->routeIsCacheable($request)) {
-            $key = $path;
+            $this->keyGenerator = $this->endpointScanner->getKeyGeneratorForPath($path);
+            $key = call_user_func($this->keyGenerator, $request);
             return $this->cacheStore->get($key);
         }
         return '';
@@ -66,68 +78,16 @@ class BackendCacheManager
      * @param SlimRequest $request
      * @param string $value
      */
-    public function set(SlimRequest $request, string $value): void
+    public function setCache(SlimRequest $request, string $value): void
     {
+        //todo set only if value isnt in store
         if ($this->routeIsCacheable($request)) {
-            $path = '/' . $request->getUri()->getPath();
-            $key = $path;
+            $key = call_user_func($this->keyGenerator, $request);
             $this->cacheStore->set($key, $value);
         }
 
     }
 
-    /**
-     * @return array
-     * @throws Exception
-     * @throws \Exception
-     */
-    private function getCacheableRoutes(): array
-    {
-        $routes = $this->localCache->getValue('cacheable_api_routes');
-        if (!empty($routes)) {
-            return $routes;
-        }
-        $routes = [];
-        $apiControllers = $this->getAllApiControllers();
-        foreach ($apiControllers as $class) {
-            $reflection = new Reflection($class);
-            $methods = $reflection->getMethodsWithAnnotation('@cacheable');
-            if (!empty($methods)) {
-                foreach ($methods as $methodName => $values) {
-                    $path = $reflection->getMethodAnnotationValue($methodName, '@path');
-                    if (empty($path)) {
-                        throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
-                    }
-                    $routes[] = $path;
-                }
-            }
-
-        }
-        if (!empty($routes)) {
-            //save the found routes to cache
-            $this->localCache->addValue('cacheable_api_routes', $routes);
-            return $routes;
-        }
-        return [];
-    }
-
-    private function getAllApiControllers(): array
-    {
-        $filter = function (&$strOneFile, $strPath) {
-            $instance = Classloader::getInstance()->getInstanceFromFilename($strPath, ApiControllerInterface::class);
-            if ($instance instanceof ApiControllerInterface) {
-                $strOneFile = get_class($instance);
-            } else {
-                $strOneFile = null;
-            }
-        };
-
-        $classes = Resourceloader::getInstance()->getFolderContent("/api", array(".php"), false, null, $filter);
-        $classes = array_filter($classes);
-        $classes = array_values($classes);
-
-        return $classes;
-    }
 
     /**
      * @param SlimRequest $request
