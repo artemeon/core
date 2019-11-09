@@ -58,8 +58,9 @@ this.test.map(domElement=>{
     const me = this
     instance.$on('click', ()=>{me.handleChild(instance,instanceBox)})
     let parentOfparent = domElement.parentNode.parentNode
+    let parent = domElement.parentNode
     parentOfparent.insertBefore(instance.$el,domElement.parentNode.nextSibling)
-     parentOfparent.insertBefore(instanceBox.$el,domElement.parentNode.nextSibling)
+     parent.insertBefore(instanceBox.$el,domElement.nextSibling)
 })
         
     }
