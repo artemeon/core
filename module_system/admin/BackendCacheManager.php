@@ -7,6 +7,7 @@ use Kajona\Api\System\EndpointScanner;
 use Kajona\System\System\CacheManager;
 use Kajona\System\System\Exception;
 use Slim\Http\Request as SlimRequest;
+use Slim\Route as Route;
 
 
 /**
@@ -62,11 +63,10 @@ class BackendCacheManager
      */
     public function getCache(SlimRequest $request): string
     {
-
-        //check if requested end-point is cachable
-        $path = '/' . $request->getUri()->getPath();
-
-        if ($this->routeIsCacheable($request)) {
+        //check if requested end-point is cachable and method is a GET-method
+        $method = $request->getMethod();
+        if ($method === 'GET' && $this->routeIsCacheable($request)) {
+            $path = $this->getPath($request);
             $this->keyGenerator = $this->endpointScanner->getKeyGeneratorForPath($path);
             $key = call_user_func($this->keyGenerator, $request);
             return $this->cacheStore->get($key);
@@ -95,7 +95,7 @@ class BackendCacheManager
      */
     public function routeIsCacheable(SlimRequest $request): bool
     {
-        $path = '/' . $request->getUri()->getPath();
+        $path = $this->getPath($request);
         return in_array($path, $this->cacheableRoutes);
     }
 
@@ -105,6 +105,18 @@ class BackendCacheManager
     private function initStore()
     {
         return new $this->storeType();
+    }
+
+    /**
+     * Returns the route's path in pattern form
+     * @param SlimRequest $request
+     * @return string
+     */
+    private function getPath(SlimRequest $request): string
+    {
+        /** @var Route $route */
+        $route = $request->getAttribute('route');
+        return $route->getPattern();
     }
 
 
