@@ -185,10 +185,13 @@ class AppBuilder
 
     /**
      * @return SlimContainer
+     * @throws \Interop\Container\Exception\ContainerException
      */
     private function newContainer(): SlimContainer
     {
         $container = new SlimContainer();
+        //make access to route attribute possible from request object to get pattern of the path
+        $container['settings']['determineRouteBeforeAppMiddleware'] = true;
         $container['notFoundHandler'] = function ($c) {
             return function (SlimRequest $request, SlimResponse $response) use ($c) {
                 $data = [
@@ -213,7 +216,6 @@ class AppBuilder
                     ->write(json_encode($data, JSON_PRETTY_PRINT));
             };
         };
-
         return $container;
     }
 }
