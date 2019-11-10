@@ -53,7 +53,7 @@
         <li v-if="currentPage!==1" @click="previous()">
           <a>« {{$t('commons.commons_back')}}</a>
         </li>
-        <li class="active" @click="changePage(index+1)">
+        <li class="active">
           <a class="active">{{currentPage}}</a>
         </li>
         <li @click="next()" v-if="!lastPage">
