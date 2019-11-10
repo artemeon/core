@@ -493,19 +493,19 @@ in addition, a container for the calendar is needed. Use %%calendarContainerId%%
     </div>
     <script type="text/javascript">
          var onChange = %%onChange%%;
-            var $objInput = $("#%%name%%");
-            $objInput.TagEditor({
-                initialTags: %%values%%,
-                forceLowercase: false,
-                delimiter: %%delimiter%%,
-                maxLength: 250,
-                onChange: onChange
-            });
-            $objInput.on('kajona.forms.mandatoryAdded', function() {
-                TagEditor.updateMandatoryRendering($(this));
-            });
-            TagEditor.updateMandatoryRendering($objInput);
-            onChange("#%%name%%", $objInput.TagEditor('getTags')[0].editor, %%values%%);
+         var $objInput = $("#%%name%%");
+         $objInput.tagEditor({
+             initialTags: %%values%%,
+             forceLowercase: false,
+             delimiter: %%delimiter%%,
+             maxLength: 250,
+             onChange: onChange
+         });
+         $objInput.on('kajona.forms.mandatoryAdded', function() {
+             TagEditor.updateMandatoryRendering($(this));
+         });
+         TagEditor.updateMandatoryRendering($objInput);
+         onChange("#%%name%%", $objInput.tagEditor('getTags')[0].editor, %%values%%);
     </script>
 </input_tageditor>
 

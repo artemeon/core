@@ -29,6 +29,7 @@ class GlobalAxiosConfig {
 
             if (timestamp > jwt.exp) {
                 // in this case we have missed our window to extend the token, there is nothing we can do here
+                window.location.href = KAJONA_WEBPATH + '/index.php?module=login&action=adminlogout';
             } else if (timestamp > refreshTime) {
                 fetch('api.php/v1/authorization/refresh', {
                     method: 'post',

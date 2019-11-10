@@ -40,7 +40,13 @@
       "error",
       "single",
       { "avoidEscape": true, "allowTemplateLiterals": true }
-    ]
+    ],
+    "no-param-reassign": ["error", {
+      "props": true,
+      "ignorePropertyModificationsFor": [
+        "state"
+      ]
+    }]
   },
   "parser": "vue-eslint-parser",
   "parserOptions": {
