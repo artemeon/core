@@ -16,7 +16,7 @@ class MessagingKeyGenerator
     public function getUnreadMessagesCount(SlimRequest $request): string
     {
         //todo choose a better key pattern
-        return $request->getMethod() . '/' . $request->getUri()->getPath();
+        return '/' . $request->getUri()->getPath();
     }
 
 }
