@@ -12,7 +12,7 @@ namespace Kajona\System\System;
  *
  *
  * @package Kajona\System\System
- * @author stefan.idler@artemeon.de
+ * @author laura.albersmann@artemeon.de
  * @since 7.2
  */
 class OrmRight4PermissionCondition extends OrmCondition
@@ -49,13 +49,7 @@ class OrmRight4PermissionCondition extends OrmCondition
         if ($this->fallback !== null) {
             return $this->fallback->getStrWhere();
         }
-        return <<<SQL
-        {$this->strColumn} IN (
-          SELECT right4_id
-          FROM agp_permissions_right4, agp_user_group, agp_user_kajona_members
-          WHERE right4_shortgroup = group_short_id AND group_id = group_member_group_kajona_id AND group_member_user_kajona_id = ? AND right4_id = {$this->strColumn}
-        )
-SQL;
+        return null;
     }
 
     /**
