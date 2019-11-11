@@ -108,6 +108,15 @@ class App {
             render: h => h(VueMain)
         })
     }
+
+    public static closePopoverFromOutside(): void {
+        $(document).click((event) => {
+            // if you click on anything except the popover itself, close the popover
+            if (!$(event.target).closest('.popover,[data-toggle=popover]').length) {
+                $('[data-toggle=popover]').popover('hide')
+            }
+        })
+    }
 }
 
 // register all the global dependencies in window object
