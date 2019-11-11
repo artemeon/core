@@ -49,6 +49,7 @@ class OrmRight4PermissionCondition extends OrmCondition
         if ($this->fallback !== null) {
             return $this->fallback->getStrWhere();
         }
+        return null;
     }
 
     /**
