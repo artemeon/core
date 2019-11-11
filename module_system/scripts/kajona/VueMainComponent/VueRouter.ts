@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Router from '../Router'
-import RatingDetail from 'core_customer/module_hsbcact/scripts/components/RatingDetail/RatingDetail.vue'
-import Reportgenerator from 'core_agp/module_reportconfigurator/scripts/components/Reportgenerator/Reportgenerator.vue'
+import RatingDetail from 'core/module_hsbcact/scripts/components/RatingDetail/RatingDetail.vue'
+import Reportgenerator from 'core/module_reportconfigurator/scripts/components/Reportgenerator/Reportgenerator.vue'
 
 Vue.use(<any>VueRouter)
 
