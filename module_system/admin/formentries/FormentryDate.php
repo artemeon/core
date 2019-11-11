@@ -50,7 +50,7 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         $objToolkit = Carrier::getInstance()->getObjToolkit("admin");
         $strReturn = "";
         if ($this->getStrHint() != null) {
-            $strReturn .= $objToolkit->formTextRow($this->getStrHint());
+            $strReturn .= $objToolkit->formTextHint($this->getStrHint(), $this->getBitHideLongHints());
         }
 
         $objDate = null;
@@ -64,7 +64,8 @@ class FormentryDate extends FormentryBase implements FormentryPrintableInterface
         $date->setReadOnly($this->getBitReadonly());
         $date->setDataArray($this->getDataAttributes());
 
-        return $date->renderComponent();
+        $strReturn .= $date->renderComponent();
+        return $strReturn;
     }
 
 

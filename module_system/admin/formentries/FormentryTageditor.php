@@ -77,7 +77,11 @@ class FormentryTageditor extends FormentryMultiselect
 
         $data = $this->getStrValue();
         if (!empty($data)) {
-            $values = json_decode($data);
+            if (strpos($data, '[') === 0) {
+                $values = json_decode($data);
+            } else {
+                $values = explode(',', $data);
+            }
         } else {
             $values = [];
         }
