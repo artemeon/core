@@ -128,9 +128,9 @@ class RightAdmin extends AdminController implements AdminInterface
 
             //Close the form
             $strButtons = "";
-            $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"), "", "", "save-permissions");
+            $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_save"), "", "", "save-permissions", true, false);
             if ($this->isPermissionHandlerExisting) {
-                $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_recalculate_permissions"), "Submit", 'Permissions.recalculatePermission();return false;', "recalc-permissions");
+                $strButtons .= $this->objToolkit->formInputSubmit($this->getLang("commons_recalculate_permissions"), "Submit", 'Permissions.recalculatePermission();return false;', "recalc-permissions", true, false);
             }
             $strReturn .= $this->objToolkit->formInputButtonWrapper($strButtons);
             $strReturn .= $this->objToolkit->formClose();

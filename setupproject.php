@@ -272,7 +272,7 @@ TEXT;
         $workingDirectory = getcwd();
         chdir(__DIR__ . '/_buildfiles');
         exec('npm config set registry "http://packages.artemeon.int:4873/"');
-        exec('npm install', $arrOutput, $exitCode);
+        exec('npm install --silent ', $arrOutput, $exitCode);
         chdir($workingDirectory);
 
         if ($exitCode !== 0) {

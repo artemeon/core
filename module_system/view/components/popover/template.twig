@@ -36,6 +36,13 @@
              pc.addClass('loadDone');
          })
         </script>
+        <script>
+            $('[data-toggle=popover]').on('click', function (e) {
+                $('[data-toggle=popover]').not(this).popover('hide');
+            });
+
+            App.closePopoverFromOutside();
+        </script>
     {% else %}
         <div id="pc_{{ id|escape("html_attr") }}" class="hidden pc_{{ id|escape("html_attr") }}">{{ content|raw }}</div>
         <script type="text/javascript">
