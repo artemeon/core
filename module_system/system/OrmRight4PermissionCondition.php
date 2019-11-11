@@ -17,7 +17,6 @@ namespace Kajona\System\System;
  */
 class OrmRight4PermissionCondition extends OrmCondition
 {
-    private $strColumn = null;
 
     /**
      * @var OrmPermissionCondition
@@ -33,10 +32,9 @@ class OrmRight4PermissionCondition extends OrmCondition
     public function __construct($column = "agp_system.system_id")
     {
         parent::__construct("", array());
-        $this->strColumn = $column;
 
         //fall back to the simple like logic for small amount of data
-        $this->fallback = new OrmPermissionCondition(Rights::$STR_RIGHT_RIGHT4, null, StringUtil::replace("system_id", "right_right4", $column));
+        $this->fallback = new OrmPermissionCondition(Rights::$STR_RIGHT_RIGHT4, null, "agp_system.right_right4");
 
     }
 
