@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import RatingDetail from 'core_agp/module_hsbcact/scripts/components/RatingDetail/RatingDetail.vue'
+import Reportgenerator from 'core_agp/module_reportconfigurator/scripts/components/Reportgenerator/Reportgenerator.vue'
 import Router from '../Router'
-import RatingDetail from 'core/module_hsbcact/scripts/components/RatingDetail/RatingDetail.vue'
-import Reportgenerator from 'core/module_reportconfigurator/scripts/components/Reportgenerator/Reportgenerator.vue'
 
 Vue.use(<any>VueRouter)
 
@@ -12,22 +12,22 @@ const router = new VueRouter({
             path: '/vm/reportconfigurator/:reportId/:page?',
             name: 'reportconfigurator',
             component: Reportgenerator,
-            beforeEnter: resetContainer
+            beforeEnter: resetContainer,
         },
         {
             path: '/vm/hsbcact/rating/:systemId',
             component: RatingDetail,
             beforeEnter: resetContainer,
-            props: route => ({
+            props: (route) => ({
                 query: {
                     startDate: route.query.startDate,
-                    endDate: route.query.endDate
-                }
-            })
-        }
-    ]
+                    endDate: route.query.endDate,
+                },
+            }),
+        },
+    ],
 })
-function resetContainer (to, from, next) : void {
+function resetContainer(to, from, next): void {
     Router.cleanPage(true)
     next()
 }
