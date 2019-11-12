@@ -674,7 +674,6 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
             ["right2_id", "right2_shortgroup"]
         );
 
-        /*
         $this->objDB->_pQuery("DELETE FROM agp_permissions_view WHERE 1=1", []);
         $this->objDB->_pQuery("DELETE FROM agp_permissions_right2 WHERE 1=1", []);
 
@@ -730,7 +729,7 @@ class InstallerSystem extends InstallerBase implements InstallerInterface {
                 }
                 $strReturn .= "Migrated {$i} records ".PHP_EOL;
 
-        }*/
+        }
 
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.4");
 
