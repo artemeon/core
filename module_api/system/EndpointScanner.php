@@ -6,6 +6,7 @@
 
 namespace Kajona\Api\System;
 
+use Kajona\System\Admin\KeyGeneratorInterface;
 use Kajona\System\System\CacheManager;
 use Kajona\System\System\Classloader;
 use Kajona\System\System\Exception;
@@ -141,12 +142,12 @@ class EndpointScanner
     }
 
     /**
-     * Returns class::method of the keyGenerator
+     * Returns an instance of the keyGenerator
      * @param string $path
-     * @return string
+     * @return KeyGeneratorInterface
      * @throws Exception
      */
-    public function getKeyGeneratorForPath(string $path): string
+    public function getKeyGeneratorForPath(string $path): KeyGeneratorInterface
     {
         $apiControllers = $this->getAllApiController();
         foreach ($apiControllers as $class) {
@@ -158,11 +159,11 @@ class EndpointScanner
                     if (empty($methodPath)) {
                         throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
                     } else if ($methodPath === $path) {
-                        $keyGenerator = $reflection->getAnnotationValuesFromClass('@keyGenerator');
+                        $keyGenerator = $reflection->getMethodAnnotationValue($methodName, '@keyGenerator');
                         if (empty($keyGenerator)) {
                             throw new \RuntimeException("Provided an empty keyGenerator at {$class}::{$methodName}");
                         }
-                        return $keyGenerator[0] . '::' . $methodName;
+                        return new $keyGenerator();
                     }
                 }
             }
