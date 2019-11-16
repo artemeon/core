@@ -18,7 +18,6 @@ use PSX\Http\Environment\HttpResponse;
  *
  * @author dhafer.harrathi@artemeon.de
  * @since 7.2
- * @keyGenerator Kajona\System\KeyGenerator\MessagingKeyGenerator
  */
 class MessagingApiController implements ApiControllerInterface
 {
@@ -37,10 +36,11 @@ class MessagingApiController implements ApiControllerInterface
      * @return HttpResponse
      * @throws Exception
      * @api
-     * @cacheable
      * @method GET
      * @path /v1/messages/count
      * @authorization usertoken
+     * @cacheable
+     * @keyGenerator Kajona\System\KeyGenerator\GetUnreadMessagesCountKeyGenerator
      */
     public function getUnreadMessagesCount(HttpContext $context): HttpResponse
     {
