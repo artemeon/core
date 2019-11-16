@@ -26,6 +26,9 @@ class BackendCacheManager
     /**
      * @var string
      */
+    /**
+     * @var KeyGeneratorInterface
+     */
     private $keyGenerator;
     private $keyInvalidator;
     /**
@@ -68,7 +71,7 @@ class BackendCacheManager
         if ($method === 'GET' && $this->routeIsCacheable($request)) {
             $path = $this->getPath($request);
             $this->keyGenerator = $this->endpointScanner->getKeyGeneratorForPath($path);
-            $key = call_user_func($this->keyGenerator, $request);
+            $key = $this->keyGenerator->getKey($request);
             return $this->cacheStore->get($key);
         }
         return '';
@@ -82,7 +85,7 @@ class BackendCacheManager
     {
         //todo set only if value isnt in store
         if ($this->routeIsCacheable($request)) {
-            $key = call_user_func($this->keyGenerator, $request);
+            $key = $this->keyGenerator->getKey($request);
             $this->cacheStore->set($key, $value);
         }
 
