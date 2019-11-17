@@ -7,6 +7,7 @@
 namespace Kajona\Api\System;
 
 use Kajona\System\Admin\KeyGeneratorInterface;
+use Kajona\System\Admin\KeyInvalidatorInterface;
 use Kajona\System\System\CacheManager;
 use Kajona\System\System\Classloader;
 use Kajona\System\System\Exception;
@@ -164,6 +165,35 @@ class EndpointScanner
                             throw new \RuntimeException("Provided an empty keyGenerator at {$class}::{$methodName}");
                         }
                         return new $keyGenerator();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param string $path
+     * @return KeyInvalidatorInterface|null
+     * @throws Exception
+     */
+    public function getKeyInvalidatorForPath(string $path)
+    {
+        $apiControllers = $this->getAllApiController();
+        foreach ($apiControllers as $class) {
+            $reflection = new Reflection($class);
+            $methods = $reflection->getMethodsWithAnnotation('@path');
+            if (!empty($methods)) {
+                foreach ($methods as $methodName => $values) {
+                    $methodPath = $reflection->getMethodAnnotationValue($methodName, '@path');
+                    if (empty($methodPath)) {
+                        throw new \RuntimeException("Provided an empty path at {$class}::{$methodName}");
+                    } else if ($methodPath === $path) {
+                        $keyInvalidator = $reflection->getMethodAnnotationValue($methodName, '@keyInvalidator');
+                        if (!empty($keyInvalidator)) {
+//                            throw new \RuntimeException("Provided an empty keyInvalidator at {$class}::{$methodName}");
+                            return new $keyInvalidator();
+                        }
+                        return null;
                     }
                 }
             }
