@@ -113,10 +113,15 @@ class AppBuilder
         // add Caching middleware
         $endpointScanner = $this->endpointScanner;
         $app->add(function (SlimRequest $request, SlimResponse $response, callable $next) use ($backendCacheManager) {
-            //todo run only if $request === GET
-            $value = $backendCacheManager->getCache($request);
-            if ($value !== '') {
-                return $response->withJson(json_decode($value));
+            //if method is a GET-request , get the cache
+            if ($request->getMethod() === 'GET') {
+                $value = $backendCacheManager->getCache($request);
+                if ($value !== '') {
+                    return $response->withJson(json_decode($value));
+                }
+            } else {
+                //else invalidate the cache
+                $backendCacheManager->invalidateCache($request);
             }
             return $next($request, $response);
         });
@@ -154,8 +159,9 @@ class AppBuilder
                             $response = $response->withHeader($name, $value);
                         }
                         //set payload to cache
-                        //todo save to cache only if $request === GET
-                        $backendCacheManager->setCache($request, $data->getBody());
+                        if ($request->getMethod() === 'GET') {
+                            $backendCacheManager->setCache($request, $data->getBody());
+                        }
                         $response = $response->write($data->getBody());
 
                     } else {
