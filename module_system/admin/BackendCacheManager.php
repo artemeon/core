@@ -30,6 +30,9 @@ class BackendCacheManager
      * @var KeyGeneratorInterface
      */
     private $keyGenerator;
+    /**
+     * @var KeyInvalidatorInterface
+     */
     private $keyInvalidator;
     /**
      * @var array
@@ -66,9 +69,8 @@ class BackendCacheManager
      */
     public function getCache(SlimRequest $request): string
     {
-        //check if requested end-point is cachable and method is a GET-method
-        $method = $request->getMethod();
-        if ($method === 'GET' && $this->routeIsCacheable($request)) {
+        //check if requested end-point is cachable
+        if ($this->routeIsCacheable($request)) {
             $path = $this->getPath($request);
             $this->keyGenerator = $this->endpointScanner->getKeyGeneratorForPath($path);
             $key = $this->keyGenerator->getKey($request);
@@ -120,6 +122,20 @@ class BackendCacheManager
         /** @var Route $route */
         $route = $request->getAttribute('route');
         return $route->getPattern();
+    }
+
+    /**
+     * @param SlimRequest $request
+     * @throws Exception
+     */
+    public function invalidateCache(SlimRequest $request)
+    {
+        $path = $this->getPath($request);
+        $this->keyInvalidator = $this->endpointScanner->getKeyInvalidatorForPath($path);
+        if ($this->keyInvalidator !== null) {
+            $this->keyInvalidator->invalidate($this->cacheStore, $request);
+        }
+
     }
 
 

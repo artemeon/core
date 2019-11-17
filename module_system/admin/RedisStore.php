@@ -43,4 +43,18 @@ class RedisStore extends CacheStore
         $this->store->set($key, $value);
     }
 
+    /**
+     * @param string $pattern
+     * @return array
+     */
+    public function getKeysForPattern(string $pattern): array
+    {
+        return $this->store->keys($pattern);
+    }
+
+    public function delete(array $keys): void
+    {
+        $this->store->del($keys);
+    }
+
 }

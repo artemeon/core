@@ -42,5 +42,18 @@ class CacheStore
     {
 
     }
+
+    /**
+     * @param string $pattern
+     * @return array
+     */
+    public function getKeysForPattern(string $pattern): array
+    {
+    }
+
+    public function delete(array $keys): void
+    {
+
+    }
 }
 
