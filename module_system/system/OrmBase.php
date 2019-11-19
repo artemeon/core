@@ -51,6 +51,7 @@ abstract class OrmBase
     const STR_ANNOTATION_BLOCKESCAPING = "@blockEscaping";
     const STR_ANNOTATION_LISTORDER = "@listOrder";
     const STR_ANNOTATION_OBJECTLIST = "@objectList";
+    const STR_ANNOTATION_OBJECTLIST_DELETED_HANDLING = "@objectListDeletedHandling";
 
     /** @var Root */
     private $objObject = null;

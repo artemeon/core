@@ -28,6 +28,7 @@ Annotation         |Context    |Introduced in     |Description
 |@module name	|Class	|4.3	|The name of the module the current class belongs to, e.g. "news".
 |@moduleId id	|Class	|4.3	|The id-constant of the module the current class belongs to, e.g. _ navigations_module_id_
 |@objectList tablename (source="column", target="column", type={"class1", "class2"}, load_deleted="false")	|Property	|5.0|	Used by the OR mapper and the schemagenerator. Used to handle 1:n relations, so assignments of object. Provided are the name of the 1:n relation table. the name of the source id column and the name of the target id column. <br/><br/>Use "type" param to restrict which object types can be assigned. <br/><br/>Use load_deleted= "true" if also deleted assigned objects should be displayed
+|@objectListDeletedHandling EXCLUDED,INCLUDED	|Property	|7.1| Defines the way deleted objects are being handled. EXCLUDED keeps deleted objects as referenced.
 |@objectList[Name] class	|Class	|4.2|	Assigns an object type (class) to an action-name (actionList), see evensimpler-classes. Used to render a list.
 |@objectEdit[Name] class	|Class	|4.2	|Assigns an object type (class) to an action-name (actionEdit), see evensimpler-classes. Used to render an edit-form.
 |@objectNew[Name] class	|Class	|4.2	|Assigns an object type (class) to an action-name (actionNew), see evensimpler-classes. Used to render a new-instance form.

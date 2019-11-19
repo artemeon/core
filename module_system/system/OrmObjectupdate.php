@@ -150,6 +150,14 @@ class OrmObjectupdate extends OrmBase
             $objAssignmentDeleteHandling = $this->getIntCombinedLogicalDeletionConfig();
             if ($arrValues != null && $arrValues instanceof OrmAssignmentArray) {
                 $objAssignmentDeleteHandling = $arrValues->getObjDeletedHandling();
+            } else {
+                $cfg = $objReflection->getAnnotationValueForProperty($strPropertyName, OrmBase::STR_ANNOTATION_OBJECTLIST_DELETED_HANDLING);
+                if ($cfg === "INCLUDED") {
+                    $objAssignmentDeleteHandling = OrmDeletedhandlingEnum::INCLUDED;
+                }
+                if ($cfg === "EXCLUDED") {
+                    $objAssignmentDeleteHandling = OrmDeletedhandlingEnum::EXCLUDED;
+                }
             }
 
 

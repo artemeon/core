@@ -109,7 +109,15 @@ class OrmObjectinit extends OrmBase
         $arrProperties = $objReflection->getPropertiesWithAnnotation(OrmBase::STR_ANNOTATION_OBJECTLIST, ReflectionEnum::PARAMS);
 
         foreach ($arrProperties as $strPropertyName => $arrValues) {
-            $objPropertyLazyLoader = new OrmAssignmentArray($this->getObjObject(), $strPropertyName, $this->getIntCombinedLogicalDeletionConfig());
+            $objDeletedHandling = $this->getIntCombinedLogicalDeletionConfig();
+            $cfg = $objReflection->getAnnotationValueForProperty($strPropertyName, OrmBase::STR_ANNOTATION_OBJECTLIST_DELETED_HANDLING);
+            if ($cfg === "INCLUDED") {
+                $objDeletedHandling = OrmDeletedhandlingEnum::INCLUDED;
+            }
+            if ($cfg === "EXCLUDED") {
+                $objDeletedHandling = OrmDeletedhandlingEnum::EXCLUDED;
+            }
+            $objPropertyLazyLoader = new OrmAssignmentArray($this->getObjObject(), $strPropertyName, $objDeletedHandling);
 
             $strSetter = $objReflection->getSetter($strPropertyName);
             if ($strSetter !== null) {
