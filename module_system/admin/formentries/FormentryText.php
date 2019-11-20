@@ -48,7 +48,14 @@ class FormentryText extends FormentryBase implements FormentryPrintableInterface
         $inputText = new Inputtext($this->getStrEntryName(), (string) $this->getStrLabel(), html_entity_decode((string) $this->getStrValue()));
         $inputText->setReadOnly($this->getBitReadonly());
         $inputText->setOpener($this->strOpener);
-        $inputText->setDataArray($this->getDataAttributes());
+        $data = $this->getDataAttributes();
+        if($this->getObjSourceObject()!==null && method_exists($this->getObjSourceObject(),'getSystemid')){
+            $data['field-id'] = crc32($this->getStrEntryName());
+            $data['system-id'] =$this->getObjSourceObject()->getSystemid();
+        }
+
+
+        $inputText->setDataArray($data);
 
         $return .= $inputText->renderComponent();
 

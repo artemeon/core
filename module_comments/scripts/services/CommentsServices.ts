@@ -5,8 +5,12 @@ import HttpClient from 'core/module_system/scripts/kajona/HttpClient'
  * makes all the necessary api calls of the commentsModule
  */
 class CommentsServices{
+    public static async listUsers(payload): Promise<[Error, AxiosResponse]> {
+        const [err, res] = await HttpClient.get('api.php/v1/comments/users',{query:'s'})
+        return [err, res]
+    }
     public static async listComments(payload): Promise<[Error, AxiosResponse]> {
-        const [err, res] = await HttpClient.get('api.php/v1/comments/'+payload)
+        const [err, res] = await HttpClient.get('api.php/v1/comments/'+payload.id+'/'+payload.field)
         return [err, res]
     }
     public static async addComment(payload): Promise<[Error, AxiosResponse]> {
