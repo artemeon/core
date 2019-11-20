@@ -1,0 +1,40 @@
+.core-component-commentsBox {
+  height: 100%;
+  width: 20vw;
+  position: absolute;
+  top: 0;
+  z-index: 500;
+  right: 0;
+  background-color: white;
+  border: 1px solid black;
+  overflow-x: hidden;
+  transition: 0.5s;
+  .close-commentsBox {
+    position: absolute;
+    right: 15px;
+    top: 5px;
+    cursor: pointer;
+  }
+  .write-comment {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 15px;
+    .sendComment {
+      margin-top: 10px;
+      margin-right: 50%;
+    }
+  }
+  .commentsShow {
+    border: 1px solid @black;
+    padding: 5px;
+    margin-top: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+  }
+}
+#moduleOutput {
+  position: relative;
+}
