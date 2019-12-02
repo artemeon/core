@@ -328,7 +328,12 @@ class StringUtil
     public static function jsSafeString($strString)
     {
         $strJson = json_encode((string)$strString, JSON_UNESCAPED_UNICODE);
-        $strJson = trim($strJson, '"');
+        if (self::substring($strJson, 0, 1) === "\"") {
+            $strJson = StringUtil::substring($strJson, 1);
+        }
+        if (self::substring($strJson, -1) === "\"") {
+            $strJson = self::substring($strJson, 0, -1);
+        }
         $strJson = addcslashes($strJson, "'");
 
         return htmlspecialchars($strJson, ENT_QUOTES | ENT_HTML401);
