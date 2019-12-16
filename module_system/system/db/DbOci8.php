@@ -232,7 +232,7 @@ class DbOci8 extends DbBase
         $arrReturn = array();
         $intCounter = 0;
 
-        $strQuery = $this->processQuery($strQuery);
+        $strQuery = $this->processQuery($strQuery, $arrParams);
         $objStatement = $this->getParsedStatement($strQuery);
 
         if ($objStatement === false) {
@@ -672,19 +672,29 @@ class DbOci8 extends DbBase
      *
      * @param string $strQuery
      *
+     * @param null $params
      * @return string
      */
-    private function processQuery($strQuery)
+    private function processQuery($strQuery, $params = null)
     {
-        $intCount = 1;
-        while (StringUtil::indexOf($strQuery, "?") !== false) {
-            $intPos = StringUtil::indexOf($strQuery, "?");
-            $strQuery = substr($strQuery, 0, $intPos).":".$intCount++.substr($strQuery, $intPos + 1);
-        }
+        $strQuery = preg_replace_callback('/\?/', static function($value): string {
+            static $i = 0;
+            $i++;
+            return ':' . $i;
+        }, $strQuery);
 
-        if (StringUtil::indexOf($strQuery, " like ", false) !== false) {
-            $this->setCaseInsensitiveSort();
-            $this->bitResetOrder = true;
+        if ($params !== null && StringUtil::indexOf($strQuery, " like ", false) !== false) {
+
+            foreach ($params as $param) {
+                if (substr($param, -1) === '%' || substr($param, 0, 1) === '%') {
+                    if (strpos($param, '%,') === false) {
+                        $this->setCaseInsensitiveSort();
+                        $this->bitResetOrder = true;
+                        break;
+                    }
+                }
+            }
+
         }
 
         return $strQuery;
