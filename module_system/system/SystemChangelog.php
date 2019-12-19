@@ -592,6 +592,53 @@ class   SystemChangelog
     }
 
     /**
+     * Creates the list of user logentries
+     *
+     * @param string $userSystemid
+     * @param int|null $start
+     * @param int|null $end
+     * @param string $table
+     * @return ChangelogContainer[]
+     */
+    public static function getUserLogEntries(
+        string $userSystemid,
+        ?int $start = null,
+        ?int $end = null,
+        string $table = 'agp_changelog'
+    ): array {
+        $params = [];
+
+        if (!validateSystemid($userSystemid)) {
+            return [];
+        }
+
+        $query = "SELECT change_date, change_systemid, change_user, change_class, change_action, change_property, change_oldvalue, change_newvalue
+                           FROM $table
+                           WHERE change_user = ? ";
+
+        $params[] = $userSystemid;
+        $query .= "ORDER BY change_date DESC";
+
+        $rows = Carrier::getInstance()->getObjDB()->getPArray($query, $params, $start, $end);
+
+        $return = array();
+        foreach ($rows as $row) {
+            $return[] = new ChangelogContainer(
+                $row["change_date"],
+                $row["change_systemid"],
+                $row["change_user"],
+                $row["change_class"],
+                $row["change_action"],
+                $row["change_property"],
+                $row["change_oldvalue"],
+                $row["change_newvalue"]
+            );
+        }
+
+        return $return;
+    }
+
+    /**
      * Counts the number of logentries available
      *
      * @param string $strSystemidFilter
