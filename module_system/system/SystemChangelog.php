@@ -52,7 +52,6 @@ class   SystemChangelog
     public static $STR_ACTION_PERMISSIONS = "editPermissions";
     public static $STR_ACTION_DELETE = "actionDelete";
 
-
     private static $arrOldInstances = array();
 
     private static $arrTables;
@@ -592,19 +591,62 @@ class   SystemChangelog
     }
 
     /**
+     * Counts the number of logentries available
+     *
+     * @param string $strSystemidFilter
+     * @param array $arrExcludeActionsFilter
+     *
+     * @return int
+     * @throws OrmException
+     */
+    public static function getLogEntriesCount($strSystemidFilter, array $arrExcludeActionsFilter = [])
+    {
+
+        $arrParams = array();
+
+        if (validateSystemid($strSystemidFilter)) {
+            $strQuery = "SELECT COUNT(*) AS cnt
+                           FROM ".self::getTableForClass(Objectfactory::getInstance()->getClassNameForId($strSystemidFilter))."
+                          WHERE change_systemid = ? ";
+
+            $arrParams[] = $strSystemidFilter;
+
+            if (!empty($arrExcludeActionsFilter)) {
+                $objRestriction = new OrmInCondition("change_action", $arrExcludeActionsFilter, OrmInCondition::STR_CONDITION_NOTIN);
+                $strQuery .= " AND " . $objRestriction->getStrWhere();
+                $arrParams = array_merge($arrParams, $objRestriction->getArrParams());
+            }
+
+
+        } else {
+            return 0;
+        }
+
+        $arrRow = Carrier::getInstance()->getObjDB()->getPRow($strQuery, $arrParams);
+        return $arrRow["cnt"];
+    }
+
+    /**
      * Creates the list of user logentries
      *
      * @param string $userSystemid
      * @param int|null $start
      * @param int|null $end
      * @param string $table
+     * @param array $excludeActionsFilter
      * @return ChangelogContainer[]
+     * @throws OrmException
      */
     public static function getUserLogEntries(
         string $userSystemid,
         ?int $start = null,
         ?int $end = null,
-        string $table = 'agp_changelog'
+        string $table = 'agp_changelog',
+        array $actionsFilter = [],
+        array $properyFilter = [],
+        array $excludeProperyFilter = [],
+        array $systemIdFilter = [],
+        array $excludeSystemIdFilter = []
     ): array {
         $params = [];
 
@@ -617,6 +659,31 @@ class   SystemChangelog
                            WHERE change_user = ? ";
 
         $params[] = $userSystemid;
+        if (!empty($actionsFilter)) {
+            $restriction = new OrmInCondition("change_action", $actionsFilter, OrmInCondition::STR_CONDITION_IN);
+            $query .= " AND " . $restriction->getStrWhere();
+            $params = array_merge($params, $restriction->getArrParams());
+        }
+        if (!empty($properyFilter)) {
+            $restriction = new OrmInCondition("change_property", $properyFilter, OrmInCondition::STR_CONDITION_IN);
+            $query .= " AND " . $restriction->getStrWhere();
+            $params = array_merge($params, $restriction->getArrParams());
+        }
+        if (!empty($excludeProperyFilter)) {
+            $restriction = new OrmInCondition("change_property", $excludeProperyFilter, OrmInCondition::STR_CONDITION_NOTIN);
+            $query .= " AND " . $restriction->getStrWhere();
+            $params = array_merge($params, $restriction->getArrParams());
+        }
+        if (!empty($systemIdFilter)) {
+            $restriction = new OrmInCondition("change_systemid", $systemIdFilter, OrmInCondition::STR_CONDITION_IN);
+            $query .= " AND " . $restriction->getStrWhere();
+            $params = array_merge($params, $restriction->getArrParams());
+        }
+        if (!empty($excludeSystemIdFilter)) {
+            $restriction = new OrmInCondition("change_systemid", $excludeSystemIdFilter, OrmInCondition::STR_CONDITION_NOTIN);
+            $query .= " AND " . $restriction->getStrWhere();
+            $params = array_merge($params, $restriction->getArrParams());
+        }
         $query .= "ORDER BY change_date DESC";
 
         $rows = Carrier::getInstance()->getObjDB()->getPArray($query, $params, $start, $end);
@@ -637,42 +704,6 @@ class   SystemChangelog
 
         return $return;
     }
-
-    /**
-     * Counts the number of logentries available
-     *
-     * @param string $strSystemidFilter
-     * @param array $arrExcludeActionsFilter
-     *
-     * @return int
-     */
-    public static function getLogEntriesCount($strSystemidFilter, array $arrExcludeActionsFilter = [])
-    {
-
-        $arrParams = array();
-
-        if (validateSystemid($strSystemidFilter)) {
-            $strQuery = "SELECT COUNT(*) AS cnt
-                           FROM ".self::getTableForClass(Objectfactory::getInstance()->getClassNameForId($strSystemidFilter))."
-                          WHERE change_systemid = ? ";
-
-            $arrParams[] = $strSystemidFilter;
-
-            if (!empty($arrExcludeActionsFilter)) {
-                    $objRestriction = new OrmInCondition("change_action", $arrExcludeActionsFilter, OrmInCondition::STR_CONDITION_NOTIN);
-                    $strQuery .= " AND " . $objRestriction->getStrWhere();
-                    $arrParams = array_merge($arrParams, $objRestriction->getArrParams());
-            }
-
-
-        } else {
-            return 0;
-        }
-
-        $arrRow = Carrier::getInstance()->getObjDB()->getPRow($strQuery, $arrParams);
-        return $arrRow["cnt"];
-    }
-
 
     /**
      * Creates the list of logentries, based on a flexible but specific filter-list
