@@ -55,7 +55,7 @@ class InstallerWorkflows extends InstallerBase implements InstallerRemovableInte
         $arrFields["wfh_end"]                    = array("long", true);
         $arrFields["wfh_class"]                  = array("char254", false);
         $arrFields["wfh_result"]                 = array("char254", true);
-        if(!$this->objDB->createTable("agp_workflows_stat_wfh", $arrFields, array("wfh_id"), array('wfh_start', 'wfh_result')))
+        if(!$this->objDB->createTable("agp_workflows_stat_wfh", $arrFields, array("wfh_id"), array('wfh_start', 'wfh_result', 'wfh_wfc')))
             $strReturn .= "An error occured! ...\n";
 
 		//register the module
@@ -172,6 +172,16 @@ class InstallerWorkflows extends InstallerBase implements InstallerRemovableInte
         $strReturn .= "Updating module-versions...\n";
         $this->objDB->flushQueryCache();
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1");
+
+        return $strReturn;
+    }
+
+    private function update_71_711() {
+        $strReturn = "Adding index column".PHP_EOL;
+        $this->objDB->createIndex('agp_workflows_stats_wfh', 'ix_'.generateSystemid(), ['wfh_wfc']);
+        $strReturn .= "Updating module-versions...\n";
+        $this->objDB->flushQueryCache();
+        $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.1");
 
         return $strReturn;
     }
