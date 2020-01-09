@@ -154,6 +154,11 @@ class InstallerWorkflows extends InstallerBase implements InstallerRemovableInte
             $strReturn .= $this->update_70_71();
         }
 
+        $arrModule = SystemModule::getPlainModuleData($this->objMetadata->getStrTitle(), false);
+        if($arrModule["module_version"] == "7.1") {
+            $strReturn .= $this->update_71_711();
+        }
+
         return $strReturn."\n\n";
 	}
 
@@ -178,7 +183,7 @@ class InstallerWorkflows extends InstallerBase implements InstallerRemovableInte
 
     private function update_71_711() {
         $strReturn = "Adding index column".PHP_EOL;
-        $this->objDB->createIndex('agp_workflows_stats_wfh', 'ix_'.generateSystemid(), ['wfh_wfc']);
+        $this->objDB->createIndex('agp_workflows_stat_wfh', 'ix_'.generateSystemid(), ['wfh_wfc']);
         $strReturn .= "Updating module-versions...\n";
         $this->objDB->flushQueryCache();
         $this->updateModuleVersion($this->objMetadata->getStrTitle(), "7.1.1");
