@@ -343,7 +343,7 @@ class UserUser extends Model implements ModelInterface, AdminListableInterface
     {
         $this->loadSourceObject();
         if ($this->objSourceUser != null) {
-            return $this->objSourceUser->getStrForename();
+            return trim($this->objSourceUser->getStrForename());
         } else {
             return "n.a.";
         }
@@ -356,7 +356,7 @@ class UserUser extends Model implements ModelInterface, AdminListableInterface
     {
         $this->loadSourceObject();
         if ($this->objSourceUser != null) {
-            return $this->objSourceUser->getStrName();
+            return trim($this->objSourceUser->getStrName());
         } else {
             return "n.a.";
         }
@@ -437,7 +437,7 @@ class UserUser extends Model implements ModelInterface, AdminListableInterface
      */
     public function getStrUsername()
     {
-        return $this->strUsername;
+        return trim($this->strUsername);
     }
 
     /**
