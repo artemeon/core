@@ -150,7 +150,7 @@ class Forms {
         var changed = false;
         $objForm.find('[data-kajona-initval]').each(function() {
             var el = $(this);
-            if (el.val() != el.attr('data-kajona-initval')) {
+            if (el.val() != el.data('kajona-initval')) {
                 changed = true;
                 return false;
             }
@@ -197,13 +197,13 @@ class Forms {
      */
     public static addChangelistener(strElementId : string, bitConfirmChange : boolean) {
         $('#'+strElementId).on('change', function(objEvent) {
-            if($(this).val() != $(this).attr("data-kajona-initval")) {
+            if($(this).val() != $(this).data("kajona-initval")) {
                 if($(this).closest(".form-group").find("div.changeHint").length == 0) {
 
                     if(bitConfirmChange && bitConfirmChange == true) {
                         var bitResponse = confirm(Forms.changeConfirmation);
                         if(!bitResponse) {
-                            $(this).val($(this).attr("data-kajona-initval"));
+                            $(this).val($(this).data("kajona-initval"));
                             objEvent.preventDefault();
                             return;
                         }
