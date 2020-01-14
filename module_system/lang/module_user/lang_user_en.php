@@ -179,3 +179,6 @@ $lang["report_hinweis_parametrisierung"] = "This report ignores the current para
 $lang["report_userrights"]               = "Userlist including assigned groups";
 $lang["user_active"]                     = "active";
 $lang["user_inactive"]                   = "inactive";
+
+$lang['workflow_user_loginprotocol_cleaner_val1'] = 'Hour of the day to execute';
+$lang['workflow_user_loginprotocol_cleaner_title'] = 'Login protocol cleanup';
