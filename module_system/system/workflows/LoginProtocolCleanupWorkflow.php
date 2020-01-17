@@ -39,13 +39,13 @@ class LoginProtocolCleanupWorkflow implements WorkflowsHandlerInterface
     public function getConfigValueNames()
     {
         return [
-            Carrier::getInstance()->getObjLang()->getLang('workflow_user_loginprotocol_cleaner_val1', 'system'),
+            Carrier::getInstance()->getObjLang()->getLang('workflow_user_loginprotocol_cleaner_val1', 'user'),
         ];
     }
 
     public function getStrName()
     {
-        return Carrier::getInstance()->getObjLang()->getLang('workflow_user_loginprotocol_cleaner_title', 'system');
+        return Carrier::getInstance()->getObjLang()->getLang('workflow_user_loginprotocol_cleaner_title', 'user');
     }
 
 
