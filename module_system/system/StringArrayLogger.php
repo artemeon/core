@@ -5,9 +5,8 @@
 
 declare(strict_types=1);
 
-namespace AGP\System\System;
+namespace Kajona\System\System;
 
-use Kajona\System\System\Date;
 use Psr\Log\LoggerInterface;
 
 /**

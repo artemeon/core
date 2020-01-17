@@ -5,9 +5,7 @@
 
 declare(strict_types=1);
 
-namespace AGP\System\System;
-
-use Kajona\System\System\Date;
+namespace Kajona\System\System;
 
 /**
  *
