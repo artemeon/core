@@ -7,6 +7,8 @@ declare(strict_types=1);
 
 namespace AGP\System\System;
 
+use Kajona\System\System\Date;
+
 /**
  *
  * @author stefan.idler@artemeon.de
@@ -20,11 +22,11 @@ class StringArrayLogEntry
 
     /**
      * StringArrayLogEntry constructor.
-     * @param $date
-     * @param $level
-     * @param $message
+     * @param Date $date
+     * @param string $level
+     * @param string $message
      */
-    public function __construct($date, $level, $message)
+    public function __construct(Date $date, string $level, string $message)
     {
         $this->date = $date;
         $this->level = $level;
