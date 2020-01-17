@@ -269,5 +269,9 @@ class ServiceProvider implements ServiceProviderInterface
         $objContainer[self::STR_DROPDOWN_LOADER] = function ($c) {
             return new DropdownConfigLoader();
         };
+
+        $objContainer[LoginProtocolCleanerInterface::class] = function (Container $c): LoginProtocolCleanerInterface {
+            return new LoginProtocolCleaner(180, Logger::getInstance('loginprotocolclean.log'));
+        };
     }
 }

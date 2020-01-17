@@ -178,3 +178,6 @@ $lang["report_hinweis_parametrisierung"] = "Diese Auswertung berücksichtigt NIC
 $lang["report_userrights"]               = "Anwenderliste mit zugehörigen Gruppen";
 $lang["user_active"]                     = "Aktiv";
 $lang["user_inactive"]                   = "Inaktiv";
+
+$lang['workflow_user_loginprotocol_cleaner_val1'] = 'Stunde zu der der Workflow ausgeführt wird';
+$lang['workflow_user_loginprotocol_cleaner_title'] = 'Login Protokoll Bereinigung';

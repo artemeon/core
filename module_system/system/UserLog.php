@@ -118,4 +118,17 @@ class UserLog
         return $arrRow["cnt"];
     }
 
+    /**
+     * Removes entries from the login protocol oder then the passed number of days
+     * @param Date $oldestDate
+     * @return int the number of deleted entries
+     */
+    public function cleanLog(Date $oldestDate): int
+    {
+        $query = 'DELETE FROM agp_user_log WHERE user_log_date < ?';
+        $database = Carrier::getInstance()->getObjDB();
+        $database->_pQuery($query, [$oldestDate->getLongTimestamp()]);
+        return $database->getIntAffectedRows();
+    }
+
 }
