@@ -604,6 +604,8 @@ abstract class Root
      */
     public function updateObjectToDb($strPrevId = false)
     {
+        $currentPrevId = $this->getStrPrevId();
+
         $bitCommit = true;
         /** @var $this Root|ModelInterface */
         if (!$this instanceof ModelInterface) {
@@ -687,7 +689,7 @@ abstract class Root
         }
 
         //new prev-id?
-        if ($strPrevId !== false && $this->getSystemid() != $strPrevId && (validateSystemid($strPrevId) || $strPrevId == "0")) {
+        if ($strPrevId !== false && $this->getSystemid() != $strPrevId && (validateSystemid($strPrevId) || $strPrevId == "0") && $currentPrevId != $strPrevId) {
             //validate the new prev id - it is not allowed to set a parent-node as a sub-node of its own child
             if (!$this->isSystemidChildNode($this->getSystemid(), $strPrevId)) {
                 $this->setStrPrevId($strPrevId);
