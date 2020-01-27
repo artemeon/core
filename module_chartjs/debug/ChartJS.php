@@ -270,6 +270,33 @@ class ChartJS
         $objGraph->setIntWidth(700);
         echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
 
+        $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_CHARTJS);
+        $objGraph->setStrGraphTitle("19. A Line Plot 2 Axis");
+        $objGraph->addBarChartSet([10, 40, 30, 6], "serie 1");
+        $objGraph->setIntHeight(350);
+        $objGraph->setIntWidth(300);
+        $objGraph->setBitRenderLegend(true);
+        $objGraph->setStrFontColor("#FF0000");
+        $objGraph->setStrFont("open sans");
+        $objGraph->setStrYAxisTitle("serie");
+        $objGraph->setStrY2AxisTitle("test");
+        $objGraph->addLinePlotY2Axis([0, 200, 300, 450, 100], "test");
+        echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
+
+        $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_CHARTJS);
+        $objGraph->setStrGraphTitle("20. A Bar Chart 2 Axis");
+        $objGraph->addLinePlot([10000, 40000, 30000, 60000], "serie 1");
+        $objGraph->setIntHeight(350);
+        $objGraph->setIntWidth(300);
+        $objGraph->setBitRenderLegend(true);
+        $objGraph->setStrFontColor("#FF0000");
+        $objGraph->setStrFont("open sans");
+        $objGraph->setStrYAxisTitle("serie");
+        $objGraph->setStrY2AxisTitle("test");
+        $objGraph->setShowThousandSeparatorAxis();
+        $objGraph->addBarChartY2Axis([0, 200000, 300000, 450000, 100000], "test");
+        echo '<div style="width: 600px; height: 600px">' . $objGraph->renderGraph() . '</div>';
+
         // === JQPLOT VS CHARTJS == BEGIN
         $objGraph = GraphFactory::getGraphInstance(GraphFactory::$STR_TYPE_JQPLOT);
         $objGraph->addStackedBarChartSet([1], "xx1");

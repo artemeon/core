@@ -145,6 +145,9 @@ class ChartjsHelper {
             chartData['options']['scales']['yAxes'][0]['ticks']['userCallback'] = function (value: number, ctx: any) {
                 return ChartjsHelper.addThousandSeparator(value, ctx);
             }
+            chartData['options']['scales']['yAxes'][1]['ticks']['userCallback'] = function (value: number, ctx: any) {
+                return ChartjsHelper.addThousandSeparator(value, ctx);
+            }
         }
 
         chartData['options']['onClick'] = function (evt: any) {

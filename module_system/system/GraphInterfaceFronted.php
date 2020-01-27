@@ -147,6 +147,17 @@ interface GraphInterfaceFronted extends GraphInterface
     public function addLinePlotY2Axis($arrValues, $strLegend);
 
     /**
+     * Add new Axis right side with bar-values
+     *
+     * @param array $values
+     * @param string $legend
+     * @param bool $writeValues
+     * @param float $lineTension
+     * @return mixed
+     */
+    public function addBarChartY2Axis(array $values, string $legend, bool $writeValues);
+
+    /**
      * Enables general repsonsiveness of the chart.
      *
      * @param bool $bitResponsive

@@ -181,6 +181,22 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
     }
 
     /**
+     * Add additional data set to the Bar chart
+     *
+     * @param array $values
+     * @param string $legend
+     * @param bool $writeValues
+     * @see GraphInterfaceFronted::addBarChartY2Axis()
+     */
+    public function addBarChartY2Axis(array $values, string $legend, bool $writeValues = false)
+    {
+        $this->addChartSet($values, $legend, null, $writeValues, "2YID");
+        $this->arrChartData['options']['scales']['yAxes'][1]['id'] = "2YID";
+        $this->arrChartData['options']['scales']['yAxes'][1]['type'] = "linear";
+        $this->arrChartData['options']['scales']['yAxes'][1]['position'] = "right";
+    }
+
+    /**
      * Add new data set to the StackedBar chart
      *
      * @param array $arrValues
@@ -220,7 +236,7 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
      *
      * @param bool $bitWriteValues
      * @param float $lineTension
-     * @see GraphInterface::addLinePlot()
+     * @see GraphInterfaceFronted::addLinePlotY2Axis()
      */
     public function addLinePlotY2Axis($arrValues, $strLegend, $bitWriteValues = false, $lineTension = 0.2)
     {
@@ -417,8 +433,10 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
         $this->arrChartData['options']['title']['fontFamily'] = $strFont;
         $this->arrChartData['options']['scales']['xAxes'][0]['ticks']['fontFamily'] = $strFont;
         $this->arrChartData['options']['scales']['yAxes'][0]['ticks']['fontFamily'] = $strFont;
+        $this->arrChartData['options']['scales']['yAxes'][1]['ticks']['fontFamily'] = $strFont;
         $this->arrChartData['options']['scales']['xAxes'][0]['scaleLabel']['fontFamily'] = $strFont;
         $this->arrChartData['options']['scales']['yAxes'][0]['scaleLabel']['fontFamily'] = $strFont;
+        $this->arrChartData['options']['scales']['yAxes'][1]['scaleLabel']['fontFamily'] = $strFont;
 
     }
 
@@ -433,8 +451,22 @@ class GraphChartjs implements GraphInterfaceFronted, \JsonSerializable
         $this->arrChartData['options']['title']['fontColor'] = $strFontColor;
         $this->arrChartData['options']['scales']['xAxes'][0]['ticks']['fontColor'] = $strFontColor;
         $this->arrChartData['options']['scales']['yAxes'][0]['ticks']['fontColor'] = $strFontColor;
+        $this->arrChartData['options']['scales']['yAxes'][1]['ticks']['fontColor'] = $strFontColor;
         $this->arrChartData['options']['scales']['xAxes'][0]['scaleLabel']['fontColor'] = $strFontColor;
         $this->arrChartData['options']['scales']['yAxes'][0]['scaleLabel']['fontColor'] = $strFontColor;
+        $this->arrChartData['options']['scales']['yAxes'][1]['scaleLabel']['fontColor'] = $strFontColor;
+    }
+
+    public function setFontSize(int $fontSize): void
+    {
+        $this->arrChartData['options']['legend']['labels']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['title']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['xAxes'][0]['ticks']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['yAxes'][0]['ticks']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['yAxes'][1]['ticks']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['xAxes'][0]['scaleLabel']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['yAxes'][0]['scaleLabel']['fontSize'] = $fontSize;
+        $this->arrChartData['options']['scales']['yAxes'][1]['scaleLabel']['fontSize'] = $fontSize;
     }
 
     /**

@@ -259,6 +259,12 @@ interface GraphInterface
      */
     public function setStrFontColor($strFontColor);
 
+    /**
+     * Set the size of the fonts used in the chart
+     *
+     * @param int $fontSize
+     */
+    public function setFontSize(int $fontSize): void;
 
     /**
      * Sets the angle to be used for rendering the x-axis lables
