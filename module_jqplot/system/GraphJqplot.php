@@ -873,6 +873,13 @@ class GraphJqplot implements GraphInterfaceFronted
     }
 
     /**
+     * not supported by jqplot
+     */
+    public function setFontSize(int $fontSize): void
+    {
+    }
+
+    /**
      * Sets the angle to be used for rendering the x-axis lables
      *
      * @param int $intXAxisAngle
@@ -1174,6 +1181,20 @@ class GraphJqplot implements GraphInterfaceFronted
      * @inheritdoc
      */
     public function setMaxXAxesTicksLimit(int $maxXAxesTicksLimit)
+    {
+        //not supported
+    }
+
+    /**
+     * Add new Axis right side with bar-values
+     *
+     * @param array $values
+     * @param string $legend
+     * @param bool $writeValues
+     * @param float $lineTension
+     * @return mixed
+     */
+    public function addBarChartY2Axis(array $values, string $legend, bool $writeValues)
     {
         //not supported
     }
