@@ -107,6 +107,11 @@ class GraphEzc implements GraphInterface
         }
     }
 
+    public function setFontSize(int $fontSize): void
+    {
+        // TODO: Implement setFontSize() method.
+    }
+
 
     /**
      * Used to create a bar-chart.
