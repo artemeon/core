@@ -2,6 +2,8 @@
 
 namespace Kajona\System\System;
 
+use Artemeon\HttpClient\Client\HttpClient;
+use Artemeon\HttpClient\Client\HttpClientFactory;
 use Kajona\System\System\Permissions\PermissionHandlerFactory;
 use Kajona\System\System\Security\PasswordRotator;
 use Kajona\System\System\Security\PasswordValidator;
@@ -133,6 +135,10 @@ class ServiceProvider implements ServiceProviderInterface
     {
         $objContainer[self::STR_DB] = function ($c) {
             return Database::getInstance();
+        };
+
+        $objContainer[HttpClient::class] = function ($c) {
+            return HttpClientFactory::withLogger($c[self::STR_LOGGER]);
         };
 
         $objContainer[self::STR_RIGHTS] = function ($c) {
