@@ -279,5 +279,10 @@ class ServiceProvider implements ServiceProviderInterface
         $objContainer[LoginProtocolCleanerInterface::class] = function (Container $c): LoginProtocolCleanerInterface {
             return new LoginProtocolCleaner(180, Logger::getInstance('loginprotocolclean.log'));
         };
+
+        $objContainer[HttpClient::class] = function (Container $c): HttpClient {
+            $logger = $c[self::STR_LOGGER];
+            return HttpClientFactory::withLogger($logger);
+        };
     }
 }
