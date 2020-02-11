@@ -9,6 +9,8 @@
 
 namespace Kajona\System\System\Usersources;
 
+use Kajona\System\System\UserUser;
+
 /**
  * Interface defining all main methods for a single usersource.
  *
@@ -103,7 +105,7 @@ interface UsersourcesUsersourceInterface
      * within the subsystems mirror
      *
      * @param $strUsername
-     * @return UsersourcesUserInterface[]
+     * @return UserUser[]
      */
     public function searchUser($strUsername, $intMax = 10);
 

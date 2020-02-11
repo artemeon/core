@@ -12,6 +12,7 @@ namespace Kajona\Ldap\System\Usersources;
 use Kajona\Ldap\System\Ldap;
 use Kajona\Ldap\System\LdapAuthenticatorInterface;
 use Kajona\System\System\Carrier;
+use Kajona\System\System\Config;
 use Kajona\System\System\Database;
 use Kajona\System\System\Exception;
 use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
@@ -167,6 +168,7 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
      * @param string $strUserDn
      *
      * @return UsersourcesUserInterface or null
+     * @deprecated
      */
     public function getUserByDn($strUserDn)
     {
@@ -206,6 +208,12 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
 
             if ($arrDetails !== false && count($arrDetails) == 1) {
                 $arrSingleUser = $arrDetails[0];
+
+                //validate if relevant
+                if (!$this->validateUserHasGroupAssignments($arrSingleUser["identifier"], $objSingleLdap->getIntCfgNr())) {
+                    continue;
+                }
+
                 $objUser = new UserUser();
                 $objUser->setStrUsername($strUsername);
                 $objUser->setStrSubsystem("ldap");
@@ -223,7 +231,6 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
                     ServiceLifeCycleFactory::getLifeCycle(get_class($objSourceUser))->update($objSourceUser);
 
                     $this->objDB->flushQueryCache();
-
                     return $objSourceUser;
                 }
 
@@ -234,10 +241,38 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
     }
 
     /**
+     * If required by the current connection config, the assignment of groups to the current user is being validated.
+     * True if either not required or if the number of assignments is > 0
+     * @param String $dn
+     * @param int $ldapCfg
+     * @return bool
+     * @throws Exception
+     */
+    private function validateUserHasGroupAssignments(String $dn, int $ldapCfg)
+    {
+        $cfg = Config::getInstance('module_ldap', 'config.php')->getConfig($ldapCfg);
+        $required = $cfg['ldap_group_assignment_required'] ?? false;
+
+        if (!$required) {
+            return true;
+        }
+
+        $user = new UsersourcesUserLdap();
+        $user->setStrDN($dn);
+        $user->setIntCfg($ldapCfg);
+
+        $groupIds = $user->getGroupIdsForUser();
+        return count($groupIds) > 0;
+    }
+
+
+    /**
      * @inheritdoc
      * @param $strUsername
      * @param int $intMax
-     * @return UsersourcesUserInterface[]|void
+     * @return UserUser[]|void
+     * @throws Exception
+     * @throws \Kajona\System\System\Lifecycle\ServiceLifeCycleUpdateException
      */
     public function searchUser($strUsername, $intMax = 10)
     {
@@ -270,31 +305,17 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
         if (count($arrReturn) < $intMax) {
             foreach (Ldap::getAllInstances() as $objSingleLdap) {
                 $arrDetails = $objSingleLdap->searchUserByWildcard($strUsername);
-                if ($arrDetails !== false) {
-                    foreach ($arrDetails as $arrSingleUser) {
-                        //transparent user creation if not already existing
-                        if ($this->getUserByUsername($arrSingleUser["username"]) === null) {
-                            $objUser = new UserUser();
-                            $objUser->setStrUsername($arrSingleUser["username"]);
-                            $objUser->setStrSubsystem("ldap");
-                            $objUser->setIntAdmin(1);
-                            $objUser->updateObjectToDb();
+                if ($arrDetails === false) {
+                    continue;
+                }
 
-                            /** @var $objSourceUser UsersourcesUserLdap */
-                            $objSourceUser = $objUser->getObjSourceUser();
-                            if ($objSourceUser instanceof UsersourcesUserLdap) {
-                                $objSourceUser->setStrDN($arrSingleUser["identifier"]);
-                                $objSourceUser->setStrFamilyname($arrSingleUser["familyname"]);
-                                $objSourceUser->setStrGivenname($arrSingleUser["givenname"]);
-                                $objSourceUser->setStrEmail($arrSingleUser["mail"]);
-                                $objSourceUser->setIntCfg($objSingleLdap->getIntCfgNr());
-                                $objSourceUser->updateObjectToDb();
-                            }
-
-                            $arrReturn[] = $objUser;
-                        }
+                foreach ($arrDetails as $arrSingleUser) {
+                    //transparent user creation if not already existing
+                    $user = $this->getUserByUsername($arrSingleUser["username"]);
+                    if ($user instanceof UsersourcesUserLdap) {
+                        $existingUser = Objectfactory::getInstance()->getObject($user->getSystemid());
+                        $arrReturn[] = $existingUser;
                     }
-
                 }
             }
         }
