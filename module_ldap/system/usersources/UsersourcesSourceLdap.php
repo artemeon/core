@@ -248,7 +248,7 @@ class UsersourcesSourceLdap implements UsersourcesUsersourceInterface
      * @return bool
      * @throws Exception
      */
-    private function validateUserHasGroupAssignments(String $dn, int $ldapCfg)
+    private function validateUserHasGroupAssignments(string $dn, int $ldapCfg)
     {
         $cfg = Config::getInstance('module_ldap', 'config.php')->getConfig($ldapCfg);
         $required = $cfg['ldap_group_assignment_required'] ?? false;
