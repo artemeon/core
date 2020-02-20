@@ -12,6 +12,6 @@
     "twig/twig": "^2.4",
     "phpmailer/phpmailer": "~6.0",
     "artemeon/image": "^0.1.1",
-    "artemeon/http-client": "dev-feat/agp-4521-create-http-client"
+    "artemeon/http-client": "0.1.*"
   }
 }
