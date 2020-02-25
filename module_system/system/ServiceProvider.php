@@ -24,136 +24,136 @@ class ServiceProvider implements ServiceProviderInterface
     /**
      * @see \Kajona\System\System\Database
      */
-    const STR_DB = "system_db";
+    public const STR_DB = "system_db";
 
     /**
      * @see \Kajona\System\System\Rights
      */
-    const STR_RIGHTS = "system_rights";
+    public const STR_RIGHTS = "system_rights";
 
     /**
      * @see \Kajona\System\System\Config
      */
-    const STR_CONFIG = "system_config";
+    public const STR_CONFIG = "system_config";
 
     /**
      * @see \Kajona\System\System\Session
      */
-    const STR_SESSION = "system_session";
+    public const STR_SESSION = "system_session";
 
     /**
      * @see \Kajona\System\Admin\ToolkitAdmin
      */
-    const STR_ADMINTOOLKIT = "system_admintoolkit";
+    public const STR_ADMINTOOLKIT = "system_admintoolkit";
 
     /**
      * @see \Kajona\System\System\Resourceloader
      */
-    const STR_RESOURCE_LOADER = "system_resource_loader";
+    public const STR_RESOURCE_LOADER = "system_resource_loader";
 
     /**
      * @see \Kajona\System\System\Classloader
      */
-    const STR_CLASS_LOADER = "system_class_loader";
+    public const STR_CLASS_LOADER = "system_class_loader";
 
     /**
      * @see \Kajona\System\System\Template
      */
-    const STR_TEMPLATE = "system_template";
+    public const STR_TEMPLATE = "system_template";
 
     /**
      * @see \Twig_Environment
      */
-    const STR_TEMPLATE_ENGINE = "system_template_engine";
+    public const STR_TEMPLATE_ENGINE = "system_template_engine";
 
     /**
      * @see \Kajona\System\System\Lang
      */
-    const STR_LANG = "system_lang";
+    public const STR_LANG = "system_lang";
 
     /**
      * @see \Kajona\System\System\Objectfactory
      */
-    const STR_OBJECT_FACTORY = "system_object_factory";
+    public const STR_OBJECT_FACTORY = "system_object_factory";
 
     /**
      * @see \Kajona\System\System\ObjectBuilder
      */
-    const STR_OBJECT_BUILDER = "system_object_builder";
+    public const STR_OBJECT_BUILDER = "system_object_builder";
 
     /**
      * @see \Psr\Log\LoggerInterface
      */
-    const STR_LOGGER = "system_logger";
+    public const STR_LOGGER = "system_logger";
 
     /**
      * @see \Kajona\System\System\CacheManager
      */
-    const STR_CACHE_MANAGER = "system_cache_manager";
+    public const STR_CACHE_MANAGER = "system_cache_manager";
 
     /**
      * @see \Kajona\System\System\Lifecycle\ServiceLifeCycleFactory
      */
-    const STR_LIFE_CYCLE_FACTORY = "system_life_cycle_factory";
+    public const STR_LIFE_CYCLE_FACTORY = "system_life_cycle_factory";
 
     /**
      * @see \Kajona\System\System\Lifecycle\ServiceLifeCycleImpl
      */
-    const STR_LIFE_CYCLE_DEFAULT = "system_life_cycle_default";
+    public const STR_LIFE_CYCLE_DEFAULT = "system_life_cycle_default";
 
     /**
      * @see \Kajona\System\System\MessagingAlertLifeCycle
      */
-    const STR_LIFE_CYCLE_MESSAGES_ALERT = "system_life_cycle_messages_alert";
+    public const STR_LIFE_CYCLE_MESSAGES_ALERT = "system_life_cycle_messages_alert";
 
     /**
      * @see \Kajona\System\System\MessagingMessagehandler
      */
-    const STR_MESSAGE_HANDLER = "system_message_handler";
+    public const STR_MESSAGE_HANDLER = "system_message_handler";
 
     /**
      * @see \Kajona\System\System\Security\PasswordRotator
      */
-    const STR_PASSWORD_ROTATOR = "system_password_rotator";
+    public const STR_PASSWORD_ROTATOR = "system_password_rotator";
 
     /**
      * @see \Kajona\System\System\Security\PasswordValidatorInterface
      */
-    const STR_PASSWORD_VALIDATOR = "system_password_validator";
+    public const STR_PASSWORD_VALIDATOR = "system_password_validator";
 
     /**
      * @see \Kajona\System\System\Permissions\PermissionHandlerFactory
      */
-    const STR_PERMISSION_HANDLER_FACTORY = "system_permission_handler_factory";
+    public const STR_PERMISSION_HANDLER_FACTORY = "system_permission_handler_factory";
 
     /**
      * @see \Kajona\System\System\DropdownLoaderInterface
      */
-    const STR_DROPDOWN_LOADER = "system_dropdown_loader";
+    public const STR_DROPDOWN_LOADER = "system_dropdown_loader";
 
-    public function register(Container $objContainer)
+    public function register(Container $container)
     {
-        $objContainer[self::STR_DB] = function ($c) {
+        $container[self::STR_DB] = function ($c) {
             return Database::getInstance();
         };
 
-        $objContainer[HttpClient::class] = function ($c) {
-            return HttpClientFactory::withLogger($c[self::STR_LOGGER]);
+        $container[HttpClient::class] = function (Container $container): HttpClient {
+            return HttpClientFactory::withLogger($container[self::STR_LOGGER]);
         };
 
-        $objContainer[self::STR_RIGHTS] = function ($c) {
+        $container[self::STR_RIGHTS] = function ($c) {
             return Rights::getInstance();
         };
 
-        $objContainer[self::STR_CONFIG] = function ($c) {
+        $container[self::STR_CONFIG] = function ($c) {
             return Config::getInstance();
         };
 
-        $objContainer[self::STR_SESSION] = function ($c) {
+        $container[self::STR_SESSION] = function ($c) {
             return Session::getInstance();
         };
 
-        $objContainer[self::STR_ADMINTOOLKIT] = function ($c) {
+        $container[self::STR_ADMINTOOLKIT] = function ($c) {
             // decide which class to load
             $strAdminToolkitClass = $c[self::STR_CONFIG]->getConfig("admintoolkit");
             if ($strAdminToolkitClass == "") {
@@ -164,15 +164,15 @@ class ServiceProvider implements ServiceProviderInterface
             return Classloader::getInstance()->getInstanceFromFilename($strPath);
         };
 
-        $objContainer[self::STR_RESOURCE_LOADER] = function ($c) {
+        $container[self::STR_RESOURCE_LOADER] = function ($c) {
             return Resourceloader::getInstance();
         };
 
-        $objContainer[self::STR_CLASS_LOADER] = function ($c) {
+        $container[self::STR_CLASS_LOADER] = function ($c) {
             return Classloader::getInstance();
         };
 
-        $objContainer[self::STR_TEMPLATE] = function ($c) {
+        $container[self::STR_TEMPLATE] = function ($c) {
             return new Template(
                 new TemplateFileParser(),
                 new TemplateSectionParser(),
@@ -181,7 +181,7 @@ class ServiceProvider implements ServiceProviderInterface
             );
         };
 
-        $objContainer[self::STR_TEMPLATE_ENGINE] = function ($c) {
+        $container[self::STR_TEMPLATE_ENGINE] = function ($c) {
             $debug = $c[self::STR_CONFIG]->getDebug("debuglevel") == 1;
             $loader = new Loader(_realpath_);
 
@@ -200,49 +200,49 @@ class ServiceProvider implements ServiceProviderInterface
             return $twig;
         };
 
-        $objContainer[self::STR_LANG] = function ($c) {
+        $container[self::STR_LANG] = function ($c) {
             return Lang::getInstance();
         };
 
-        $objContainer[self::STR_OBJECT_FACTORY] = function ($c) {
+        $container[self::STR_OBJECT_FACTORY] = function ($c) {
             return Objectfactory::getInstance();
         };
 
-        $objContainer[self::STR_OBJECT_BUILDER] = function ($c) {
+        $container[self::STR_OBJECT_BUILDER] = function ($c) {
             return new ObjectBuilder($c);
         };
 
-        $objContainer[self::STR_LOGGER] = function ($c) {
+        $container[self::STR_LOGGER] = function ($c) {
             return Logger::getInstance();
         };
 
-        $objContainer[self::STR_CACHE_MANAGER] = function ($c) {
+        $container[self::STR_CACHE_MANAGER] = function ($c) {
             return new CacheManager();
         };
 
-        $objContainer[self::STR_MESSAGE_HANDLER] = function ($c) {
+        $container[self::STR_MESSAGE_HANDLER] = function ($c) {
             return new MessagingMessagehandler(
                 $c[self::STR_LIFE_CYCLE_FACTORY]
             );
         };
 
-        $objContainer[self::STR_LIFE_CYCLE_FACTORY] = function ($c) {
+        $container[self::STR_LIFE_CYCLE_FACTORY] = function ($c) {
             return new Lifecycle\ServiceLifeCycleFactory($c);
         };
 
-        $objContainer[self::STR_LIFE_CYCLE_DEFAULT] = function ($c) {
+        $container[self::STR_LIFE_CYCLE_DEFAULT] = function ($c) {
             return new Lifecycle\ServiceLifeCycleImpl(
                 $c[ServiceProvider::STR_PERMISSION_HANDLER_FACTORY]
             );
         };
 
-        $objContainer[self::STR_LIFE_CYCLE_MESSAGES_ALERT] = function ($c) {
+        $container[self::STR_LIFE_CYCLE_MESSAGES_ALERT] = function ($c) {
             return new MessagingAlertLifeCycle(
                 $c[ServiceProvider::STR_PERMISSION_HANDLER_FACTORY]
             );
         };
 
-        $objContainer[self::STR_PASSWORD_VALIDATOR] = function ($c) {
+        $container[self::STR_PASSWORD_VALIDATOR] = function ($c) {
             $arrConfig = $c[self::STR_CONFIG]->getConfig("password_validator");
 
             $arrMinLength = $arrConfig["minlength"] ?? [];
@@ -260,7 +260,7 @@ class ServiceProvider implements ServiceProviderInterface
             return $objValidator;
         };
 
-        $objContainer[self::STR_PASSWORD_ROTATOR] = function ($c) {
+        $container[self::STR_PASSWORD_ROTATOR] = function ($c) {
             return new PasswordRotator(
                 $c[self::STR_LANG],
                 $c[\Kajona\System\System\ServiceProvider::STR_LIFE_CYCLE_FACTORY],
@@ -268,21 +268,16 @@ class ServiceProvider implements ServiceProviderInterface
             );
         };
 
-        $objContainer[self::STR_PERMISSION_HANDLER_FACTORY] = function ($c) {
+        $container[self::STR_PERMISSION_HANDLER_FACTORY] = function ($c) {
             return new PermissionHandlerFactory($c);
         };
 
-        $objContainer[self::STR_DROPDOWN_LOADER] = function ($c) {
+        $container[self::STR_DROPDOWN_LOADER] = function ($c) {
             return new DropdownConfigLoader();
         };
 
-        $objContainer[LoginProtocolCleanerInterface::class] = function (Container $c): LoginProtocolCleanerInterface {
+        $container[LoginProtocolCleanerInterface::class] = function (Container $c): LoginProtocolCleanerInterface {
             return new LoginProtocolCleaner(180, Logger::getInstance('loginprotocolclean.log'));
-        };
-
-        $objContainer[HttpClient::class] = function (Container $c): HttpClient {
-            $logger = $c[self::STR_LOGGER];
-            return HttpClientFactory::withLogger($logger);
         };
     }
 }
