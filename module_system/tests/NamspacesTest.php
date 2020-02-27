@@ -71,8 +71,6 @@ class NamspacesTest extends TestCase
             //now compare e.g. "Mediamanager\Admin\Elements\ElementDownloadsAdmin" with "mediamanager/admin/elements/ElementDownloadsAdmin"
             $this->assertEquals($strClassNameTemp, $strFileNameTemp);
 
-
-
             //test the module name vs the namespace module name
             $strClassNamespaceModule = StringUtil::substring($strStrippedClassname, 0, StringUtil::indexOf($strStrippedClassname, "\\"));
             //special handling of underscores in namespaces: Aaaa_Bbbb, in filesytem aaaa_bbbb
