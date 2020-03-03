@@ -16,11 +16,13 @@ use Kajona\System\System\Validators\DummyValidator;
  * @since 4.3
  * @package module_formgenerator
  */
-class FormentryButton extends FormentryBase implements FormentryInterface {
+class FormentryButton extends FormentryBase implements FormentryInterface
+{
 
     private $strEventhandler = "";
 
-    public function __construct($strFormName, $strSourceProperty = "", $objSourceObject = null) {
+    public function __construct($strFormName, $strSourceProperty = "", $objSourceObject = null)
+    {
         parent::__construct($strFormName, $strSourceProperty, $objSourceObject);
 
         //set the default validator
@@ -33,13 +35,15 @@ class FormentryButton extends FormentryBase implements FormentryInterface {
      *
      * @return string
      */
-    public function renderField() {
+    public function renderField()
+    {
         $objToolkit = Carrier::getInstance()->getObjToolkit();
         $strReturn = "";
-        if($this->getStrHint() != null)
+        if ($this->getStrHint() != null) {
             $strReturn .= $objToolkit->formTextRow($this->getStrHint());
+        }
 
-        $strReturn .= $objToolkit->formInputSubmit($this->getStrLabel(), $this->getStrValue(), $this->getStrEventhandler(), "", !$this->getBitReadonly());
+        $strReturn .= $objToolkit->formInputSubmit($this->getStrLabel(), $this->getStrValue() ?? '', $this->getStrEventhandler(), "", !$this->getBitReadonly());
 
         return $strReturn;
     }
@@ -48,7 +52,8 @@ class FormentryButton extends FormentryBase implements FormentryInterface {
      * @param string $strEventhandler
      * @return FormentryButton
      */
-    public function setStrEventhandler($strEventhandler) {
+    public function setStrEventhandler($strEventhandler)
+    {
         $this->strEventhandler = $strEventhandler;
         return $this;
     }
@@ -56,11 +61,8 @@ class FormentryButton extends FormentryBase implements FormentryInterface {
     /**
      * @return string
      */
-    public function getStrEventhandler() {
+    public function getStrEventhandler()
+    {
         return $this->strEventhandler;
     }
-
-
-
-
 }

@@ -17,6 +17,7 @@ use Kajona\System\System\Security\PasswordExpiredException;
 use Kajona\System\System\Security\PasswordRotator;
 use Kajona\System\System\ServiceProvider;
 use Kajona\System\System\StringUtil;
+use Kajona\System\System\UserUser;
 
 
 /**
@@ -208,7 +209,7 @@ class UsersourcesSourceKajona implements UsersourcesUsersourceInterface
     /**
      * @inheritdoc
      * @param $strUsername
-     * @return array|UsersourcesUserInterface[]
+     * @return array|UserUser[]
      */
     public function searchUser($strUsername, $intMax = 10)
     {

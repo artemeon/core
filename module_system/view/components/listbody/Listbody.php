@@ -32,6 +32,8 @@ class Listbody extends AbstractComponent
     private $deleted = "";
     private $path = "";
 
+    private $dataAttributes = [];
+
     /**
      * Listbody constructor.
      * @param string $id
@@ -66,6 +68,7 @@ class Listbody extends AbstractComponent
         $data["deleted"] = $this->deleted;
         $data["checkbox"] = $this->checkbox;
         $data["path"] = $this->path;
+        $data["data"] = $this->dataAttributes;
 
         return $this->renderTemplate($data);
     }
@@ -246,6 +249,20 @@ class Listbody extends AbstractComponent
     public function setPath(string $path): void
     {
         $this->path = $path;
+    }
+
+    /**
+     * Method to set additional data attributes on an element
+     *
+     * @param string $key
+     * @param mixed $value
+     *
+     * @return Listbody
+     */
+    public function setData(string $key, $value)
+    {
+        $this->dataAttributes[$key] = $value;
+        return $this;
     }
 
 
