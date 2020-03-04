@@ -292,6 +292,18 @@ trait FlowControllerTrait
             $return.= "</div>";
         }
 
+        $menuItems = $result->getMenuItems();
+        if (!empty($menuItems)) {
+            $return .= "<div class='alert alert-info'>";
+            $return.= "<ul>";
+            foreach ($menuItems as $item) {
+                $link = Link::getLinkAdminManual('href="'.$item->getLink().'" target="_parent"', $item->getName());
+                $return.= "<li>{$link}</li>";
+            }
+            $return.= "</ul>";
+            $return.= "</div>";
+        }
+
         return $return;
     }
 

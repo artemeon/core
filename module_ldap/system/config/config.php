@@ -8,7 +8,7 @@
 ********************************************************************************************************/
 
 /*
-    Config-file for the ldap-connector. 
+    Config-file for the ldap-connector.
     The sample-file is created to match the structure of an ms active directory.
 
     There may be configured multiple ldap sources, each identified by the numerical array key.
@@ -68,6 +68,9 @@ $config[0]["ldap_group_isUserMemberOf"]            = "(&(objectClass=group)(memb
 //the attribute mapping to the groups' members
 $config[0]["ldap_group_attribute_member"]          = "member";
 
+//if set to true, only users with at least a single group assignment will be returned. otherwise the user will be created on the fly in the database.
+$config[0]["ldap_group_assignment_required"]       = false;
+
 
 
 
@@ -92,3 +95,4 @@ $config[1]["ldap_user_attribute_givenname"]        = "givenName";
 $config[1]["ldap_group_filter"]                    = "(objectClass=group)";
 $config[1]["ldap_group_isUserMemberOf"]            = "(&(objectClass=group)(member=?))";
 $config[1]["ldap_group_attribute_member"]          = "member";
+$config[1]["ldap_group_assignment_required"]       = false;

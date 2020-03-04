@@ -1,5 +1,5 @@
 
-<tbody class="generalListSet {{ cssaddon }}">
+<tbody class="generalListSet {{ cssaddon }}" {% for key, value in data %}data-{{ key }}="{{ value|e('html_attr') }}"{% endfor %} >
     {% if path %}
         <tr>
             <td colspan="4" class="path"></td>
