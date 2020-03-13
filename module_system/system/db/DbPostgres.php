@@ -509,11 +509,12 @@ class DbPostgres extends DbBase
     {
         $strFilename = _realpath_.$strFilename;
 
+        $strCommand= '';
         if ($this->objCfg->getStrPass() != "") {
             if ($this->isWinOs()) {
-                $strCommand = "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
+                $strCommand .= "SET \"PGPASSWORD=".$this->objCfg->getStrPass()."\" && ";
             } else {
-                $strCommand = "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
+                $strCommand .= "PGPASSWORD=\"".$this->objCfg->getStrPass()."\" ";
             }
         }
 
