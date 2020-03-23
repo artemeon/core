@@ -43,4 +43,21 @@ abstract class JStreeNodeLoaderBaseClass implements JStreeNodeLoaderInterface
 
         return $arrChildren;
     }
+
+    /**
+     * Esacpes the current tree-nodes' title to avoid script tags
+     * @param ModelInterface|Root $sourceObject
+     * @param string|null $templateTitle
+     * @return string
+     */
+    protected function escapeTitle(ModelInterface $sourceObject, ?string $templateTitle): string
+    {
+        $templateTitle = $templateTitle ?? $sourceObject->getStrDisplayName();
+        $templateTitle = (html_entity_decode($templateTitle,  ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $templateTitle = strip_tags(($templateTitle));
+        if ($sourceObject->getIntRecordDeleted() == 1) {
+            $templateTitle = '<span style="text-decoration: line-through;">'.$templateTitle.'</span>';
+        }
+        return $templateTitle;
+    }
 }

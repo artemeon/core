@@ -52,7 +52,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
 
                 $objNode = new SystemJSTreeNode();
                 $objNode->setStrId(generateSystemid());
-                $objNode->setStrText($this->objToolkit->getTooltipText($strCategoryName, $strCategoryName));
+                $objNode->setStrText($strCategoryName);
                 $objNode->setArrChildren(false);
                 $objNode->setStrType("provider");
                 $objNode->addAAttrAttr(
@@ -75,7 +75,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
 
             $objNode = new SystemJSTreeNode();
             $objNode->setStrId(generateSystemid());
-            $objNode->setStrText('<i class="fa fa-folder-o"></i>&nbsp;'.$this->objToolkit->getTooltipText($strProviderName, $strProviderName));
+            $objNode->setStrText('<i class="fa fa-folder-o"></i>&nbsp;'.$strProviderName);
             $objNode->setArrChildren($arrCategoryNodes);
             $objNode->setStrType("category");
             $objNode->addAAttrAttr(
@@ -105,7 +105,7 @@ class TodoJstreeNodeLoader extends JStreeNodeLoaderBaseClass
     {
         $objNode = new SystemJSTreeNode();
         $objNode->setStrId(generateSystemid());
-        $objNode->setStrText($this->objToolkit->getTooltipText(Carrier::getInstance()->getObjLang()->getLang("todo_provider_category", "dashboard"), Carrier::getInstance()->getObjLang()->getLang("todo_provider_category", "dashboard")));
+        $objNode->setStrText(Carrier::getInstance()->getObjLang()->getLang("todo_provider_category", "dashboard"));
         $objNode->setStrType("navigationpoint");
         $objNode->addAAttrAttr(
             SystemJSTreeNode::STR_NODE_AATTR_HREF,
