@@ -7,8 +7,10 @@
 namespace Kajona\System;
 
 use Kajona\Mediamanager\System\MediamanagerFile;
+use Kajona\System\System\AuthenticationException;
 use Kajona\System\System\Carrier;
 use Kajona\System\System\CoreEventdispatcher;
+use Kajona\System\System\Exception;
 use Kajona\System\System\HttpStatuscodes;
 use Artemeon\Image\Image;
 use Artemeon\Image\Plugins\ImageLine;
@@ -103,6 +105,20 @@ class Flyimage
      */
     public function generateImage()
     {
+        if (!Session::getInstance()->isLoggedin()) {
+            ResponseObject::getInstance()->setStrStatusCode(HttpStatuscodes::SC_FORBIDDEN);
+            ResponseObject::getInstance()->setStrContent(
+                Exception::renderException(
+                    new AuthenticationException(
+                        "Access forbidden, you are not allowed to access this resource",
+                        Exception::$level_ERROR
+                    )
+                )
+            );
+            ResponseObject::getInstance()->sendHeaders();
+            ResponseObject::getInstance()->sendContent();
+            return;
+        }
         //switch the different modes - may be want to generate a detailed image-view
         Carrier::getInstance()->getObjSession()->sessionClose();
         $this->resizeImage();
@@ -153,6 +169,7 @@ class Flyimage
      * captcha image
      *
      * @return void
+     * @deprecated remove in 8.x
      */
     public function generateCaptchaImage()
     {
