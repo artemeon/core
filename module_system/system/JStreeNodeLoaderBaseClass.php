@@ -50,7 +50,7 @@ abstract class JStreeNodeLoaderBaseClass implements JStreeNodeLoaderInterface
      * @param string|null $templateTitle
      * @return string
      */
-    protected function escapeTitle(ModelInterface $sourceObject, ?string $templateTitle): string
+    protected function escapeTitle(ModelInterface $sourceObject, string $templateTitle = null): string
     {
         $templateTitle = $templateTitle ?? $sourceObject->getStrDisplayName();
         $templateTitle = (html_entity_decode($templateTitle,  ENT_QUOTES | ENT_HTML5, 'UTF-8'));
