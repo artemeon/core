@@ -170,17 +170,21 @@ class FormentryObjectlist extends FormentryBase implements FormentryPrintableInt
 
     public function setStrValue($strValue)
     {
-        $arrValuesIds = array();
+        if (is_string($strValue)) {
+            $strValue = [$strValue];
+        }
+
+        $valuesIds = [];
         if (is_array($strValue) || $strValue instanceof Traversable) {
             foreach ($strValue as $objValue) {
                 if ($objValue instanceof Model) {
-                    $arrValuesIds[] = $objValue->getStrSystemid();
+                    $valuesIds[] = $objValue->getStrSystemid();
                 } else {
-                    $arrValuesIds[] = $objValue;
+                    $valuesIds[] = $objValue;
                 }
             }
         }
-        $strValue = implode(",", $arrValuesIds);
+        $strValue = implode(',', $valuesIds);
 
         $objReturn = parent::setStrValue($strValue);
         $this->setArrKeyValues($this->toObjectArray());
