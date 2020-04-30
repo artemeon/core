@@ -35,7 +35,7 @@
     "font-awesome": "^4.7.0",
     "html2canvas": "^1.0.0-rc.3",
     "hotkeys-js": "^3.7.1",
-    "jquery": "^3.0.0",
+    "jquery": "^3.5.0",
     "jquery-tageditor": "^1.0.0",
     "jquery-ui-touch-punch": "^0.2.3",
     "jquery-ui.custom": "github:artemeon/jquery-ui.custom",
