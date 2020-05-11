@@ -17,6 +17,7 @@ use Kajona\System\Admin\Formentries\FormentryPlaintext;
 use Kajona\System\Admin\Formentries\FormentryText;
 use Kajona\System\Admin\Formentries\FormentryUser;
 use Kajona\System\Admin\Reports\AdminreportsReportUserrights;
+use Kajona\System\Admin\Reports\AdminreportsReportUserroles;
 use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\ArraySectionIterator;
 use Kajona\System\System\Carrier;
@@ -110,6 +111,10 @@ class UserAdmin extends AdminEvensimpler implements AdminInterface
             $arrReturn[] = ["", ""];
             $arrReturn[] = ["right1", $this->getLang("action_show_report")];
             $arrReturn[] = ["right1", Link::getLinkAdmin("auswertung", "show", ["report" => "userrights"], $this->getLang("report_userrights"))];
+
+            if (AuswertungAccessConfig::hasRightView(AdminreportsReportUserroles::class)) {
+                $arrReturn[] = ["right2", Link::getLinkAdmin("auswertung", "show", ["report" => "userroles"], $this->getLang("report_userroles"))];
+            }
         }
 
         return $arrReturn;

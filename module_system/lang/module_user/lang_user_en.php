@@ -176,7 +176,9 @@ $lang["reset_reason_expired"] = "Your password is expired. Please choose a new p
 
 
 $lang["report_hinweis_parametrisierung"] = "This report ignores the current parametrization!";
+$lang["report_hinweis_runtime"]          = "This report is only available for download because of its long runtime.";
 $lang["report_userrights"]               = "Userlist including assigned groups";
+$lang["report_userroles"]                = "Employees with roles (groups or contract based)";
 $lang["user_active"]                     = "active";
 $lang["user_inactive"]                   = "inactive";
 

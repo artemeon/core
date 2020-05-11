@@ -175,7 +175,9 @@ $lang["user_password_validate_username"] = "Das Passwort darf keine Zeichen aus 
 $lang["reset_reason_expired"] = "Ihr Passwort is abgelaufen. Bitte vergeben Sie ein neues Passwort unter Angabe des zugehörigen Benutzernamens.";
 
 $lang["report_hinweis_parametrisierung"] = "Diese Auswertung berücksichtigt NICHT die aktuelle Parametrisierung!";
+$lang["report_hinweis_runtime"]          = "Diese Auswertung ist wegen ihrer langen Laufzeit nur als Download verfügbar.";
 $lang["report_userrights"]               = "Anwenderliste mit zugehörigen Gruppen";
+$lang["report_userroles"]                = "Mitarbeiter mit Rollen (Gruppen oder vorgangsbezogen)";
 $lang["user_active"]                     = "Aktiv";
 $lang["user_inactive"]                   = "Inaktiv";
 
