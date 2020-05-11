@@ -6,24 +6,17 @@ namespace Kajona\System\Admin\Reports;
 
 use AGP\Auswertung\Admin\Reports\AuswertungReportInterface;
 use AGP\Contracts\Admin\Reports\AuswertungReportExportBase;
-use AGP\Contracts\System\ContractsContractAbstract;
-use AGP\Gdpr\System\Models\GdprProcedure;
 use AGP\Phpexcel\System\PhpspreadsheetDataTableExporter;
 use AGP\Prozessverwaltung\System\ProzessverwaltungProzGroupAssignment;
-use AGP\Prozessverwaltung\System\ProzessverwaltungProzGroupBase;
-use AGP\Prozessverwaltung\System\ProzessverwaltungProzOe;
-use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Exception;
 use Kajona\System\System\FilterBase;
 use Kajona\System\System\Filters\UserGroupFilter;
-use Kajona\System\System\Link;
 use Kajona\System\System\Objectfactory;
-use Kajona\System\System\Rights;
+use Kajona\System\System\Root;
 use Kajona\System\System\SystemModule;
+use Kajona\System\System\SystemSetting;
 use Kajona\System\System\UserGroup;
-use Kajona\System\System\UserSourcefactory;
 use Kajona\System\System\UserUser;
-use Kajona\System\View\Components\Dtable\DTableComponent;
 use Kajona\System\View\Components\Dtable\Model\DTable;
 
 /**
@@ -100,7 +93,7 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
      */
     public function getReport(): string
     {
-        if ($this->getParam('export') === 'xls' && SystemModule::getModuleByName('auswertung')->rightView() && SystemModule::getModuleByName('user')->rightView()) {
+        if ($this->getParam('export') === 'xls' && SystemModule::getModuleByName('auswertung')->rightView() && SystemModule::getModuleByName('user')->rightRight1()) {
             $this->generateExcelExport();
 
             return '';
@@ -162,12 +155,13 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
     private function generateExcelExport(): void
     {
         $this->generalUserGroupId = UserGroup::getGroupByName('GENERAL')->getSystemid();
-        $this->adminUserGroupId = UserGroup::getGroupByName('Admins')->getSystemid();
+        $this->adminUserGroupId = SystemSetting::getConfigValue('admins_group_id');
 
         $generalUserGroups = $this->getGeneralUserGroups();
 
         $data = [];
         foreach ($this->getUsersInUserGroups($generalUserGroups) as $user) {
+
             foreach ($user->getArrGroupIds() as $singleGroupAssignment) {
                 if ($this->shouldExcludeUserGroupId($singleGroupAssignment)) {
                     continue;
@@ -179,6 +173,8 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
                             $user->getStrUsername(),
                             $generalUserGroup->getStrDisplayName(),
                             '',
+                            '',
+                            '',
                         ];
                         continue 2;
                     }
@@ -186,28 +182,41 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
 
                 foreach (ProzessverwaltungProzGroupAssignment::getAllByGroupId($singleGroupAssignment) as $assignment) {
                     $target = $this->objectFactory->getObject($assignment->getStrProcessId());
+                    if (!($target instanceof Root)) {
+                        continue;
+                    }
 
-                    if ($target instanceof ContractsContractAbstract) {
-                        $groupName = $this->objLang->getLang('form_contracts_transparentgroups_' . $assignment->getStrType(), 'contracts');
-                    } elseif ($target instanceof GdprProcedure) {
-                        $groupName = $this->objLang->getLang('form_gdpr_transparentgroups_' . $assignment->getStrType(), 'gdpr');
-                    } elseif ($target instanceof ProzessverwaltungProzGroupBase) {
-                        $groupName = $this->objLang->getLang('form_prozessverwaltung_transparentgroups_' . $assignment->getStrType(), 'prozessverwaltung');
-                    } else {
+                    $moduleName = $target->getArrModule('module');
+                    $languageString = 'form_ ' . $moduleName . '_transparentgroups_' . $assignment->getStrType();
+                    $groupName = $this->objLang->getLang($languageString, $moduleName);
+                    if ($groupName === '!' . $languageString . '!') {
                         $groupName = 'n.a.';
                     }
 
                     $data[] = [
                         $user->getStrUsername(),
+                        '',
                         $groupName,
                         $target->getStrDisplayName(),
+                        $moduleName,
                     ];
                 }
             }
         }
 
         (new PhpspreadsheetDataTableExporter())->exportDTableToExcel(
-            new DTable([['Benutzer', 'Gruppe', 'Vorgang']], $data)
+            new DTable(
+                [
+                    [
+                        $this->objLang->getLang('report_userroles_column_user', 'user'),
+                        $this->objLang->getLang('report_userroles_column_group_common', 'user'),
+                        $this->objLang->getLang('report_userroles_column_group_process', 'user'),
+                        $this->objLang->getLang('report_userroles_column_process', 'user'),
+                        $this->objLang->getLang('report_userroles_column_module', 'user'),
+                    ],
+                ],
+                $data
+            )
         );
     }
 }
