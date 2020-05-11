@@ -187,9 +187,11 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
                     }
 
                     $moduleName = $target->getArrModule('module');
-                    $languageString = 'form_ ' . $moduleName . '_transparentgroups_' . $assignment->getStrType();
+                    $languageString = 'form_' . $moduleName . '_transparentgroups_' . $assignment->getStrType();
                     $groupName = $this->objLang->getLang($languageString, $moduleName);
                     if ($groupName === '!' . $languageString . '!') {
+
+var_dump($groupName, $moduleName);exit();
                         $groupName = 'n.a.';
                     }
 
