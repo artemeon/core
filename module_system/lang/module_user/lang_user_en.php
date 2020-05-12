@@ -184,7 +184,7 @@ $lang["user_inactive"]                   = "inactive";
 
 $lang['report_userroles_column_user'] = 'User';
 $lang['report_userroles_column_group_common'] = 'Group';
-$lang['report_userroles_column_group_process'] = 'process related';
+$lang['report_userroles_column_group_process'] = 'Process related';
 $lang['report_userroles_column_process'] = 'Process';
 $lang['report_userroles_column_module'] = 'Module';
 

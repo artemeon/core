@@ -183,7 +183,7 @@ $lang["user_inactive"]                   = "Inaktiv";
 
 $lang['report_userroles_column_user'] = 'Benutzer';
 $lang['report_userroles_column_group_common'] = 'Gruppe';
-$lang['report_userroles_column_group_process'] = 'vorgangsbezogen';
+$lang['report_userroles_column_group_process'] = 'Vorgangsbezogen';
 $lang['report_userroles_column_process'] = 'Vorgang';
 $lang['report_userroles_column_module'] = 'Modul';
 

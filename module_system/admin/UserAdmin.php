@@ -107,12 +107,14 @@ class UserAdmin extends AdminEvensimpler implements AdminInterface
         $arrReturn[] = ["", ""];
         $arrReturn[] = ["right1", Link::getLinkAdmin($this->getArrModule("modul"), "loginLog", "", $this->getLang("loginlog"))];
 
-        if (SystemModule::getModuleByName("auswertung") !== null && AuswertungAccessConfig::hasRightView(AdminreportsReportUserrights::class)) {
+        if (SystemModule::getModuleByName("auswertung") !== null) {
             $arrReturn[] = ["", ""];
             $arrReturn[] = ["right1", $this->getLang("action_show_report")];
-            $arrReturn[] = ["right1", Link::getLinkAdmin("auswertung", "show", ["report" => "userrights"], $this->getLang("report_userrights"))];
+            if (AuswertungAccessConfig::hasRightView(AdminreportsReportUserrights::class)) {
+                $arrReturn[] = ["right1", Link::getLinkAdmin("auswertung", "show", ["report" => "userrights"], $this->getLang("report_userrights"))];
+            }
 
-            if (AuswertungAccessConfig::hasRightRight1(AdminreportsReportUserroles::class)) {
+            if (AuswertungAccessConfig::hasRightView(AdminreportsReportUserroles::class)) {
                 $arrReturn[] = ["right1", Link::getLinkAdmin("auswertung", "show", ["report" => "userroles"], $this->getLang("report_userroles"))];
             }
         }

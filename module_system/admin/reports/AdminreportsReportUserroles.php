@@ -8,6 +8,7 @@ use AGP\Auswertung\Admin\Reports\AuswertungReportInterface;
 use AGP\Contracts\Admin\Reports\AuswertungReportExportBase;
 use AGP\Phpexcel\System\PhpspreadsheetDataTableExporter;
 use AGP\Prozessverwaltung\System\ProzessverwaltungProzGroupAssignment;
+use AGP\Prozessverwaltung\System\ProzessverwaltungProzOe;
 use Kajona\System\System\Exception;
 use Kajona\System\System\FilterBase;
 use Kajona\System\System\Filters\UserGroupFilter;
@@ -119,9 +120,9 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
         $userGroupFilter = new UserGroupFilter();
         $userGroupFilter->setIntSystemFilter(1);
         foreach (UserGroup::getObjectListFiltered($userGroupFilter) as $userGroup) {
-            if (!$this->shouldExcludeUserGroupId($userGroup->getStrSystemid())) {
+//            if (!$this->shouldExcludeUserGroupId($userGroup->getStrSystemid())) {
                 $userGroups[] = $userGroup;
-            }
+//            }
         }
 
         return $userGroups;
@@ -155,7 +156,7 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
     private function generateExcelExport(): void
     {
         $this->generalUserGroupId = UserGroup::getGroupByName('GENERAL')->getSystemid();
-        $this->adminUserGroupId = SystemSetting::getConfigValue('admins_group_id');
+        $this->adminUserGroupId = SystemSetting::getConfigValue('_admins_group_id_');
 
         $generalUserGroups = $this->getGeneralUserGroups();
 
@@ -186,6 +187,10 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
                         continue;
                     }
 
+                    if ($target instanceof ProzessverwaltungProzOe && in_array($assignment->getStrType(), [ProzessverwaltungProzOe::GROUP_HEAD, ProzessverwaltungProzOe::GROUP_DEPUTY, 'oe_users'])) {
+                        continue;
+                    }
+
                     $moduleName = $target->getArrModule('module');
                     $languageString = 'form_' . $moduleName . '_transparentgroups_' . $assignment->getStrType();
                     $groupName = $this->objLang->getLang($languageString, $moduleName);
@@ -198,7 +203,7 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
                         '',
                         $groupName,
                         $target->getStrDisplayName(),
-                        $moduleName,
+                        $this->getLang('modul_titel', $moduleName),
                     ];
                 }
             }
