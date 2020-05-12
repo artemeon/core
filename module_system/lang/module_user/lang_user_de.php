@@ -175,9 +175,17 @@ $lang["user_password_validate_username"] = "Das Passwort darf keine Zeichen aus 
 $lang["reset_reason_expired"] = "Ihr Passwort is abgelaufen. Bitte vergeben Sie ein neues Passwort unter Angabe des zugehörigen Benutzernamens.";
 
 $lang["report_hinweis_parametrisierung"] = "Diese Auswertung berücksichtigt NICHT die aktuelle Parametrisierung!";
+$lang["report_hinweis_runtime"]          = "Diese Auswertung ist wegen ihrer langen Laufzeit nur als Download verfügbar.";
 $lang["report_userrights"]               = "Anwenderliste mit zugehörigen Gruppen";
+$lang["report_userroles"]                = "Mitarbeiter mit Rollen (Gruppen oder vorgangsbezogen)";
 $lang["user_active"]                     = "Aktiv";
 $lang["user_inactive"]                   = "Inaktiv";
+
+$lang['report_userroles_column_user'] = 'Benutzer';
+$lang['report_userroles_column_group_common'] = 'Gruppe';
+$lang['report_userroles_column_group_process'] = 'vorgangsbezogen';
+$lang['report_userroles_column_process'] = 'Vorgang';
+$lang['report_userroles_column_module'] = 'Modul';
 
 $lang['workflow_user_loginprotocol_cleaner_val1'] = 'Stunde zu der der Workflow ausgeführt wird';
 $lang['workflow_user_loginprotocol_cleaner_title'] = 'Login Protokoll Bereinigung';

@@ -176,9 +176,17 @@ $lang["reset_reason_expired"] = "Your password is expired. Please choose a new p
 
 
 $lang["report_hinweis_parametrisierung"] = "This report ignores the current parametrization!";
+$lang["report_hinweis_runtime"]          = "This report is only available for download because of its long runtime.";
 $lang["report_userrights"]               = "Userlist including assigned groups";
+$lang["report_userroles"]                = "Employees with roles (groups or contract based)";
 $lang["user_active"]                     = "active";
 $lang["user_inactive"]                   = "inactive";
+
+$lang['report_userroles_column_user'] = 'User';
+$lang['report_userroles_column_group_common'] = 'Group';
+$lang['report_userroles_column_group_process'] = 'process related';
+$lang['report_userroles_column_process'] = 'Process';
+$lang['report_userroles_column_module'] = 'Module';
 
 $lang['workflow_user_loginprotocol_cleaner_val1'] = 'Hour of the day to execute';
 $lang['workflow_user_loginprotocol_cleaner_title'] = 'Login protocol cleanup';
