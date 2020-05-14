@@ -4,14 +4,17 @@ declare(strict_types=1);
 
 namespace Kajona\System\Admin\Reports;
 
+use AGP\Auswertung\Admin\Reports\AuswertungReportBaseFilter;
 use AGP\Auswertung\Admin\Reports\AuswertungReportInterface;
 use AGP\Contracts\Admin\Reports\AuswertungReportExportBase;
 use AGP\Phpexcel\System\PhpspreadsheetDataTableExporter;
 use AGP\Prozessverwaltung\System\ProzessverwaltungProzGroupAssignment;
 use AGP\Prozessverwaltung\System\ProzessverwaltungProzOe;
+use Kajona\System\System\AdminskinHelper;
 use Kajona\System\System\Exception;
 use Kajona\System\System\FilterBase;
 use Kajona\System\System\Filters\UserGroupFilter;
+use Kajona\System\System\Link;
 use Kajona\System\System\Objectfactory;
 use Kajona\System\System\Root;
 use Kajona\System\System\SystemModule;
@@ -23,7 +26,7 @@ use Kajona\System\View\Components\Dtable\Model\DTable;
 /**
  * @since 7.1
  */
-class AdminreportsReportUserroles extends AuswertungReportExportBase implements AuswertungReportInterface
+class AdminreportsReportUserroles extends AuswertungReportBaseFilter implements AuswertungReportInterface
 {
     /** @var Objectfactory */
     private $objectFactory;
@@ -89,6 +92,38 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
     }
 
     /**
+     * Renders the export button for the report
+     *
+     * @return string
+     */
+    protected function renderExportButton($arrAdditionalFilters = [])
+    {
+        $strReturn = "";
+
+        $arrParams = [
+            'report' => $this->getInternalTitle(),
+            'export' => 'xls',
+        ];
+        if (!empty($arrAdditionalFilters)) {
+            $arrParams = array_merge($arrParams, $arrAdditionalFilters);
+        }
+
+        $strXlsExportHref = Link::getLinkAdminXml("auswertung", "showDirect", $arrParams);
+        $strExportLink = Link::getLinkAdminManual(
+            "href='#' onclick=\"DownloadIndicator.triggerDownload('{$strXlsExportHref}');return false;\"",
+            AdminskinHelper::getAdminImage("icon_excel") . " " . $this->getLang("change_export_excel", "system"),
+            "",
+            "",
+            "",
+            "",
+            false
+        );
+
+        $strReturn .= $this->objToolkit->addToContentToolbar($strExportLink);
+        return $strReturn;
+    }
+
+    /**
      * {@inheritDoc}
      * @throws Exception
      */
@@ -120,9 +155,7 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
         $userGroupFilter = new UserGroupFilter();
         $userGroupFilter->setIntSystemFilter(1);
         foreach (UserGroup::getObjectListFiltered($userGroupFilter) as $userGroup) {
-//            if (!$this->shouldExcludeUserGroupId($userGroup->getStrSystemid())) {
-                $userGroups[] = $userGroup;
-//            }
+            $userGroups[] = $userGroup;
         }
 
         return $userGroups;
@@ -155,7 +188,7 @@ class AdminreportsReportUserroles extends AuswertungReportExportBase implements 
 
     private function generateExcelExport(): void
     {
-        $this->generalUserGroupId = UserGroup::getGroupByName('GENERAL')->getSystemid();
+        $this->generalUserGroupId = UserGroup::getGroupByName('GENERAL') !== null ? UserGroup::getGroupByName('GENERAL')->getSystemid() : null;
         $this->adminUserGroupId = SystemSetting::getConfigValue('_admins_group_id_');
 
         $generalUserGroups = $this->getGeneralUserGroups();
