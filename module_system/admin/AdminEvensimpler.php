@@ -8,7 +8,7 @@
 
 namespace Kajona\System\Admin;
 
-use Kajona\Admin\Exceptions\ModelNotFoundException;
+use Kajona\System\Admin\Exceptions\ModelNotFoundException;
 use Kajona\System\Admin\Formentries\FormentryHidden;
 use Kajona\System\System\ArraySectionIterator;
 use Kajona\System\System\Exception;
