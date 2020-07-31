@@ -176,6 +176,28 @@ class FlowManager
     }
 
     /**
+     * Returns if a flow is configured for the given class
+     *
+     * @param string $strClass
+     * @return bool
+     */
+    public function isFlowConfiguredForClass($strClass)
+    {
+        if (isset($this->arrFlows[$strClass])) {
+            return true;
+        }
+
+        $objFlow = FlowConfig::getByModelClass($strClass);
+        if (!($objFlow instanceof FlowConfig)) {
+            return false;
+        }
+
+        $this->arrFlows[$strClass] = $objFlow;
+
+        return true;
+    }
+
+    /**
      * Executes an action with the given classname of the transition from sourceindex to targetindex
      *
      * @param int $intSourceIndex

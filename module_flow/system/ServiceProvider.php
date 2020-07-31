@@ -7,6 +7,8 @@
 
 namespace Kajona\Flow\System;
 
+use Kajona\System\System\Lifecycle\ServiceLifeCycleFactory;
+use Kajona\System\System\ServiceProvider as SystemServiceProvider;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -36,6 +38,19 @@ class ServiceProvider implements ServiceProviderInterface
             return new FlowHandlerFactory(
                 $c[self::STR_MANAGER],
                 $c[\Kajona\System\System\ServiceProvider::STR_LIFE_CYCLE_FACTORY]
+            );
+        };
+        $c[FlowInstallerHelper::class] = static function (Container $container): FlowInstallerHelper {
+            /** @var ServiceLifeCycleFactory $lifeCycleFactory */
+            $lifeCycleFactory = $container[SystemServiceProvider::STR_LIFE_CYCLE_FACTORY];
+
+            return new FlowInstallerHelper(
+                $container[self::STR_MANAGER],
+                $lifeCycleFactory->factory(FlowConfig::class),
+                $lifeCycleFactory->factory(FlowStatus::class),
+                $lifeCycleFactory->factory(FlowTransition::class),
+                $lifeCycleFactory->factory(FlowConditionAbstract::class),
+                $lifeCycleFactory->factory(FlowActionAbstract::class)
             );
         };
     }
