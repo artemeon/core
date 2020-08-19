@@ -156,6 +156,7 @@ class Mail
      */
     public function addAttachement(string $strFilename, string $strContentType = "", bool $bitInline = false): bool
     {
+        $strFilename = StringUtil::replace(_realpath_, '', $strFilename);
         if (is_file(_realpath_.$strFilename)) {
             $arrTemp = array();
             $arrTemp["filename"] = _realpath_.$strFilename;
